@@ -8,4 +8,12 @@ class Piece
     @y = y
   end
 
+  def uni_char
+    if colour == :white
+      print(" | #{self.class.class_variable_get(:@@white_char)}w| ")
+    else
+      print(" | #{self.class.class_variable_get(:@@black_char)}b| ")
+    end
+  end
+
 end
