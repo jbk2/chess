@@ -27,6 +27,10 @@ class Board
     pp grid[x][y]
   end
   
+  def display_piece_utf(x,y)
+    puts grid[x][y].uni_char
+  end
+  
   def piece(x,y)
     grid[x][y]
   end
@@ -76,8 +80,9 @@ b.populate_board
 # # b.grid[1][0] = Piece.new(:pawn, 1, 0)
 # # p = Piece.new(1,1,1)
 # # puts p.inspect
-b.display_board
-b.display_piece(1,1)
+# b.display_board
+b.display_piece(6,1)
+b.display_piece_utf(6,1)
 # puts "heres grid[1] #{b.grid[1]}"
 # p board.inspect
 # pp "here my path; #{$:.inspect}"
