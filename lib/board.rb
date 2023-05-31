@@ -1,4 +1,4 @@
-Dir[File.dirname(__FILE__) + '/pieces/*.rb'].each {|file| require_relative file }
+Dir[File.join(__dir__, 'pieces', '*.rb')].each { |file| require_relative file }
 
 class Board
   attr_accessor :grid
@@ -90,8 +90,8 @@ class Board
 
 end
 
-b = Board.new
-b.populate_board
+# b = Board.new
+# b.populate_board
 # # b.grid[1].each_with_index do |e, i|
 # #   e = Piece.new(:pawn, 1, i)
 # #   puts "#{e.y}"
@@ -99,7 +99,7 @@ b.populate_board
 # # b.grid[1][0] = Piece.new(:pawn, 1, 0)
 # # p = Piece.new(1,1,1)
 # # puts p.inspect
-b.display_board_utf
+# b.display_board_utf
 # b.display_piece(6,1)
 # b.display_piece_utf(6,1)
 # puts "heres grid[1] #{b.grid[1]}"

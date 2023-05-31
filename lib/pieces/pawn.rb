@@ -1,4 +1,4 @@
-# require_relative 'piece'
+require_relative 'piece'
 
 class Pawn < Piece
   attr_reader :black_char, :white_char
