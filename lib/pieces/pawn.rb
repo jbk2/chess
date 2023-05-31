@@ -5,7 +5,7 @@ class Pawn < Piece
   attr_accessor :colour, :x, :y
 
  @@black_char = "\u2659"
- @@white_char = "\u265f"
+ @@white_char = "\u265F"
 
   def initialize(colour, x, y)
     super(colour, x, y)

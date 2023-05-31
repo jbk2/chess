@@ -10,9 +10,9 @@ class Piece
 
   def uni_char
     if colour == :white
-      print(" | #{self.class.class_variable_get(:@@white_char)}w| ")
+      print(" | #{self.class.class_variable_get(:@@white_char)} #{self.class.to_s.chr}w| ")
     else
-      print(" | #{self.class.class_variable_get(:@@black_char)}b| ")
+      print(" | #{self.class.class_variable_get(:@@black_char)} #{self.class.to_s.chr}b| ")
     end
   end
 

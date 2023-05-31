@@ -14,6 +14,7 @@ class Board
   def populate_board
     populate_pawns
     populate_rooks
+    populate_knights
     populate_bishops
     populate_queens
     populate_kings
@@ -29,7 +30,7 @@ class Board
       puts
        row.each do |piece|
         # puts "here's piece #{piece.inspect}"
-        piece.nil? ? print(" | x | ") : piece.uni_char
+        piece.nil? ? print(" | nil | ") : piece.uni_char
       end
     end
   end
@@ -63,11 +64,18 @@ class Board
     grid[7][0] = Rook.new(:white, 7, 0)
   end
 
+  def populate_knights
+    grid[0][1] = Knight.new(:black, 0, 1)
+    grid[0][6] = Knight.new(:black, 0, 6)
+    grid[7][6] = Knight.new(:white, 7, 6)
+    grid[7][1] = Knight.new(:white, 7, 1)
+  end
+
   def populate_bishops
-    grid[0][1] = Bishop.new(:black, 0, 1)
-    grid[0][6] = Bishop.new(:black, 0, 6)
-    grid[7][6] = Bishop.new(:white, 7, 6)
-    grid[7][1] = Bishop.new(:white, 0, 1)
+    grid[0][2] = Bishop.new(:black, 0, 2)
+    grid[0][5] = Bishop.new(:black, 0, 5)
+    grid[7][5] = Bishop.new(:white, 7, 5)
+    grid[7][2] = Bishop.new(:white, 7, 2)
   end
   
   def populate_queens
