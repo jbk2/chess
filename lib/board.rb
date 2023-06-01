@@ -5,6 +5,7 @@ class Board
 
   def initialize
     @grid = create_grid
+    populate_board
   end
 
   def create_grid
@@ -33,6 +34,8 @@ class Board
         piece.nil? ? print(" | nil | ") : piece.uni_char
       end
     end
+    puts
+    puts
   end
 
   def display_piece(x,y)

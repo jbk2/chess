@@ -2,6 +2,33 @@ require_relative 'board'
 require_relative 'player'
 
 class Game
+  @@cmd_format = "\e[47m\e[0;30m"
+  @@p1_format = "\e[34m"
+  @@p2_format = "\e[32m"
+  @@bold_white = "\e[1;37m"
+  @@ansi_end = "\e[0m"
+
+  attr_accessor :player_1, :player_2, :active_player
+  attr_reader :board
+
+  def initialize
+    build_board
+    create_players
+    assign_colour
+    @active_player = white_player
+  end
+
+  def build_board
+    @board = Board.new
+  end
+
+  def create_players
+    puts "Welcome to your new chess game players. Please tell me the 1st player's name?"
+    @player_1 = Player.new(player_1_name)
+    puts "hi #{@@p1_format + player_1.name + @@ansi_end}.\nAnd player 2's name please?:"
+    @player_2 = Player.new(player_2_name)
+    puts "hey there #{@@p2_format + player_2.name + @@ansi_end}."
+  end
 
   def play_game
     # get players names
@@ -10,28 +37,72 @@ class Game
     # populate board
     # begin game
   end
-
-  def setup
-    puts "welcome to your new chess game playaz. Please tell me the 1st player's name?:"
-    player_1_name = gets.chomp
-    player_1 = Player.new(player_1_name)
-    puts "hi #{player_1.name}.\nAnd player 2's name please?:"
-    player_2_name = gets.chomp
-    player_2 = Player.new(player_2_name)
-    puts "hey there #{player_2.name}."
-    puts "ok, randomly assigning a colour to you both now..."
+  
+  def assign_colour
+    puts "#ok, randomly assigning a colour to you both now..."
     player_1.colour = random_colour
-    puts "ok #{player_1.name}'s randomly assigned colour is #{player_1.colour}"
+    sleep 1
+    puts "ok #{@@p1_format + player_1.name + @@ansi_end}'s randomly assigned colour is #{@@bold_white + player_1.colour.to_s + @@ansi_end}"
     player_1.colour == :white ? player_2.colour = :black : player_2.colour = :white
-    puts "and #{player_2.name}'s colour therefore is #{player_2.colour}"
+    sleep 0.5
+    puts "and #{@@p1_format + player_2.name + @@ansi_end}'s colour therefore is #{@@bold_white + player_2.colour.to_s + @@ansi_end}"
+  end
+
+  def game_setup
+    puts "here's your board:"
+    puts "\n\n"
+    puts "#{@@p2_format + black_player.name + @@ansi_end} playing from black pieces at the top of the board"
+    board.display_board_utf
+    board_orientation = <<~EOF
+      and #{@@p1_format + white_player.name + @@ansi_end} playing from white pieces at bottom of the board.
+    EOF
+    puts board_orientation
+    puts "\n\n"
+  end
+
+  def start_game
+    turn_instructions = <<~EOF
+      When prompted to take a turn please type your move by piece's current position, comma,
+      position to move piece to, e.g. b1,d1, then key return.
+      EOF
+    puts turn_instructions
+  end
+
+  def starting_player
+    @active_player = white_player
+  end
+
+  def toggle_turn
+    active_player == player_1 ? (self.active_player = player_2) : (self.active_player = player_1)
+  end
+
+  def white_player
+    player_1.colour == :white ? player_1 : player_2
+  end
+
+  def black_player
+    player_1.colour == :black ? player_1 : player_2
+  end
+
+  private
+  def player_1_name
+    $stdin.gets.chomp
+  end
+  
+  def player_2_name
+    $stdin.gets.chomp
   end
 
   def random_colour
     [:white, :black].sample
   end
+  
+end
 
 
-  b = Board.new
+
+
+  # b = Board.new
   # b.populate_board
   # # b.grid[1].each_with_index do |e, i|
   # #   e = Piece.new(:pawn, 1, i)
@@ -47,7 +118,16 @@ class Game
   # p board.inspect
   # pp "here my path; #{$:.inspect}"
 
-end
 
-game = Game.new
-game.setup
+# game = Game.new
+# puts "active player is #{game.active_player.inspect}"
+# puts "player 1 is #{game.player_1.inspect}"
+# puts "white player is #{game.white_player.inspect}"
+# puts '\n\n'
+# game.toggle_turn
+# puts "new active player is #{game.active_player.inspect}"
+# puts "player 1 is #{game.player_1.inspect}"
+# puts "black player is #{game.black_player.inspect}"
+
+# game.colour_assignment
+# game.game_setup

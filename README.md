@@ -1,0 +1,2 @@
+- #active_player code perhaps move from Game to Player class?
+- for black and white positions just a class variable or two arrays on Board?
