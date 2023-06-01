@@ -65,7 +65,7 @@ describe Board do
 
   describe '#square_colour' do
     it 'has black in bottom left' do
-      board.build_colour_grid
+      board.send(:build_colour_grid)
       expect(board.square_colour(7,0)).to eq(:black)
       expect(board.square_colour(0,0)).to eq(:white)
     end

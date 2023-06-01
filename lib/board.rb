@@ -28,14 +28,12 @@ class Board
 
   def display_board_utf
     grid.each do |row|
-      puts
-      puts
+      puts "\n\n"
       row.each do |piece|
         piece.nil? ? print(" | nil | ") : piece.uni_char
       end
     end
-    puts
-    puts
+    puts "\n\n"
   end
 
   def display_piece(x,y)
@@ -49,7 +47,23 @@ class Board
   def piece(x,y)
     grid[x][y]
   end
+  
+  def square_colour(x,y)
+    colour_grid[x][y]
+  end
 
+  def display_colour_grid_utf
+    build_colour_grid
+    colour_grid.each do |row|
+      puts "\n\n"
+      row.each do |square|
+        print(" | #{square.inspect} | ")
+      end
+    end
+    puts "\n\n"
+  end
+  
+  private
   def build_colour_grid
     @colour_grid = Array.new(8) { Array.new(8) }
     colour_grid.map.with_index do |row, row_index|
@@ -63,21 +77,6 @@ class Board
     end
   end
 
-  def square_colour(x,y)
-   colour_grid[x][y]
-  end
-
-  def display_colour_grid_utf
-    colour_grid.each do |row|
-      puts "\n\n"
-      row.each do |square|
-        print(" | #{square.inspect} | ")
-      end
-    end
-    puts "\n\n"
-  end
-
-  private
   def populate_pawns
     grid[1].map!.with_index do |v, i|
       v = Pawn.new(:black, 1, i)
@@ -120,10 +119,9 @@ class Board
 
 end
 
-b = Board.new
-b.build_colour_grid
-b.display_colour_grid_utf
-p b.square_colour(0,0)
+# b = Board.new
+# b.display_colour_grid_utf
+# p b.square_colour(0,0)
 # b.populate_board
 # # b.grid[1].each_with_index do |e, i|
 # #   e = Piece.new(:pawn, 1, i)
