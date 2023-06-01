@@ -28,13 +28,12 @@ class Game
 
   def create_players
     display_string(yaml_variables['game']['welcome'], 0.01)
-    display_string(yaml_variables['game']['player_1_name_prompt'], 0.01)
+    display_string(yaml_variables['game']['player1_name_prompt'], 0.01)
     @player_1 = Player.new(player_1_name)
-    display_string("hi #{@@blue + player_1.name + @@ansi_end} \u{1F44B}\n", @@type_speed)
+    display_string(ERB.new(yaml_variables['game']['player1_greeting']).result(binding), @@type_speed)
     sleep 0.3
-    display_string(yaml_variables['game']['player_1_name_prompt'], @@type_speed)
     @player_2 = Player.new(player_2_name)
-    display_string("hey there #{@@green + player_2.name + @@ansi_end}.\u{1F91D}\n\n", @@type_speed)
+    display_string(ERB.new(yaml_variables['game']['player2_greeting']).result(binding), @@type_speed)
   end
 
   def play_game
@@ -47,28 +46,20 @@ class Game
   
   def assign_colour
     display_string(yaml_variables['game']['assigning_colour1'], @@type_speed)
-    player_1.colour = random_colour
-    sleep 1
+    player_1.colour = random_colour; sleep 1;
     display_string(ERB.new(yaml_variables['game']['player1_colour_stmnt']).result(binding), @@type_speed)
-    player_1.colour == :white ? player_2.colour = :black : player_2.colour = :white
-    sleep 0.5
-    display_string(ERB.new(yaml_variables['game']['player2_colour_stmnt']).result(binding), @@type_speed)
+    player_1.colour == :white ? player_2.colour = :black : player_2.colour = :white; sleep 0.5;
+    display_string(ERB.new(yaml_variables['game']['player2_colour_stmnt']).result(binding), @@type_speed); sleep 0.7
   end
 
   def game_setup
-    sleep 0.7
-    display_string("here's your board:\n", @@type_speed)
-    sleep 0.7
-    display_string("#{@@green}#{black_player.name}#{@@ansi_end} playing from black pieces at the top of the board.", @@type_speed)
-    sleep 0.8
-    board.display_board_utf
-    sleep 1
-    display_string("#{@@blue + white_player.name + @@ansi_end} playing from white pieces at bottom of the board.", @@type_speed)
-    puts "\n"
-    sleep 3
+    display_string("here's your board:\n", @@type_speed); sleep 0.7;
+    display_string(ERB.new(yaml_variables['game']['black_piece_instructions']).result(binding), @@type_speed); sleep 0.8;
+    board.display_board_utf; sleep 1;
+    display_string(ERB.new(yaml_variables['game']['white_piece_instructions']).result(binding), @@type_speed)
+    puts "\n"; sleep 3;
     display_string(yaml_variables['game']['board_illustration'], @@type_speed)
-    puts "\n"
-    sleep 2
+    puts "\n"; sleep 2;
   end
   
   
