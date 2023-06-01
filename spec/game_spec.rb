@@ -5,8 +5,13 @@ describe Game do
   before do
     allow($stdin).to receive(:gets).and_return("John", "James")
     allow($stdout).to receive(:write) # comment if debugging as this will stop pry output also 
+    allow_any_instance_of(Game).to receive(:sleep)
   end
   
+  it 'received sleep' do
+    expect(game).to have_received(:sleep).exactly(302).times
+  end
+
   context 'should be constructed with' do
     it 'should have a board' do
       expect(game.board).to be_instance_of(Board)

@@ -145,10 +145,10 @@ end
   
   # game.colour_assignment
   # game.game_setup
-  
-  game = Game.new
   # p "#{__dir__}"
   # puts game.player_1.inspect
-  game.game_setup
   # sleep 1
-  game.start_game
+  
+  # game = Game.new
+  # game.game_setup
+  # game.start_game
