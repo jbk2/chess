@@ -1,3 +1,5 @@
+require 'yaml'
+require 'erb'
 require_relative 'board'
 require_relative 'player'
 
@@ -12,8 +14,6 @@ class Game
   @@cyan = "\e[0;36m"
   @@ansi_end = "\e[0m"
   @@type_speed = 0.02
-  
-
 
   def initialize
     build_board
@@ -27,11 +27,12 @@ class Game
   end
 
   def create_players
-    display_string("Welcome to your new chess game players. Please tell me the 1st player's name?", 0.01)
+    display_string(yaml_variables['game']['welcome'], 0.01)
+    display_string(yaml_variables['game']['player_1_name_prompt'], 0.01)
     @player_1 = Player.new(player_1_name)
     display_string("hi #{@@blue + player_1.name + @@ansi_end} \u{1F44B}\n", @@type_speed)
     sleep 0.3
-    display_string("\nAnd player 2's name please?:", @@type_speed)
+    display_string(yaml_variables['game']['player_1_name_prompt'], @@type_speed)
     @player_2 = Player.new(player_2_name)
     display_string("hey there #{@@green + player_2.name + @@ansi_end}.\u{1F91D}\n\n", @@type_speed)
   end
@@ -45,23 +46,16 @@ class Game
   end
   
   def assign_colour
-    display_string("#ok, randomly assigning a colour to you both now...\n\n", @@type_speed)
-    # puts "#ok, randomly assigning a colour to you both now...\n\n"
+    display_string(yaml_variables['game']['assigning_colour1'], @@type_speed)
     player_1.colour = random_colour
     sleep 1
-    display_string("ok #{@@blue + player_1.name + @@ansi_end}'s randomly assigned colour is #{@@bold_white + player_1.colour.to_s + @@ansi_end}\n\n", @@type_speed)
-    # puts "ok #{@@blue + player_1.name + @@ansi_end}'s randomly assigned colour is #{@@bold_white + player_1.colour.to_s + @@ansi_end}\n\n"
+    display_string(ERB.new(yaml_variables['game']['player1_colour_stmnt']).result(binding), @@type_speed)
     player_1.colour == :white ? player_2.colour = :black : player_2.colour = :white
     sleep 0.5
-    display_string("and #{@@green + player_2.name + @@ansi_end}'s colour therefore is #{@@bold_white + player_2.colour.to_s + @@ansi_end}\n\n", @@type_speed)
+    display_string(ERB.new(yaml_variables['game']['player2_colour_stmnt']).result(binding), @@type_speed)
   end
 
   def game_setup
-    board_illustration = <<~EOF
-      In case the UTF chess pieces and colours aren't clear, two letters are written after each piece.
-      The first letter represents the first letter of the piece type, e.g. P = Pawn, Q = Queen.
-      The second letter represents the colour, e.g. b = black, w = white.
-    EOF
     sleep 0.7
     display_string("here's your board:\n", @@type_speed)
     sleep 0.7
@@ -72,14 +66,19 @@ class Game
     display_string("#{@@blue + white_player.name + @@ansi_end} playing from white pieces at bottom of the board.", @@type_speed)
     puts "\n"
     sleep 3
-    display_string(board_illustration, @@type_speed)
-    # puts "\n"
+    display_string(yaml_variables['game']['board_illustration'], @@type_speed)
+    puts "\n"
     sleep 2
   end
   
   
   def start_game
-    display_string(@@turn_instructions, @@type_speed)
+    display_string(ERB.new(yaml_variables['game']['turn_instructions']).result(binding), @@type_speed)
+    # turn_instructions = yaml_variables['game']['turn_instructions']
+    # formatted_instructions = turn_instructions.encode('UTF-8')
+    # display_string(formatted_instructions, @@type_speed)
+    # puts yaml_variables['game']['turn_instructions']
+    
   end
   
   def starting_player
@@ -99,10 +98,10 @@ class Game
   end
   
   private
-  @@turn_instructions = <<~EOF
-    When prompted to take a turn please type your move by piece's current position, comma,
-    position to move piece to, e.g. #{@@cyan}b1,d1#{@@ansi_end}, then key return.
-  EOF
+  def yaml_variables
+    yaml_file = File.join(__dir__, "variables.yml")
+    variables = YAML.load_file(yaml_file)
+  end
 
   def display_string(string, delay)
     string.each_char do |char|
@@ -157,7 +156,8 @@ end
   # game.game_setup
   
   game = Game.new
+  # p "#{__dir__}"
   # puts game.player_1.inspect
   game.game_setup
-  sleep 1
+  # sleep 1
   game.start_game

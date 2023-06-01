@@ -1,0 +1,22 @@
+game:
+  welcome: Welcome to your new chess game players.\n\n
+  player_1_name_prompt: Please tell me the 1st player's name?
+  player_2_name_prompt: Please tell me the 2nd player's name?
+  assigning_colour1: Ok, randomly assigning a colour to you both now...\n\n
+  player1_colour_stmnt: ok <%=@@blue%> <%=player_1.name%><%=@@ansi_end%>'s randomly assigned colour is
+    <%=@@bold_white%> <%=player_1.colour.to_s%> <%=@@ansi_end%>\n\n
+  player2_colour_stmnt: and <%=@@green%> <%=player_2.name%><%=@@ansi_end%>'s colour therefore is
+    <%=@@bold_white%> <%=player_2.colour.to_s%> <%=@@ansi_end%>\n\n
+  board_illustration: In case the UTF chess pieces and colours aren't clear, two letters are written after each piece.
+    The first letter represents the first letter of the piece type, e.g. P = Pawn, Q = Queen.
+    The second letter represents the colour, e.g. b = black, w = white.
+  turn_instructions: When prompted to take a turn please type your move by piece's current position, comma,
+    position to move piece to, e.g. <%=@@cyan%>b1,d1<%=@@ansi_end%>, then key return.
+# ui:
+#   cmd_format: \e[47m\e[0;30m
+#   blue: \e[34m
+#   green: \e[32m
+#   bold_white: \e[1;37m
+#   cyan: \e[0;36m
+#   ansi_end: \e[0m
+#   type_speed: 0.02
