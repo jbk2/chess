@@ -2,13 +2,14 @@ Dir[File.join(__dir__, 'pieces', '*.rb')].each { |file| require_relative file }
 
 class Board
   attr_accessor :grid
+  attr_reader :colour_grid
 
   def initialize
-    @grid = create_grid
+    @grid = build_grid
     populate_board
   end
 
-  def create_grid
+  def build_grid
     Array.new(8) { Array.new(8) }
   end
 
@@ -29,8 +30,7 @@ class Board
     grid.each do |row|
       puts
       puts
-       row.each do |piece|
-        # puts "here's piece #{piece.inspect}"
+      row.each do |piece|
         piece.nil? ? print(" | nil | ") : piece.uni_char
       end
     end
@@ -48,6 +48,33 @@ class Board
   
   def piece(x,y)
     grid[x][y]
+  end
+
+  def build_colour_grid
+    @colour_grid = Array.new(8) { Array.new(8) }
+    colour_grid.map.with_index do |row, row_index|
+      row.map!.with_index do |square, col_index|
+        if row_index.even?
+          col_index.even? ? square = :white : square = :black
+        else
+          col_index.odd? ? square = :white : square = :black
+        end
+      end
+    end
+  end
+
+  def square_colour(x,y)
+   colour_grid[x][y]
+  end
+
+  def display_colour_grid_utf
+    colour_grid.each do |row|
+      puts "\n\n"
+      row.each do |square|
+        print(" | #{square.inspect} | ")
+      end
+    end
+    puts "\n\n"
   end
 
   private
@@ -93,7 +120,10 @@ class Board
 
 end
 
-# b = Board.new
+b = Board.new
+b.build_colour_grid
+b.display_colour_grid_utf
+p b.square_colour(0,0)
 # b.populate_board
 # # b.grid[1].each_with_index do |e, i|
 # #   e = Piece.new(:pawn, 1, i)
