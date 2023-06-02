@@ -1,0 +1,26 @@
+game:
+  welcome: "Welcome to your new chess game players.\n"
+  player1_name_prompt: Please tell me the 1st player's name?
+  player1_greeting: "hi <%=BLUE%><%=player1_name%><%=ANSI_END%> \U0001F44B\n"
+  player2_name_prompt: Please tell me the 2nd player's name?
+  player2_greeting: "hey there <%=GREEN%><%=player2_name%><%=ANSI_END%> \U0001F91D\n"
+  assigning_colour1: "Ok, randomly assigning a colour to you both now...\n"
+  player1_colour_stmnt: "ok <%=player1_name%>'s randomly assigned colour is
+    <%=player1.colour.to_s%> <%= colour_emoji(player1.colour)%>.\n"
+  player2_colour_stmnt: "and <%=player2_name%>'s colour therefore is
+    <%=player2.colour.to_s%> <%= colour_emoji(player2.colour)%>.\n"
+  black_piece_instructions: "<%=black_player_name%> playing with black \U000026AB pieces at the top of the board."
+  white_piece_instructions: "<%=white_player_name%> playing with white \U000026AA pieces from the bottom of the board."
+  board_illustration: Pieces are illustrated with the piece's character then two following characters. The first alpha character, for clarity,
+    represents the piece type's first letter, e.g. P = Pawn, Q = Queen. The second character represents the colour's first letter,
+    e.g. b = black, w = white.
+  turn_instructions: When prompted to take a turn please type your move by piece's current position, comma,
+    position to move piece to, e.g. <%=CYAN%>b1,d1<%=ANSI_END%>, then key return.
+# ui:
+#   cmd_format: \e[47m\e[0;30m
+#   blue: \e[34m
+#   green: \e[32m
+#   bold_white: \e[1;37m
+#   cyan: \e[0;36m
+#   ansi_end: \e[0m
+#   type_speed: 0.02
