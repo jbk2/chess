@@ -28,10 +28,10 @@ class Game
   def create_players
     display_string(yaml_data['game']['welcome'], 0.01)
     display_string(yaml_data['game']['player1_name_prompt'], 0.01)
-    @player1 = Player.new(get_player1_name)
+    @player1 = Player.new(get_input)
     display_string(ERB.new(yaml_data['game']['player1_greeting']).result(binding), @@type_speed)
     sleep 0.3
-    @player2 = Player.new(get_player2_name)
+    @player2 = Player.new(get_input)
     display_string(ERB.new(yaml_data['game']['player2_greeting']).result(binding), @@type_speed)
   end
 
@@ -76,7 +76,11 @@ class Game
   def get_player2_name
     $stdin.gets.chomp
   end
-  
+
+  def get_input
+    $stdin.gets.chomp
+  end
+
   def random_colour
     [:white, :black].sample
   end
@@ -89,10 +93,10 @@ class Game
   
   def get_move
     display_string(ERB.new(yaml_data['game']['move_prompt']).result(binding), @@type_speed)
-    move = gets.chomp
+    move = get_input
     if move_valid_format?(move)
       if true_move?(move)
-        active_player.moves=(move)
+        active_player.add_move(move)
       else
         puts "you didn't ask your piece to move anywhere, please enter an actual move"
         get_move

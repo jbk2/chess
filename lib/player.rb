@@ -6,10 +6,10 @@ class Player
     @moves = []
   end
 
-  def moves=(move)
-    @moves << move  
+  def add_move(move)
+    @moves << move
   end
-
+  
   def moves
     @moves
   end

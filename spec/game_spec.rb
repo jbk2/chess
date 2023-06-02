@@ -49,12 +49,46 @@ describe Game do
       end
     end
   end
-  
+
   describe '#get_move' do
-    it 'should not save move if formatted incorrectly' do
+    let(:active_player) { double(Player) }
+    context 'when the move is invalid' do
+      before do
+        allow(game).to receive(:active_player).and_return(active_player)
+      end
+
+      it "should not save move if it's not formatted correctly" do
+        allow(game).to receive(:get_input).and_return('aaa1,asdff2', 'a1,a2')
+        allow(game).to receive(:move_valid_format?).and_return(false, true)
+        allow(game).to receive(:true_move?).and_return(true)
+
+        expect(active_player).not_to receive(:add_move).with('aaa1,asdff2')
+        game.send(:get_move)
+      end
+      
+      it "should not save move if it's not a genuine move" do
+        allow(game).to receive(:get_input).and_return('a1,a1', 'a1,a2')
+        allow(game).to receive(:move_valid_format?).and_return(true)
+        allow(game).to receive(:true_move?).and_return(false, true)
+
+        expect(active_player).not_to receive(:add_move).with('a1,a1')
+        game.send(:get_move)
+      end
     end
     
-    it 'should not save move if not a genuine move' do
+    context 'when move is valid' do
+      before do
+        allow(game).to receive(:get_input).and_return('a1,a2')
+        allow(game).to receive(:move_valid_format?).and_return(true)
+        allow(game).to receive(:true_move?).and_return(true)
+        allow(game).to receive(:active_player).and_return(active_player)
+      end
+      
+      it 'saves the move on the active_player' do
+        expect(active_player).to receive(:add_move).with('a1,a2').once
+        game.send(:get_move)
+      end
     end
   end
+
 end
