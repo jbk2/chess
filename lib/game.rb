@@ -29,10 +29,10 @@ class Game
   def create_players
     display_string(yaml_variables['game']['welcome'], 0.01)
     display_string(yaml_variables['game']['player1_name_prompt'], 0.01)
-    @player_1 = Player.new(player_1_name)
+    @player_1 = Player.new(get_player1_name)
     display_string(ERB.new(yaml_variables['game']['player1_greeting']).result(binding), @@type_speed)
     sleep 0.3
-    @player_2 = Player.new(player_2_name)
+    @player_2 = Player.new(get_player2_name)
     display_string(ERB.new(yaml_variables['game']['player2_greeting']).result(binding), @@type_speed)
   end
 
@@ -89,6 +89,11 @@ class Game
   end
   
   private
+
+  def colour_emoji(colour)
+    colour == :black ? "\u{26AB}" : "\u{26AA}"
+  end
+
   def yaml_variables
     yaml_file = File.join(__dir__, "variables.yml")
     variables = YAML.load_file(yaml_file)
@@ -102,53 +107,24 @@ class Game
     puts
   end
 
-  def player_1_name
+  def get_player1_name
     $stdin.gets.chomp
   end
   
-  def player_2_name
+  def get_player2_name
     $stdin.gets.chomp
   end
-
+  def player1_name
+    player_1.name.capitalize
+  end
+  
+  def player2_name
+    player_2.name.capitalize
+  end
+  
   def random_colour
     [:white, :black].sample
   end
   
 end
 
-# puts Game.class_variable_get(:@@cmd_format).inspect
-  # b = Board.new
-  # b.populate_board
-  # # b.grid[1].each_with_index do |e, i|
-  # #   e = Piece.new(:pawn, 1, i)
-  # #   puts "#{e.y}"
-  # # end
-  # # b.grid[1][0] = Piece.new(:pawn, 1, 0)
-  # # p = Piece.new(1,1,1)
-  # # puts p.inspect
-  # b.display_board_utf
-  # b.display_piece(6,1)
-  # b.display_piece_utf(6,1)
-  # puts "heres grid[1] #{b.grid[1]}"
-  # p board.inspect
-  # pp "here my path; #{$:.inspect}"
-
-
-  # puts "active player is #{game.active_player.inspect}"
-  # puts "player 1 is #{game.player_1.inspect}"
-  # puts "white player is #{game.white_player.inspect}"
-  # puts '\n\n'
-  # game.toggle_turn
-  # puts "new active player is #{game.active_player.inspect}"
-  # puts "player 1 is #{game.player_1.inspect}"
-  # puts "black player is #{game.black_player.inspect}"
-  
-  # game.colour_assignment
-  # game.game_setup
-  # p "#{__dir__}"
-  # puts game.player_1.inspect
-  # sleep 1
-  
-  # game = Game.new
-  # game.game_setup
-  # game.start_game

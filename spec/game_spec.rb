@@ -9,7 +9,7 @@ describe Game do
   end
   
   it 'received sleep' do
-    expect(game).to have_received(:sleep).exactly(302).times
+    expect(game).to have_received(:sleep).exactly(304).times
   end
 
   context 'should be constructed with' do
