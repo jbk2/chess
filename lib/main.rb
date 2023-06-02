@@ -1,7 +1,7 @@
 require_relative 'game'
 game = Game.new
 game.game_setup
-game.start_game
+game.play_game
   
 # ___________________________________________________
 
