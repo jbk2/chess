@@ -43,6 +43,24 @@ describe Board do
     end 
   end
 
+  describe '@colour_grid' do
+    it 'should have black pieces in the correct squares' do
+      expect(board.colour_grid[7][0]).to be(:black)
+      expect(board.colour_grid[7][4]).to be(:black)
+      expect(board.colour_grid[5][2]).to be(:black)
+      expect(board.colour_grid[2][5]).to be(:black)
+      expect(board.colour_grid[0][3]).to be(:black)
+    end
+    
+    it 'should have black pieces in the correct squares' do
+      expect(board.colour_grid[0][0]).to be(:white)
+      expect(board.colour_grid[4][4]).to be(:white)
+      expect(board.colour_grid[5][5]).to be(:white)
+      expect(board.colour_grid[6][6]).to be(:white)
+      expect(board.colour_grid[7][7]).to be(:white)
+    end
+  end
+
   describe '#piece' do
     it 'can return a piece from a given location in the grid' do
       piece = board.piece(1,0) 

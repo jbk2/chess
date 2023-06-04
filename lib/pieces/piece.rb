@@ -1,3 +1,5 @@
+require 'pry-byebug'
+
 class Piece
 
   attr_reader :colour, :x, :y
@@ -10,9 +12,13 @@ class Piece
 
   def uni_char
     if colour == :white
-      print(" | #{self.class.class_variable_get(:@@white_char)} #{self.class.to_s.chr}w| ")
+      # print(" |\u{26AB}#{self.class::WHITE_CHAR}#{self.class.to_s.chr}| ")
+      # self.class
+      self.class::WHITE_CHAR
     else
-      print(" | #{self.class.class_variable_get(:@@black_char)} #{self.class.to_s.chr}b| ")
+      # print(" |\u{26AA}#{self.class::BLACK_CHAR}#{self.class.to_s.chr}| ")
+      # self.class
+      self.class::BLACK_CHAR
     end
   end
 

@@ -4,8 +4,8 @@ class Pawn < Piece
   attr_reader :black_char, :white_char
   attr_accessor :colour, :x, :y
 
- @@black_char = "\u2659"
- @@white_char = "\u265F"
+ BLACK_CHAR = "\u265F"
+ WHITE_CHAR = "\u2659"
 
   def initialize(colour, x, y)
     super(colour, x, y)

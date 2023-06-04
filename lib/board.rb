@@ -6,6 +6,7 @@ class Board
 
   def initialize
     @grid = build_grid
+    @colour_grid = build_colour_grid
     populate_board
   end
 
@@ -21,29 +22,7 @@ class Board
     populate_queens
     populate_kings
   end
-  
-  def display_board
-    grid.each {|e| pp "#{e}"}
-  end
 
-  def display_board_utf
-    grid.each do |row|
-      puts "\n\n"
-      row.each do |piece|
-        piece.nil? ? print(" | nil | ") : piece.uni_char
-      end
-    end
-    puts "\n\n"
-  end
-
-  def display_piece(x,y)
-    pp grid[x][y]
-  end
-  
-  def display_piece_utf(x,y)
-    puts grid[x][y].uni_char
-  end
-  
   def piece(x,y)
     grid[x][y]
   end
@@ -51,7 +30,7 @@ class Board
   def square_colour(x,y)
     colour_grid[x][y]
   end
-
+  
   def display_colour_grid_utf
     build_colour_grid
     colour_grid.each do |row|
@@ -63,6 +42,28 @@ class Board
     puts "\n\n"
   end
   
+  def display_board_utf
+    grid.each_with_index do |row, row_index|
+      puts "\n\n"
+      row.each_with_index do |piece, column_index|
+        if piece.nil?
+          if colour_grid[row_index][column_index] == :black
+            print("\033[40m| nil |\033[m")
+          else
+            print("\033[47m| nil |\033[m")
+          end
+        else
+          if colour_grid[row_index][column_index] == :black
+            print("\033[40m|#{piece.uni_char + piece.class.to_s.chr.downcase + piece.colour.to_s.chr + colour_emoji(piece.colour)}|\033[m")
+          else
+            print("\033[47m|#{piece.uni_char + piece.class.to_s.chr.downcase + piece.colour.to_s.chr + colour_emoji(piece.colour)}|\033[m")
+          end
+        end
+      end
+    end
+    puts "\n\n"
+  end
+
   private
   def build_colour_grid
     @colour_grid = Array.new(8) { Array.new(8) }
@@ -117,22 +118,28 @@ class Board
     grid[7][4] = King.new(:white, 7, 4)
   end
 
+  def colour_emoji(colour)
+    colour == :black ? "\u{26AB}" : "\u{26AA}"
+  end
+
 end
 
+# ________ Old unused, but potentially helpful, methods _______________________
+
+ # def display_board
+  #   grid.each {|e| pp "#{e}"}
+  # end
+
+  # def display_piece(x,y)
+  #   pp grid[x][y]
+  # end
+  
+  # def display_piece_utf(x,y)
+  #   puts grid[x][y].uni_char
+  # end
+
+  # def black_or_white(row, column)
+  #   populate_board[row][column]
+  # end
 # b = Board.new
-# b.display_colour_grid_utf
-# p b.square_colour(0,0)
-# b.populate_board
-# # b.grid[1].each_with_index do |e, i|
-# #   e = Piece.new(:pawn, 1, i)
-# #   puts "#{e.y}"
-# # end
-# # b.grid[1][0] = Piece.new(:pawn, 1, 0)
-# # p = Piece.new(1,1,1)
-# # puts p.inspect
-# b.display_board_utf
-# b.display_piece(6,1)
-# b.display_piece_utf(6,1)
-# puts "heres grid[1] #{b.grid[1]}"
-# p board.inspect
-# pp "here my path; #{$:.inspect}"
+# p b.display_colour_grid_utf

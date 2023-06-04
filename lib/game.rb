@@ -29,13 +29,15 @@ class Game
   def create_players
     display_string(yaml_data['game']['welcome'], 0.01)
     display_string(yaml_data['game']['player1_name_prompt'], 0.01)
-    @player1 = Player.new(get_input)
+    get_player1_name
     display_string(ERB.new(yaml_data['game']['player1_greeting']).result(binding), @@type_speed)
     sleep 0.3
     display_string(yaml_data['game']['player2_name_prompt'], 0.01)
-    @player2 = Player.new(get_input)
+    get_player2_name
     display_string(ERB.new(yaml_data['game']['player2_greeting']).result(binding), @@type_speed)
   end
+
+  
 
   def play_game
     start_game
@@ -71,12 +73,26 @@ class Game
   
   
   private
+  
   def get_player1_name
-    $stdin.gets.chomp
+    player1_name = get_input
+    if player1_name == ''
+      puts "please enter at least one character"
+      get_player1_name
+    end
+    @player1 = Player.new(player1_name)
   end
   
   def get_player2_name
-    $stdin.gets.chomp
+    player2_name = get_input
+    if player2_name == ''
+      puts "please enter at least one character"
+      get_player2_name
+    elsif player2_name == player1.name  
+      puts "please use a different name to Player 1"
+      get_player2_name
+    end
+    @player2 = Player.new(player2_name)
   end
 
   def get_input
@@ -86,7 +102,6 @@ class Game
   def random_colour
     [:white, :black].sample
   end
-  
   
   def start_game
     display_string(ERB.new(yaml_data['game']['turn_instructions']).result(binding), @@type_speed)
@@ -171,3 +186,7 @@ class Game
   end
 end
 
+
+# ________ Old unused, but potentially helpful, methods _______________________
+
+  
