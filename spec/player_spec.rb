@@ -1,17 +1,46 @@
 require_relative '../lib/player'
 
 describe Player do
-  let(:player_1) { Player.new('James') }
+  let(:player1) { Player.new('James') }
   describe "a player's name" do
     it 'is readable' do
-      expect(player_1.name).to eq("James")
+      expect(player1.name).to eq("James")
     end
   end
   
   describe "a player's colour" do
     it 'is readable' do
-      player_1.colour = :white
-      expect(player_1.colour).to equal(:white)
+      player1.colour = :white
+      expect(player1.colour).to equal(:white)
+    end
+  end
+
+  describe "#add_move(move)" do
+    context 'with a valid format' do
+      it "returns the given valid move" do
+        expect(player1.add_move('a1,b2')).to eq(['a1,b2'])
+      end
+
+      it "adds move to player's @moves" do
+        player1.add_move('a1,a2')
+        expect(player1.moves).to eq(['a1,a2'])
+      end
+    end
+    
+    context 'with validly formatted, but without a real piece movement' do
+      it "does not add move to player's @moves" do
+        expect {
+          player1.add_move('a1,a1')
+          player1.add_move('a1,a1')
+        }.to raise_error(InvalidInputError)
+        expect(player1.moves).to eq([])
+      end
+    end
+
+    context 'with an invalid format' do
+      it "does not add move to player's @moves" do
+        expect { player1.add_move('a1,a23') }.to raise_error(InvalidInputError)
+      end
     end
   end
 end

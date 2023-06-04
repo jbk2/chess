@@ -1,5 +1,6 @@
 require 'yaml'
 require 'erb'
+require 'pry-byebug'
 require_relative 'board'
 require_relative 'player'
 
@@ -31,6 +32,7 @@ class Game
     @player1 = Player.new(get_input)
     display_string(ERB.new(yaml_data['game']['player1_greeting']).result(binding), @@type_speed)
     sleep 0.3
+    display_string(yaml_data['game']['player2_name_prompt'], 0.01)
     @player2 = Player.new(get_input)
     display_string(ERB.new(yaml_data['game']['player2_greeting']).result(binding), @@type_speed)
   end
@@ -39,7 +41,7 @@ class Game
     start_game
     get_move
     make_move
-    #
+    binding.pry
   end
 
   def make_move
@@ -108,7 +110,7 @@ class Game
   end
 
   def move_valid_format?(move)
-    move.match?(/[a-h][1-8],[a-h][1-8]/)
+    move.match?(/[a-h][1-8],[a-h][1-8]/) && move.length == 5
   end
 
   def true_move?(move)

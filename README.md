@@ -4,6 +4,10 @@
 - Main running script written in the Game class, just run `ruby lib/game.rb` in your terminal to start.
 - Written with TDD, just run `rspec` in your terminal.
 
+## Points of note:
+- User input error on move formats is with the 'front end' CLI user input tested for validity via conditional format checks and print messages to user. User input is checked on the back end before it's saved on the Player's @moves variable via creating exception objects of a custom InvalidUserInput class.
+
+
 ## Tasks
 - Introduce concept of player moves;
   - script for user command
