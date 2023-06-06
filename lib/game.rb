@@ -65,7 +65,7 @@ class Game
 
   def make_move
     puts "here's my active player #{active_player}"
-    move = active_player.moves.pop #only the active player's move ever attempts to be made
+    move = active_player.moves.last #only the active player's move ever attempts to be made
     puts "here's my move #{move}"
     moving_piece = board.grid[move[0].to_i][move[1].to_i] # Must be a piece, or move invalid, and screened for invalid move in #get_move already
     # binding.irb

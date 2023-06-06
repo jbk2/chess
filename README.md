@@ -6,6 +6,13 @@
 
 ## Points of note:
 - User input error on move formats is with the 'front end' CLI user input tested for validity via conditional format checks and print messages to user. User input is checked on the back end before it's saved on the Player's @moves variable via creating exception objects of a custom InvalidUserInput class.
+- Game#get_move implements user input validation for:
+  - format, e.g. 'b1,c1'
+  - actual move; i.e. moving fron one square to a different square
+  - first move for player Pawn or Knight only.
+  - in board 8x8 scope
+- In board 8x8 scope validation is also implemented in #valid_class_moves generator method.
+
 
 
 ## Tasks
