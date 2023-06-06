@@ -143,3 +143,7 @@ end
   # end
 # b = Board.new
 # p b.display_colour_grid_utf
+
+# b = Board.new
+# b.build_grid
+# puts b.grid.inspect

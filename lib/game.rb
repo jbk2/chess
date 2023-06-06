@@ -29,30 +29,14 @@ class Game
   def create_players
     display_string(yaml_data['game']['welcome'], 0.01)
     display_string(yaml_data['game']['player1_name_prompt'], 0.01)
-    get_player1_name
+    create_player1
     display_string(ERB.new(yaml_data['game']['player1_greeting']).result(binding), @@type_speed)
     sleep 0.3
     display_string(yaml_data['game']['player2_name_prompt'], 0.01)
-    get_player2_name
+    create_player2
     display_string(ERB.new(yaml_data['game']['player2_greeting']).result(binding), @@type_speed)
   end
 
-  
-
-  def play_game
-    start_game
-    get_move
-    make_move
-    binding.pry
-  end
-
-  def make_move
-    # check whether valid move,
-    # if so:
-      # make move check for win, change active user hand turn over.
-    # If not explain why not and prompt player turn again
-  end
-  
   def assign_colour
     display_string(yaml_data['game']['assigning_colour1'], @@type_speed)
     player1.colour = random_colour; sleep 1;
@@ -71,10 +55,55 @@ class Game
     puts "\n"; sleep 2;
   end
   
+  def play_game
+    start_game
+    # until game_finished? # yet to be written
+      get_move
+      make_move
+    # end
+  end
+
+  def make_move
+    puts "here's my active plyr #{active_player}"
+    move = active_player.moves.pop #only the active player's move ever attempts to be made
+    puts "here's my move #{move}"
+    moving_piece = board.grid[move[0].to_i][move[1].to_i] # Must be a piece, or move invalid, and screened for invalid move in #get_move already
+    # binding.irb
+    move_square = move[2] + move[3] # a 2 integer string
+    move_square_occupant = board.grid[move[2].to_i][move[3].to_i] # either a Piece or nil
+
+    if moving_piece.piece_valid_move?(move)
+      if game_valid_move?(move)
+        place_move(move)
+        toggle_turn
+      else
+        puts 'you cannot make that move because xyz'
+      end
+    else
+      puts 'your piece is not allowed to make that move'
+    end
+    # check whether valid piece move
+    # if so:
+      # make move check for win, change active user hand turn over.
+    # If not explain why not and prompt player turn again
+  end
   
   private
+  def self.format_to_index(chess_move)
+    indexed_move = String.new
+    indexed_move[0] = (chess_move[0].upcase.ord - 'A'.ord).to_s
+    indexed_move[1] = (chess_move[1].to_i - 1).to_s
+    indexed_move[2] = (chess_move[3].upcase.ord - 'A'.ord).to_s
+    indexed_move[3] = (chess_move[4].to_i - 1).to_s
+    indexed_move
+  end
+
+  def self.char_to_int(char)
+    char.upcase
+    char.ord - 'A'.ord
+  end
   
-  def get_player1_name
+  def create_player1
     player1_name = get_input
     if player1_name == ''
       puts "please enter at least one character"
@@ -83,7 +112,7 @@ class Game
     @player1 = Player.new(player1_name)
   end
   
-  def get_player2_name
+  def create_player2
     player2_name = get_input
     if player2_name == ''
       puts "please enter at least one character"
@@ -108,18 +137,25 @@ class Game
     display_string(ERB.new(yaml_data['game']['start_prompt']).result(binding), @@type_speed)
   end
   
+  # all user input move validation done here, then sent to active player to store in their @moves
   def get_move
     display_string(ERB.new(yaml_data['game']['move_prompt']).result(binding), @@type_speed)
     move = get_input
     if move_valid_format?(move)
       if true_move?(move)
-        active_player.add_move(move)
+        indexed_move = Game.format_to_index(move)
+        if has_piece?(indexed_move[0].to_i, indexed_move[1].to_i)
+          active_player.add_move(indexed_move)
+        else
+          puts "Square '#{CYAN}#{move}#{ANSI_END}' doesn't contain a piece. Please enter a piece's position and your move..."
+          get_move
+        end
       else
-        puts "you didn't ask your piece to move anywhere, please enter an actual move"
+        puts "your move; '#{CYAN}#{move}#{ANSI_END}' didn't ask your given piece to move anywhere, please enter an actual move..."
         get_move
       end
     else
-      puts "your move; '#{CYAN}#{move}#{ANSI_END}', was not formated correctly, it shoud be formatted like; 'a1,a2', try again..."
+      puts "your move; '#{CYAN}#{move}#{ANSI_END}' was not formated correctly, it shoud be formatted like; 'a1,a2', try again..."
       get_move
     end
   end
@@ -130,6 +166,10 @@ class Game
 
   def true_move?(move)
     move[0..1] != move[3..4]
+  end
+
+  def has_piece?(r, c)
+    board.grid[r][c] ? true : false
   end
   
   def starting_player

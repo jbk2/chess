@@ -9,4 +9,6 @@ class Rook < Piece
     super(colour, x, y)
   end
 
+  def piece_valid_move?(move)
+  end
 end

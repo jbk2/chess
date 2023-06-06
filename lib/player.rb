@@ -10,7 +10,7 @@ class Player
     if move_valid_format?(move)
       true_move?(move) ? @moves << move : (raise InvalidInputError, "Input; #{move} does not represent an actual move")
     else
-      raise InvalidInputError, "Input format should be 'rc,rc'"
+      raise InvalidInputError, "Move should move position, and when placed in Person.moves array formatted like 'iiii'"
     end
   end
   
@@ -24,11 +24,11 @@ class Player
 
   private
   def move_valid_format?(move)
-    move.match?(/[a-h][1-8],[a-h][1-8]/) && move.length == 5
+    move.match?(/[0-7][0-7][0-7][0-7]/) && move.length == 4
   end
 
   def true_move?(move)
-    move[0..1] != move[3..4]
+    move[0..1] != move[2..3]
   end
 end
 
