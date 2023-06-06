@@ -15,7 +15,7 @@ game:
     represents the piece type's first letter, e.g. P = Pawn, Q = Queen. The second character represents the colour's first letter,
     e.g. b = black, w = white.
   turn_instructions: "When prompted to take a turn please type your move by piece's current position, comma,
-    position to move piece to, e.g. <%=CYAN%>b1,d1<%=ANSI_END%>, then key return.\n"
+    position to move piece to, e.g. <%=CYAN%>1b,1d<%=ANSI_END%>, then key return.\n"
   start_prompt: "Drum roll please \U0001F941\U0001F941\U0001F941.
     <%= active_player_name %> as the white player will begin the game.
     Let the game commence \U0001F3AC. And may the best player win \U0001F3C6.\n"

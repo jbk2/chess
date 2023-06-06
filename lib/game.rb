@@ -72,36 +72,54 @@ class Game
     move_square = move[2] + move[3] # a 2 integer string
     move_square_occupant = board.grid[move[2].to_i][move[3].to_i] # either a Piece or nil
 
-    if moving_piece.piece_valid_move?(move)
-      # if game_valid_move?(move)
-      puts "************************************"
-      puts "yes the pieces rules allow that move"
-      puts "************************************"
+    return rescue_against_this_piece_move_rules unless moving_piece.piece_valid_move?(move)
+    return rescue_against_other_piece_move_rules unless moving_piece.game_valid_move?(move)
 
-      #   place_move(move)
-      #   toggle_turn
-      # else
+    # if game_valid_move?(move)
+    puts "************************************"
+    puts "yes the pieces rules allow that move"
+    puts "************************************"
+    #   place_move(move)
+    #   toggle_turn
+      # get_move
+      # make_move
+      
+        # else
       #   puts 'you cannot make that move because xyz'
       # end
-    else
-      puts "your piece #{moving_piece} is not allowed to make the move; #{move}, try again..."
-      active_player.moves.pop
-      get_move
-      make_move
-    end
+    # else
+      
+      
+    # end
     # check whether valid piece move
     # if so:
       # make move check for win, change active user hand turn over.
     # If not explain why not and prompt player turn again
   end
+
+  def rescue_against_this_piece_move_rules
+    puts "your piece #{moving_piece} is not allowed to make the move; #{move}, try again..."
+    board.display_board_utf
+    active_player.moves.pop
+    get_move
+    make_move
+  end
+  
+  def rescue_against_other_piece_move_rules
+    puts "your move #{move} is breaching the game rules because of other pieces and their relative positions, try again..."
+    board.display_board_utf
+    active_player.moves.pop
+    get_move
+    make_move
+  end
   
   private
   def self.format_to_index(chess_move)
     indexed_move = String.new
-    indexed_move[0] = (chess_move[0].upcase.ord - 'A'.ord).to_s
-    indexed_move[1] = (chess_move[1].to_i - 1).to_s
-    indexed_move[2] = (chess_move[3].upcase.ord - 'A'.ord).to_s
-    indexed_move[3] = (chess_move[4].to_i - 1).to_s
+    indexed_move[0] = (chess_move[0].to_i - 1).to_s
+    indexed_move[1] = (chess_move[1].upcase.ord - 'A'.ord).to_s
+    indexed_move[2] = (chess_move[3].to_i - 1).to_s
+    indexed_move[3] = (chess_move[4].upcase.ord - 'A'.ord).to_s
     indexed_move
   end
 
@@ -179,7 +197,7 @@ class Game
   end
 
   def move_valid_format?(move)
-    move.match?(/[a-h][1-8],[a-h][1-8]/) && move.length == 5
+    move.match?(/[1-8][a-h],[1-8][a-h]/) && move.length == 5
   end
 
   def true_move?(move)

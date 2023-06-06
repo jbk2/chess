@@ -55,7 +55,7 @@ describe Game do
     
     context 'when move is valid' do
       before do
-        allow(game).to receive(:get_input).and_return('b1,c1') # Pawn
+        allow(game).to receive(:get_input).and_return('2a,3a') # Pawn
         allow(game).to receive(:move_valid_format?).and_return(true)
         allow(game).to receive(:true_move?).and_return(true)
         allow(active_player).to receive(:moves).and_return([])
@@ -75,7 +75,7 @@ describe Game do
       end
 
       it "will not save move when formatted incorrectly" do
-        allow(game).to receive(:get_input).and_return('aaa1,asdff2', 'a1,a2')
+        allow(game).to receive(:get_input).and_return('aaa1,asdff2', '1a,1b')
         allow(game).to receive(:move_valid_format?).and_return(false, true)
         allow(game).to receive(:true_move?).and_return(true)
         allow(game).to receive(:pawn_or_knight_move?).and_return(false, true)
@@ -86,7 +86,7 @@ describe Game do
       end
       
       it "will not save move when it's not a genuine move from one square to another" do
-        allow(game).to receive(:get_input).and_return('a1,a1', 'a1,a2')
+        allow(game).to receive(:get_input).and_return('1a,1a', '1a,1b')
         allow(game).to receive(:move_valid_format?).and_return(true, true)
         allow(game).to receive(:true_move?).and_return(false, true)
         allow(game).to receive(:pawn_or_knight_move?).and_return(false, true)
@@ -108,25 +108,25 @@ describe Game do
         end
 
         it "a Rook move" do
-          allow(game).to receive(:get_input).and_return('a1,c1', 'a2,c3') #Rook & Knight 
+          allow(game).to receive(:get_input).and_return('1a,3a', '1b,3c') #Rook & Knight 
           expect(active_player).not_to receive(:add_move).with('0020') 
           expect(active_player).to receive(:add_move).with('0122')
           game.send(:get_move)
         end
         it "a Bishop move" do
-          allow(game).to receive(:get_input).and_return('a3,c5', 'a2,c3') #Bishop & Knight 
+          allow(game).to receive(:get_input).and_return('1c,3e', '1b,3c') #Bishop & Knight 
           expect(active_player).not_to receive(:add_move).with('0224') 
           expect(active_player).to receive(:add_move).with('0122')
           game.send(:get_move)
         end
         it "a Queen move" do
-          allow(game).to receive(:get_input).and_return('a4,c6', 'b1,c1') #Queen & Pawn 
+          allow(game).to receive(:get_input).and_return('1d,3f', '2a,3a') #Queen & Pawn 
           expect(active_player).not_to receive(:add_move).with('0325') 
           expect(active_player).to receive(:add_move).with('1020')
           game.send(:get_move)
         end
         it "a King move" do
-          allow(game).to receive(:get_input).and_return('a5,b5', 'b2,c2') #King & Pawn 
+          allow(game).to receive(:get_input).and_return('1e,2e', '2b,3b') #King & Pawn 
           expect(active_player).not_to receive(:add_move).with('0414') 
           expect(active_player).to receive(:add_move).with('1121')
           game.send(:get_move)
@@ -143,12 +143,12 @@ describe Game do
         end
 
         it "will save a Pawn move" do
-          allow(game).to receive(:get_input).and_return('b2,c2') #Pawn  
+          allow(game).to receive(:get_input).and_return('2b,3b') #Pawn  
           expect(active_player).to receive(:add_move).with('1121')
           game.send(:get_move)
         end
         it "will save a Knight move" do
-          allow(game).to receive(:get_input).and_return('a2,c3') #Knight 
+          allow(game).to receive(:get_input).and_return('1b,3c') #Knight 
           expect(active_player).to receive(:add_move).with('0122')
           game.send(:get_move)
         end
@@ -193,7 +193,7 @@ describe Game do
 
   describe "#format_to_index" do
     it 'takes chess input format and outputs in array index format' do
-      result = Game.send(:format_to_index, 'a1,a2')
+      result = Game.send(:format_to_index, '1a,1b')
       expect(result).to eq('0001')
     end
   end
@@ -213,10 +213,10 @@ describe Game do
   end
 
   describe '#make_move' do
-  let(:active_player) { instance_double(Player) }
-  let(:board) { double('Board') }
-  let(:pawn_move_piece) { instance_double(Pawn)}
-  let(:rook_move_piece) { instance_double(Rook)}
+    let(:active_player) { instance_double(Player) }
+    let(:board) { double('Board') }
+    let(:pawn_move_piece) { instance_double(Pawn)}
+    let(:rook_move_piece) { instance_double(Rook)}
     let(:knight_move_piece) { instance_double(Knight)}
     let(:bishop_move_piece) { instance_double(Bishop)}
     let(:queen_move_piece) { instance_double(Queen)}
@@ -323,6 +323,10 @@ describe Game do
     end
   end
 
-  describe 'only the active player can make a move' do
+  describe '#game_valid_move?' do
+    
   end
+
+  # describe 'only the active player can make a move' do
+  # end
 end
