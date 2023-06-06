@@ -64,7 +64,7 @@ class Game
   end
 
   def make_move
-    puts "here's my active plyr #{active_player}"
+    puts "here's my active player #{active_player}"
     move = active_player.moves.pop #only the active player's move ever attempts to be made
     puts "here's my move #{move}"
     moving_piece = board.grid[move[0].to_i][move[1].to_i] # Must be a piece, or move invalid, and screened for invalid move in #get_move already
@@ -73,14 +73,15 @@ class Game
     move_square_occupant = board.grid[move[2].to_i][move[3].to_i] # either a Piece or nil
 
     if moving_piece.piece_valid_move?(move)
-      if game_valid_move?(move)
-        place_move(move)
-        toggle_turn
-      else
-        puts 'you cannot make that move because xyz'
-      end
+      # if game_valid_move?(move)
+      # #   place_move(move)
+      # #   toggle_turn
+      # else
+      # #   puts 'you cannot make that move because xyz'
+      # end
     else
-      puts 'your piece is not allowed to make that move'
+      # puts "your piece #{moving_piece} is not allowed to make the move; #{move}, try again..."
+      # get_move
     end
     # check whether valid piece move
     # if so:
@@ -145,7 +146,16 @@ class Game
       if true_move?(move)
         indexed_move = Game.format_to_index(move)
         if has_piece?(indexed_move[0].to_i, indexed_move[1].to_i)
-          active_player.add_move(indexed_move)
+          if active_player.moves.empty?
+            if pawn_or_knight_move?(indexed_move)
+              active_player.add_move(indexed_move)
+            else
+              puts "Your first move can only be a Pawn or a Knight, this '#{CYAN}#{move}#{ANSI_END}' was neither, try again..."
+              get_move
+            end
+          else
+            active_player.add_move(indexed_move)
+          end
         else
           puts "Square '#{CYAN}#{move}#{ANSI_END}' doesn't contain a piece. Please enter a piece's position and your move..."
           get_move
@@ -170,6 +180,13 @@ class Game
 
   def has_piece?(r, c)
     board.grid[r][c] ? true : false
+  end
+
+  def pawn_or_knight_move?(indexed_move)
+    if board.piece(indexed_move[0].to_i, indexed_move[1].to_i).class == Pawn || Knight
+      true
+    end
+    false
   end
   
   def starting_player
@@ -226,7 +243,8 @@ class Game
   end
 end
 
-
 # ________ Old unused, but potentially helpful, methods _______________________
 
-  
+
+# ________ Rules ______________________________________________________________
+# on start only a knight or a pawn can move

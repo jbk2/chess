@@ -19,16 +19,17 @@ describe Player do
     context 'with a valid format' do
       it "returns the given valid move" do
         expect(player1.add_move('0001')).to eq(['0001'])
+        expect(player1.moves).to eq(['0001'])
       end
 
-      it "adds move to player's @moves" do
+      it "stores the move to the player's readable @moves" do
         player1.add_move('0001')
         expect(player1.moves).to eq(['0001'])
       end
     end
     
-    context 'with validly formatted, but without a real piece movement' do
-      it "does not add move to player's @moves" do
+    context 'with validly formatted, but without a real one square to another real piece movement' do
+      it "doesn't add move to player's @moves" do
         expect {
           player1.add_move('0000')
           player1.add_move('0000')
@@ -37,8 +38,8 @@ describe Player do
       end
     end
 
-    context 'with an invalid format' do
-      it "does not add move to player's @moves" do
+    context 'with an invalid input format' do
+      it "doesn't add move to player's @moves" do
         expect { player1.add_move('a1,a23') }.to raise_error(InvalidInputError)
       end
     end

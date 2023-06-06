@@ -9,4 +9,7 @@ class Queen < Piece
     super(colour, x, y)
   end
 
+  def piece_valid_move?(move)
+    # test whether given move is a valid move according to the piece's possible valid moves and a chess board of always 8x8
+  end
 end

@@ -24,7 +24,11 @@ class Board
   end
 
   def piece(x,y)
-    grid[x][y]
+    if (0..7).include?(x && y)
+      grid[x][y]
+    else
+      puts 'those coordinates were not in valid indexed 0-7 format'
+    end
   end
   
   def square_colour(x,y)
@@ -146,4 +150,4 @@ end
 
 # b = Board.new
 # b.build_grid
-# puts b.grid.inspect
+# pp b.grid.inspect
