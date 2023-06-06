@@ -13,12 +13,12 @@ describe Board do
     expect(row_count).to eq(8)
   end
   
-  describe 'building the board' do
+  describe 'building a board' do
     before do 
       board.populate_board
     end
 
-    it "can build a board with Pawn pieces in correct location" do
+    it "puts all Pawns in the correct rows and columns" do
       board.grid[1].each do |e|
         expect(e).to be_instance_of(Pawn)
       end 
@@ -27,7 +27,7 @@ describe Board do
       end 
     end
 
-    it '#populate_board populates grid with the correct pieces in correct positions' do
+    it '#populate_board places the correct piece instances in correct the locations' do
       expect(board.grid[1][0]).to be_instance_of(Pawn)
       expect(board.grid[1][7]).to be_instance_of(Pawn)
       expect(board.grid[0][0]).to be_instance_of(Rook)
@@ -44,7 +44,7 @@ describe Board do
   end
 
   describe '@colour_grid' do
-    it 'should have black pieces in the correct squares' do
+    it 'has black squares in the correct locations' do
       expect(board.colour_grid[7][0]).to be(:black)
       expect(board.colour_grid[7][4]).to be(:black)
       expect(board.colour_grid[5][2]).to be(:black)
@@ -52,7 +52,7 @@ describe Board do
       expect(board.colour_grid[0][3]).to be(:black)
     end
     
-    it 'should have black pieces in the correct squares' do
+    it 'has white squares in the correct locations' do
       expect(board.colour_grid[0][0]).to be(:white)
       expect(board.colour_grid[4][4]).to be(:white)
       expect(board.colour_grid[5][5]).to be(:white)
@@ -62,32 +62,39 @@ describe Board do
   end
 
   describe '#piece' do
-    it 'can return a piece from a given location in the grid' do
-      piece = board.piece(1,0) 
-      expect(piece).to be_instance_of(Pawn)
-    end
-    
-    it 'has pieces whose x and y values mirror the grid position' do
-      piece = board.piece(1,0)
-      expect(piece.x).to eq(1)
-      expect(piece.y).to eq(0)
+    context 'with valid coordinates' do
+      it 'returns the piece from the given location in the grid' do
+        piece = board.piece(1,0) 
+        expect(piece).to be_instance_of(Pawn)
+      end
+      
+      it "the returned piece's x and y values match the grid position looked up" do
+        piece = board.piece(1,0)
+        expect(piece.x).to eq(1)
+        expect(piece.y).to eq(0)
+      end
     end
 
-    it 'a board can tell the colour of its pieces' do
+    context 'with invalid coordinates' do
+      it 'prints a message describing the error' do
+        expect { board.piece(9,8) }.to output("those coordinates were not in valid indexed 0-7 format\n").to_stdout
+      end
+    end
+  end
+
+  describe 'board and piece colours' do
+    it "a board can tell the colour of its pieces" do
       black_rook = board.piece(0,0)
       white_bishop = board.piece(7,1)
       expect(black_rook.colour).to eq(:black)
       expect(white_bishop.colour).to eq(:white)
     end
-  end
 
-  describe '#square_colour' do
-    it 'has black in bottom left' do
+    it "a board can tell the colour of its squares"  do
       board.send(:build_colour_grid)
       expect(board.square_colour(7,0)).to eq(:black)
       expect(board.square_colour(0,0)).to eq(:white)
     end
   end
-
   
 end
