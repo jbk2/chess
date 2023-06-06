@@ -3,6 +3,7 @@ require 'erb'
 require 'pry-byebug'
 require_relative 'board'
 require_relative 'player'
+Dir[File.join(__dir__, 'pieces', '*.rb')].each { |file| require_relative file }
 
 class Game
   attr_accessor :player1, :player2, :active_player, :active_user_move
@@ -58,8 +59,8 @@ class Game
   def play_game
     start_game
     # until game_finished? # yet to be written
-      get_move
-      make_move
+    get_move
+    make_move
     # end
   end
 
@@ -68,20 +69,25 @@ class Game
     move = active_player.moves.last #only the active player's move ever attempts to be made
     puts "here's my move #{move}"
     moving_piece = board.grid[move[0].to_i][move[1].to_i] # Must be a piece, or move invalid, and screened for invalid move in #get_move already
-    # binding.irb
     move_square = move[2] + move[3] # a 2 integer string
     move_square_occupant = board.grid[move[2].to_i][move[3].to_i] # either a Piece or nil
 
     if moving_piece.piece_valid_move?(move)
       # if game_valid_move?(move)
-      # #   place_move(move)
-      # #   toggle_turn
+      puts "************************************"
+      puts "yes the pieces rules allow that move"
+      puts "************************************"
+
+      #   place_move(move)
+      #   toggle_turn
       # else
-      # #   puts 'you cannot make that move because xyz'
+      #   puts 'you cannot make that move because xyz'
       # end
     else
-      # puts "your piece #{moving_piece} is not allowed to make the move; #{move}, try again..."
-      # get_move
+      puts "your piece #{moving_piece} is not allowed to make the move; #{move}, try again..."
+      active_player.moves.pop
+      get_move
+      make_move
     end
     # check whether valid piece move
     # if so:
@@ -142,32 +148,34 @@ class Game
   def get_move
     display_string(ERB.new(yaml_data['game']['move_prompt']).result(binding), @@type_speed)
     move = get_input
-    if move_valid_format?(move)
-      if true_move?(move)
-        indexed_move = Game.format_to_index(move)
-        if has_piece?(indexed_move[0].to_i, indexed_move[1].to_i)
-          if active_player.moves.empty?
-            if pawn_or_knight_move?(indexed_move)
-              active_player.add_move(indexed_move)
-            else
-              puts "Your first move can only be a Pawn or a Knight, this '#{CYAN}#{move}#{ANSI_END}' was neither, try again..."
-              get_move
-            end
-          else
-            active_player.add_move(indexed_move)
-          end
-        else
-          puts "Square '#{CYAN}#{move}#{ANSI_END}' doesn't contain a piece. Please enter a piece's position and your move..."
-          get_move
-        end
-      else
-        puts "your move; '#{CYAN}#{move}#{ANSI_END}' didn't ask your given piece to move anywhere, please enter an actual move..."
-        get_move
-      end
-    else
-      puts "your move; '#{CYAN}#{move}#{ANSI_END}' was not formated correctly, it shoud be formatted like; 'a1,a2', try again..."
-      get_move
-    end
+
+    return rescue_invalid_format_error(move) unless move_valid_format?(move)
+    return rescue_untrue_move_error(move) unless true_move?(move)
+    indexed_move = Game.format_to_index(move)
+    return rescue_empty_square_error(move) unless has_piece?(indexed_move[0].to_i, indexed_move[1].to_i)
+    return rescue_first_move_piece_error(move) unless pawn_or_knight_move?(indexed_move)
+
+    active_player.add_move(indexed_move)
+  end
+
+  def rescue_invalid_format_error(move)
+    puts "your move; '#{CYAN}#{move}#{ANSI_END}' was not formated correctly, it shoud be formatted like; 'a1,a2', try again..."
+    get_move
+  end
+  
+  def rescue_untrue_move_error(move)
+    puts "your move; '#{CYAN}#{move}#{ANSI_END}' didn't ask your given piece to move anywhere, please enter an actual move..."
+    get_move
+  end
+  
+  def rescue_empty_square_error(move)
+    puts "Square '#{CYAN}#{move}#{ANSI_END}' doesn't contain a piece. Please enter a piece's position and your move..."
+    get_move
+  end
+  
+  def rescue_first_move_piece_error(move)
+    puts "Your first move can only be a Pawn or a Knight, this '#{CYAN}#{move}#{ANSI_END}' was neither, try again..."
+    get_move
   end
 
   def move_valid_format?(move)
@@ -183,10 +191,8 @@ class Game
   end
 
   def pawn_or_knight_move?(indexed_move)
-    if board.piece(indexed_move[0].to_i, indexed_move[1].to_i).class == Pawn || Knight
-      true
-    end
-    false
+    piece = board.piece(indexed_move[0].to_i, indexed_move[1].to_i)
+    piece.is_a?(Pawn) || piece.is_a?(Knight)
   end
   
   def starting_player
