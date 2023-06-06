@@ -156,14 +156,36 @@ describe Game do
     end
   end
 
-  # describe '#pawn_or_knight_move?(move)' do
-  #   context 'with a non Pawn or Knight move' do
-  #     it 'will return false' do
-  #       result = game.send(:pawn_or_knight_move?, '0011') # Rook
-  #       expect(result).to be(false)
-  #     end
-  #   end
-  # end
+  describe '#pawn_or_knight_move?(move)' do
+    context 'will return false' do
+      it 'with a Rook' do
+        result = game.send(:pawn_or_knight_move?, '0011')
+        expect(result).to be(false)
+      end
+      it 'with a Bishop' do
+        result = game.send(:pawn_or_knight_move?, '0213')
+        expect(result).to be(false)
+      end
+      it 'with a Queen' do
+        result = game.send(:pawn_or_knight_move?, '0314')
+        expect(result).to be(false)
+      end
+      it 'with a King' do
+        result = game.send(:pawn_or_knight_move?, '0415')
+        expect(result).to be(false)
+      end
+    end
+    context 'will return true' do
+      it 'with a Pawn' do
+        result = game.send(:pawn_or_knight_move?, '1020')
+        expect(result).to be(false)
+      end
+      it 'with a Knight' do
+        result = game.send(:pawn_or_knight_move?, '0122')
+        expect(result).to be(false)
+      end
+    end
+  end
   
   describe 'first move allows only Pawn or Knight moves, implemented by Game#get_move' do
     let(:active_player) { double(Player) }
