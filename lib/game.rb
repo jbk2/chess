@@ -71,15 +71,17 @@ class Game
     moving_piece = board.grid[move[0].to_i][move[1].to_i] # Must be a piece, or move invalid, and screened for invalid move in #get_move already
     move_square = move[2] + move[3] # a 2 integer string
     move_square_occupant = board.grid[move[2].to_i][move[3].to_i] # either a Piece or nil
-
-    return rescue_against_this_piece_move_rules unless moving_piece.piece_valid_move?(move)
-    return rescue_against_other_piece_move_rules unless moving_piece.game_valid_move?(move)
+    
+    # binding.pry
+    return rescue_against_this_piece_move_rules(moving_piece, move) unless moving_piece.piece_valid_move?(move)
+    # return rescue_against_other_piece_move_rules unless moving_piece.game_valid_move?(move)
 
     # if game_valid_move?(move)
     puts "************************************"
     puts "yes the pieces rules allow that move"
     puts "************************************"
     #   place_move(move)
+    # Don't forget to set @first_move variable `piece.first_move_made` on piece to false.
     #   toggle_turn
       # get_move
       # make_move
@@ -97,7 +99,7 @@ class Game
     # If not explain why not and prompt player turn again
   end
 
-  def rescue_against_this_piece_move_rules
+  def rescue_against_this_piece_move_rules(moving_piece, move)
     puts "your piece #{moving_piece} is not allowed to make the move; #{move}, try again..."
     board.display_board_utf
     active_player.moves.pop
