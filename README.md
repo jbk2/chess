@@ -43,4 +43,4 @@
 - #active_player code perhaps move from Game to Player class?
 - for black and white positions just a class variable or two arrays on Board?
 - there's the concept of a move ('a1,b1', formatted into index '0111'), which is saved on the players @ moves. The Piece also has its own x and y variables, and the board.grid also hosts the pice objects in it;s x and y location. Can we eliminate the piece's x and y, and just use the board.grids locations, does a piece need to know its own location?
-- 
+- Perhaps instead of individual piece classes inheriting from the Piece class I can turn that Piece class into a module and just extend it to all individual piece type classes?

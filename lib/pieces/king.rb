@@ -1,4 +1,13 @@
+# ## MOVE RULES
+# - Any one square straight or diagnonal (therefore can step on any colour)
+# - Cannot move itself into a check position.
+# - Castling; if 1st move && rook in corner && no pieces inbetween, can move king two squares towards rook,
+# and rook move to square on opposite side of king after its move. Cannot castle when king in check,
+# king moves through a check or lands in check.
+require_relative 'piece'
+
 class King < Piece
+  attr_writer :first_move
   attr_accessor :colour, :x, :y
   attr_reader :black_char, :white_char
   
@@ -7,7 +16,16 @@ class King < Piece
 
 
   def initialize(colour, x, y)
+    @first_move = true
     super(colour, x, y)
+  end
+
+  def first_move?
+    @first_move
+  end
+
+  def first_move_made
+    @first_move = false
   end
 
   def piece_valid_move?(move)

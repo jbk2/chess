@@ -1,6 +1,10 @@
+# ## MOVE RULES
+# Can jump over other pieces
+# L shaped two and one square moves
 require_relative 'piece'
 
 class Knight < Piece
+  attr_writer :first_move
   attr_reader :black_char, :white_char
   attr_accessor :colour, :x, :y
 
@@ -8,7 +12,16 @@ class Knight < Piece
   WHITE_CHAR = "\u2658"
 
   def initialize(colour, x, y)
+    @first_move = true
     super(colour, x, y)
+  end
+
+  def first_move?
+    @first_move
+  end
+
+  def first_move_made
+    @first_move = false
   end
 
   def valid_knights_moves

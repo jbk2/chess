@@ -1,4 +1,10 @@
+# ## MOVE RULES
+# - Any stright or diagnonal direction, any number of squares (therefore can be on any colour square).
+# - Cannot move over other her own or over other sides pieces.
+require_relative 'piece'
+
 class Queen < Piece
+  attr_writer :first_move
   attr_accessor :colour, :x, :y
   attr_reader :black_char, :white_char
 
@@ -6,7 +12,16 @@ class Queen < Piece
   WHITE_CHAR = "\u2655"
 
   def initialize(colour, x, y)
+    @first_move = true
     super(colour, x, y)
+  end
+
+  def first_move?
+    @first_move
+  end
+
+  def first_move_made
+    @first_move = false
   end
 
   def piece_valid_move?(move)

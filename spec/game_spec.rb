@@ -329,4 +329,6 @@ describe Game do
 
   # describe 'only the active player can make a move' do
   # end
+  # describe 'is in check?' do
+  # end
 end

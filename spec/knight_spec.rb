@@ -1,18 +1,29 @@
 require_relative '../lib/pieces/knight'
-# require_relative 'knight'
 
 describe Knight do
   describe "a knight's instantiation" do
-    it 'sets and makes readable colour, x and y variables' do
+    it 'sets and makes readable colour, x, y and first_movevariables' do
       white_knight = Knight.new(:white, 3,3)
       knights_colour = white_knight.colour
       knights_x_coor = white_knight.x
       knights_y_coor = white_knight.y
+      knights_first_move = white_knight.first_move?
       expect(knights_colour).to equal(:white)
       expect(knights_x_coor).to equal(3)
       expect(knights_y_coor).to equal(3)
+      expect(knights_first_move).to be(true)
     end
   end
+
+  describe '#first_move_made' do
+    it "sets Knight's @first move to false" do
+      white_knight = Knight.new(:white, 3,3)
+      expect(white_knight.first_move?).to be(true)
+      white_knight.first_move_made
+      expect(white_knight.first_move?).to be(false)
+    end
+  end
+
 
   describe "#all_knights_moves" do
     context 'with a knight in coords 3,3' do
