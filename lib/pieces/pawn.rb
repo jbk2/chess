@@ -39,6 +39,8 @@ class Pawn < Piece
 
   def piece_valid_move?(move)
     # test whether given move is a valid move according to the piece's possible valid moves and a chess board of always 8x8
+    puts "returning false as placemat here"
+    false
   end
   
 

@@ -1,0 +1,51 @@
+module UiModule
+
+  def start_game
+    display_string(ERB.new(yaml_data['game']['turn_instructions']).result(binding), @@type_speed)
+    display_string(ERB.new(yaml_data['game']['start_prompt']).result(binding), @@type_speed)
+  end
+
+  def get_input
+    $stdin.gets.chomp
+  end
+
+  def colour_emoji(colour)
+    colour == :black ? "\u{26AB}" : "\u{26AA}"
+  end
+
+  def index_format?(move)
+    move.match?(/[0-7][0-7][0-7][0-7]/) && move.length == 4
+  end
+
+  def index_format(chess_move)
+    indexed_move = String.new
+    indexed_move[0] = (chess_move[0].to_i - 1).to_s
+    indexed_move[1] = (chess_move[1].upcase.ord - 'A'.ord).to_s
+    indexed_move[2] = (chess_move[3].to_i - 1).to_s
+    indexed_move[3] = (chess_move[4].upcase.ord - 'A'.ord).to_s
+    indexed_move
+  end
+  
+  def chess_format?(move)
+    move.match?(/[1-8][a-h],[1-8][a-h]/) && move.length == 5
+  end
+
+  def chess_format(index_move)
+    chess_move = String.new
+    chess_move[0] = (index_move[0].to_i + 1).to_s
+    chess_move[1] = ((index_move[1].to_i) + 'A'.ord).chr.downcase
+    chess_move[2] = ','
+    chess_move[3] = (index_move[2].to_i + 1).to_s
+    chess_move[4] = ((index_move[3].to_i) + 'A'.ord).chr.downcase
+    chess_move
+  end
+
+  def display_string(string, delay)
+    string.each_char do |char|
+      print char
+      sleep(delay)
+    end
+    puts
+  end
+
+end

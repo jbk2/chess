@@ -1,26 +1,30 @@
+require 'pry-byebug'
 require 'yaml'
 require 'erb'
-require 'pry-byebug'
 require_relative 'board'
 require_relative 'player'
+require_relative 'ui_module'
+
 Dir[File.join(__dir__, 'pieces', '*.rb')].each { |file| require_relative file }
 
 class Game
+  include UiModule
   attr_accessor :player1, :player2, :active_player, :active_user_move
-  attr_reader :board
+  attr_reader :board, :moves
 
   BLUE = "\e[34m"
   GREEN = "\e[32m"
   BOLD_WHITE = "\e[1;37m"
   CYAN = "\e[0;36m"
   ANSI_END = "\e[0m"
-  @@type_speed = 0.02
+  @@type_speed = 0.005
 
   def initialize
     build_board
     create_players
     assign_colour
     @active_player = white_player
+    @moves = []
   end
 
   def build_board
@@ -40,7 +44,7 @@ class Game
 
   def assign_colour
     display_string(yaml_data['game']['assigning_colour1'], @@type_speed)
-    player1.colour = random_colour; sleep 1;
+    player1.colour = random_colour; sleep 0.3;
     display_string(ERB.new(yaml_data['game']['player1_colour_stmnt']).result(binding), @@type_speed)
     player1.colour == :white ? player2.colour = :black : player2.colour = :white; sleep 0.5;
     display_string(ERB.new(yaml_data['game']['player2_colour_stmnt']).result(binding), @@type_speed); sleep 0.7
@@ -48,12 +52,12 @@ class Game
 
   def game_setup
     display_string("Here's your board:", @@type_speed); sleep 0.7;
-    display_string(ERB.new(yaml_data['game']['black_piece_instructions']).result(binding), @@type_speed); sleep 0.8;
+    display_string(ERB.new(yaml_data['game']['black_piece_instructions']).result(binding), @@type_speed); sleep 0.1;
     board.display_board_utf; sleep 1;
     display_string(ERB.new(yaml_data['game']['white_piece_instructions']).result(binding), @@type_speed)
-    puts "\n"; sleep 3;
-    display_string(yaml_data['game']['board_illustration'], @@type_speed)
-    puts "\n"; sleep 2;
+    puts "\n"; sleep 1;
+    display_string(yaml_data['game']['board_illustration'], 0.005)
+    puts "\n"; sleep 1;
   end
   
   def play_game
@@ -62,6 +66,26 @@ class Game
     get_move
     make_move
     # end
+  end
+
+  def add_move(indexed_move)
+    if index_format?(indexed_move)
+      true_move?(indexed_move) ? @moves << indexed_move : (raise InvalidInputError, "Input; #{indexed_move} does not represent an actual move")
+    else
+      raise InvalidInputError, "Indexed_move; #{indexed_move} should be formatted like 'iiii'"
+    end
+  end
+  
+  def last_move
+    moves.last
+  end
+
+  def first_move?
+    @first_move
+  end
+
+  def first_move_made
+    @first_move = false
   end
 
   def make_move
@@ -81,7 +105,8 @@ class Game
     puts "yes the pieces rules allow that move"
     puts "************************************"
     #   place_move(move)
-    # Don't forget to set @first_move variable `piece.first_move_made` on piece to false.
+    # Don't forget to set pieces' @first_move variable `piece.first_move_made` on piece to false.
+    # Don't forget to set players' @first_move variable `player.first_move_made` on piece to false.
     #   toggle_turn
       # get_move
       # make_move
@@ -99,37 +124,9 @@ class Game
     # If not explain why not and prompt player turn again
   end
 
-  def rescue_against_this_piece_move_rules(moving_piece, move)
-    puts "your piece #{moving_piece} is not allowed to make the move; #{move}, try again..."
-    board.display_board_utf
-    active_player.moves.pop
-    get_move
-    make_move
-  end
   
-  def rescue_against_other_piece_move_rules
-    puts "your move #{move} is breaching the game rules because of other pieces and their relative positions, try again..."
-    board.display_board_utf
-    active_player.moves.pop
-    get_move
-    make_move
-  end
   
   private
-  def self.format_to_index(chess_move)
-    indexed_move = String.new
-    indexed_move[0] = (chess_move[0].to_i - 1).to_s
-    indexed_move[1] = (chess_move[1].upcase.ord - 'A'.ord).to_s
-    indexed_move[2] = (chess_move[3].to_i - 1).to_s
-    indexed_move[3] = (chess_move[4].upcase.ord - 'A'.ord).to_s
-    indexed_move
-  end
-
-  def self.char_to_int(char)
-    char.upcase
-    char.ord - 'A'.ord
-  end
-  
   def create_player1
     player1_name = get_input
     if player1_name == ''
@@ -151,31 +148,28 @@ class Game
     @player2 = Player.new(player2_name)
   end
 
-  def get_input
-    $stdin.gets.chomp
-  end
-
   def random_colour
     [:white, :black].sample
   end
-  
-  def start_game
-    display_string(ERB.new(yaml_data['game']['turn_instructions']).result(binding), @@type_speed)
-    display_string(ERB.new(yaml_data['game']['start_prompt']).result(binding), @@type_speed)
+
+  def true_move?(move)
+    move[0..1] != move[2..3]
+  end
+
+  def last_move
+    moves.last
   end
   
-  # all user input move validation done here, then sent to active player to store in their @moves
+  # all user input move validation done here, then move stored in Game @moves
   def get_move
     display_string(ERB.new(yaml_data['game']['move_prompt']).result(binding), @@type_speed)
     move = get_input
-
-    return rescue_invalid_format_error(move) unless move_valid_format?(move)
+    return rescue_invalid_format_error(move) unless chess_format?(move)
     return rescue_untrue_move_error(move) unless true_move?(move)
-    indexed_move = Game.format_to_index(move)
+    indexed_move = index_format(move)
     return rescue_empty_square_error(move) unless has_piece?(indexed_move[0].to_i, indexed_move[1].to_i)
-    return rescue_first_move_piece_error(move) unless pawn_or_knight_move?(indexed_move)
-
-    active_player.add_move(indexed_move)
+    (return rescue_first_move_piece_error(move) unless pawn_or_knight_move?(indexed_move)) if active_player.first_move?
+    add_move(indexed_move)
   end
 
   def rescue_invalid_format_error(move)
@@ -198,18 +192,29 @@ class Game
     get_move
   end
 
-  def move_valid_format?(move)
-    move.match?(/[1-8][a-h],[1-8][a-h]/) && move.length == 5
+  def rescue_against_this_piece_move_rules(moving_piece, move)
+    puts "A #{CYAN}#{moving_piece.class}#{ANSI_END} is not allowed to make the move; '#{CYAN}#{chess_format(move)}#{ANSI_END}', try again..."
+    board.display_board_utf
+    active_player.moves.pop
+    get_move
+    make_move
   end
-
-  def true_move?(move)
-    move[0..1] != move[3..4]
+  
+  def rescue_against_other_piece_move_rules
+    puts "your move #{move} is breaching the game rules because of other pieces and their relative positions, try again..."
+    board.display_board_utf
+    active_player.moves.pop
+    get_move
+    make_move
   end
 
   def has_piece?(r, c)
     board.grid[r][c] ? true : false
   end
 
+  def player_start_move?
+    active_player.first_move?
+  end
   def pawn_or_knight_move?(indexed_move)
     piece = board.piece(indexed_move[0].to_i, indexed_move[1].to_i)
     piece.is_a?(Pawn) || piece.is_a?(Knight)
@@ -250,23 +255,21 @@ class Game
   def active_player_name
     active_player == player1 ? player1_name : player2_name
   end
-  
-  def colour_emoji(colour)
-    colour == :black ? "\u{26AB}" : "\u{26AA}"
-  end
 
   def yaml_data
     yaml_file = File.join(__dir__, "data.yml")
     data = YAML.load_file(yaml_file)
   end
 
-  def display_string(string, delay)
-    string.each_char do |char|
-      print char
-      sleep(delay)
-    end
-    puts
+  
+end
+
+class InvalidInputError < StandardError
+
+  def initialize(message = 'Invalid input format')
+    super(message)
   end
+
 end
 
 # ________ Old unused, but potentially helpful, methods _______________________
