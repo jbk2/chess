@@ -38,8 +38,8 @@ describe Game do
     end
   end
   
-  describe "active_player logic" do
-    it 'starts a game with the active_player always the white player' do
+  describe "active_player" do
+    it 'first game move is played by the active player whis is the white player' do
       orig_active_player = game.active_player
       expect(game.active_player).to eq(game.send(:white_player))
     end
@@ -55,10 +55,19 @@ describe Game do
   end
 
   describe '#add_move(move)' do
-    it 'pushes a the move string onto the @moves array' do
-      game.add_move('1011')
-      expect(game.moves).to eq(['1011'])
+    context 'with correct index format' do 
+      it 'pushes a the move string onto the @moves array' do
+        game.add_move('1011')
+        expect(game.moves).to eq(['1011'])
+      end
     end
+    
+    context 'with incorrect index format' do
+        it 'raises and InputError' do
+          expect { game.add_move('1b,1c') }.to raise_error(InputError, "Indexed_move; 1b,1c should be formatted like 'iiii'")
+          expect(game.moves).to eq([])
+        end
+      end
   end
 
   describe '#get_move' do

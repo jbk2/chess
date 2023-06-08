@@ -2,7 +2,7 @@ require_relative '../lib/pieces/bishop'
 
 describe Bishop do
   describe "a bishop's instantiation" do
-    it 'sets and makes readable colour, x, y and first_movevariables' do
+    it 'sets and makes readable colour, x, y and first_move variables' do
       white_bishop = Bishop.new(:white, 0,2)
       bishops_colour = white_bishop.colour
       bishops_x_coor = white_bishop.x
@@ -16,7 +16,7 @@ describe Bishop do
   end
 
   describe '#first_move_made' do
-    it "sets bishop's @first move to false" do
+    it "sets bishop's @first move from true to false" do
       white_bishop = Bishop.new(:white, 0,2)
       expect(white_bishop.first_move?).to be(true)
       white_bishop.first_move_made

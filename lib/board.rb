@@ -27,7 +27,8 @@ class Board
     if (0..7).include?(x && y)
       grid[x][y]
     else
-      puts 'those coordinates were not in valid indexed 0-7 format'
+      raise InputError.new("#{x},#{y} is not a valid coordinate. Try again...")
+      # puts 'those coordinates were not in valid indexed 0-7 format'
     end
   end
   

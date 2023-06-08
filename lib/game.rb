@@ -4,20 +4,21 @@ require 'erb'
 require_relative 'board'
 require_relative 'player'
 require_relative 'ui_module'
+require_relative '../lib/errors/input_errors'
 
 Dir[File.join(__dir__, 'pieces', '*.rb')].each { |file| require_relative file }
 
 class Game
   include UiModule
-  attr_accessor :player1, :player2, :active_player, :active_user_move
-  attr_reader :board, :moves
+  attr_accessor :player1, :player2, :active_player, :active_user_move, :moves
+  attr_reader :board
 
-  BLUE = "\e[34m"
-  GREEN = "\e[32m"
-  BOLD_WHITE = "\e[1;37m"
-  CYAN = "\e[0;36m"
-  ANSI_END = "\e[0m"
-  @@type_speed = 0.005
+  # BLUE = "\e[34m"
+  # GREEN = "\e[32m"
+  # BOLD_WHITE = "\e[1;37m"
+  # CYAN = "\e[0;36m"
+  # ANSI_END = "\e[0m"
+  # @@type_speed = 0.005
 
   def initialize
     build_board
@@ -70,9 +71,9 @@ class Game
 
   def add_move(indexed_move)
     if index_format?(indexed_move)
-      true_move?(indexed_move) ? @moves << indexed_move : (raise InvalidInputError, "Input; #{indexed_move} does not represent an actual move")
+      true_move?(indexed_move) ? @moves << indexed_move : (raise InputError.new("Input; #{indexed_move} does not represent an actual move"))
     else
-      raise InvalidInputError, "Indexed_move; #{indexed_move} should be formatted like 'iiii'"
+      raise InputError.new("Indexed_move; #{indexed_move} should be formatted like 'iiii'")
     end
   end
   
@@ -90,7 +91,7 @@ class Game
 
   def make_move
     puts "here's my active player #{active_player}"
-    move = active_player.moves.last #only the active player's move ever attempts to be made
+    move = moves.last
     puts "here's my move #{move}"
     moving_piece = board.grid[move[0].to_i][move[1].to_i] # Must be a piece, or move invalid, and screened for invalid move in #get_move already
     move_square = move[2] + move[3] # a 2 integer string
@@ -195,7 +196,7 @@ class Game
   def rescue_against_this_piece_move_rules(moving_piece, move)
     puts "A #{CYAN}#{moving_piece.class}#{ANSI_END} is not allowed to make the move; '#{CYAN}#{chess_format(move)}#{ANSI_END}', try again..."
     board.display_board_utf
-    active_player.moves.pop
+    moves.pop
     get_move
     make_move
   end
@@ -203,7 +204,7 @@ class Game
   def rescue_against_other_piece_move_rules
     puts "your move #{move} is breaching the game rules because of other pieces and their relative positions, try again..."
     board.display_board_utf
-    active_player.moves.pop
+    moves.pop
     get_move
     make_move
   end
@@ -264,13 +265,7 @@ class Game
   
 end
 
-class InvalidInputError < StandardError
 
-  def initialize(message = 'Invalid input format')
-    super(message)
-  end
-
-end
 
 # ________ Old unused, but potentially helpful, methods _______________________
 

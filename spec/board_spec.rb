@@ -13,12 +13,12 @@ describe Board do
     expect(row_count).to eq(8)
   end
   
-  describe 'building a board' do
+  describe '#populate_board' do
     before do 
       board.populate_board
     end
 
-    it "puts all Pawns in the correct rows and columns" do
+    it "correctly populates board's @grid with every Pawn in starting positions" do
       board.grid[1].each do |e|
         expect(e).to be_instance_of(Pawn)
       end 
@@ -27,7 +27,7 @@ describe Board do
       end 
     end
 
-    it '#populate_board places the correct piece instances in correct the locations' do
+    it "correctly populates board's @grid with all pieces in starting positions" do
       expect(board.grid[1][0]).to be_instance_of(Pawn)
       expect(board.grid[1][7]).to be_instance_of(Pawn)
       expect(board.grid[0][0]).to be_instance_of(Rook)
@@ -76,8 +76,8 @@ describe Board do
     end
 
     context 'with invalid coordinates' do
-      it 'prints a message describing the error' do
-        expect { board.piece(9,8) }.to output("those coordinates were not in valid indexed 0-7 format\n").to_stdout
+      it 'raises and InputErrorprints a message describing the error' do
+        expect { board.piece(9,8) }.to raise_error(InputError, '9,8 is not a valid coordinate. Try again...')
       end
     end
   end
