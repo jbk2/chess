@@ -1,6 +1,9 @@
 # ## MOVE RULES
 # - in any stright line any number of squares, therefore can sit on any colour square.
 # - not over other pieces
+# - Castling; if 1st move for king & rook & no pieces between them, can in one simultaneous move move king
+# two squares towards rook, and rook move to square on opposite side of new king position. Cannot
+# castle when either; king is in check, king moves through a check or king lands in check.
 require_relative 'piece'
 
 class Rook < Piece
@@ -20,11 +23,33 @@ class Rook < Piece
     @first_move
   end
 
-  def first_move_made
+  def first_move_taken
     @first_move = false
   end
 
   def piece_valid_move?(move)
     # test whether given move is a valid move according to the piece's possible valid moves and a chess board of always 8x8
   end
+
+  def valid_rook_moves
+    moves = []
+    new_x = x.dup
+    until new_x >= 7
+      new_x += 1; moves.push([new_x, y])
+    end
+    new_x = x.dup
+    until new_x <= 0
+      new_x -= 1; moves.push([new_x, y])
+    end
+    new_y = y.dup
+    until new_y >= 7
+      new_y += 1; moves.push([x, new_y]) 
+    end
+    new_y = y.dup
+    until new_y <= 0
+      new_y -= 1; moves.push([x, new_y]) 
+    end
+    moves
+  end
+
 end

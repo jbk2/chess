@@ -15,21 +15,21 @@ describe Knight do
     end
   end
 
-  describe '#first_move_made' do
+  describe '#first_move_taken' do
     it "sets Knight's @first move to false" do
       white_knight = Knight.new(:white, 3,3)
       expect(white_knight.first_move?).to be(true)
-      white_knight.first_move_made
+      white_knight.first_move_taken
       expect(white_knight.first_move?).to be(false)
     end
   end
 
 
-  describe "#all_knights_moves" do
+  describe "#valid_knight_moves" do
     context 'with a knight in coords 3,3' do
       it 'has 8 L shaped possible moves' do
         white_knight = Knight.new(:white, 3,3)
-        result = white_knight.valid_knights_moves
+        result = white_knight.valid_knight_moves
         moves_array = [[5, 4],[5, 2],[1, 4],[1, 2],[4, 5],[2, 5],[4, 1],[2, 1]]
         expect(result).to eq(moves_array)
       end
@@ -38,7 +38,7 @@ describe Knight do
     context 'with a knight in coords 2,5' do
       it 'has 8 L shaped possible moves' do
         white_knight = Knight.new(:white, 2,5)
-        result = white_knight.valid_knights_moves
+        result = white_knight.valid_knight_moves
         moves_array = [[4, 6],[4, 4],[0, 6],[0, 4],[3, 7],[1, 7],[3, 3],[1, 3]]
         expect(result).to eq(moves_array)
       end
@@ -47,7 +47,7 @@ describe Knight do
     context 'with a knight in 0,0 coords' do
       it "gives the only two in board bounds possible moves" do
         black_knight = Knight.new(:black, 0,0)
-        result = black_knight.valid_knights_moves
+        result = black_knight.valid_knight_moves
         moves_array = [[2, 1],[1, 2]]
         expect(result).to eq(moves_array)    
       end

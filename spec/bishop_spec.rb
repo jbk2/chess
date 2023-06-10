@@ -15,11 +15,11 @@ describe Bishop do
     end
   end
 
-  describe '#first_move_made' do
+  describe '#first_move_taken' do
     it "sets bishop's @first move from true to false" do
       white_bishop = Bishop.new(:white, 0,2)
       expect(white_bishop.first_move?).to be(true)
-      white_bishop.first_move_made
+      white_bishop.first_move_taken
       expect(white_bishop.first_move?).to be(false)
     end
   end

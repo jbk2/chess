@@ -12,21 +12,25 @@ describe Game do
     expect(game).to have_received(:sleep).at_least(:once)
   end
 
-  context 'it is constructed with' do
-    it 'a board' do
+  describe 'instantiation' do
+    it 'has a board' do
       expect(game.board).to be_instance_of(Board)
     end
 
-    it 'a player1' do
+    it 'has a player1' do
       expect(game.player1).to be_instance_of(Player)
     end
     
-    it 'a player2' do
+    it 'has a player2' do
       expect(game.player2).to be_instance_of(Player)
     end
     
-    it 'a readable @moves variable' do
+    it 'has a readable @moves variable' do
       expect(game.moves).to eq([])
+    end
+    
+    it 'has an @active_player, set before any moves are taken to the white player' do
+      expect(game.active_player).to eq(game.send(:white_player))
     end
   end
 
@@ -39,7 +43,7 @@ describe Game do
   end
   
   describe "active_player" do
-    it 'first game move is played by the active player whis is the white player' do
+    it 'is also the white player' do
       orig_active_player = game.active_player
       expect(game.active_player).to eq(game.send(:white_player))
     end

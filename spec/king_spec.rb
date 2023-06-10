@@ -15,11 +15,11 @@ describe King do
     end
   end
 
-  describe '#first_move_made' do
+  describe '#first_move_taken' do
     it "sets king's @first move to false" do
       white_king = King.new(:white, 0,4)
       expect(white_king.first_move?).to be(true)
-      white_king.first_move_made
+      white_king.first_move_taken
       expect(white_king.first_move?).to be(false)
     end
   end

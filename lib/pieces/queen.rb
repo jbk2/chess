@@ -20,7 +20,7 @@ class Queen < Piece
     @first_move
   end
 
-  def first_move_made
+  def first_move_taken
     @first_move = false
   end
 

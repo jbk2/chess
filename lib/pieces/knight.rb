@@ -20,11 +20,11 @@ class Knight < Piece
     @first_move
   end
 
-  def first_move_made
+  def first_move_taken
     @first_move = false
   end
 
-  def valid_knights_moves
+  def valid_knight_moves
     moves = []
     moves.push([x+2, y+1],[x+2, y-1],[x-2, y+1],[x-2, y-1],[x+1, y+2],[x-1, y+2],[x+1, y-2],[x-1, y-2])
     moves.delete_if { |move| move[0] < 0 || move[1] < 0}
@@ -33,7 +33,7 @@ class Knight < Piece
 
   def piece_valid_move?(move)
     destination_square = [move[2].to_i,move[3].to_i]
-    valid_knights_moves.include?(destination_square)
+    valid_knight_moves.include?(destination_square)
   end
 
 end

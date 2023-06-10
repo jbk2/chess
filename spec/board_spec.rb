@@ -76,7 +76,7 @@ describe Board do
     end
 
     context 'with invalid coordinates' do
-      it 'raises and InputErrorprints a message describing the error' do
+      it 'raises an InputError' do
         expect { board.piece(9,8) }.to raise_error(InputError, '9,8 is not a valid coordinate. Try again...')
       end
     end

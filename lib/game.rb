@@ -13,13 +13,6 @@ class Game
   attr_accessor :player1, :player2, :active_player, :active_user_move, :moves
   attr_reader :board
 
-  # BLUE = "\e[34m"
-  # GREEN = "\e[32m"
-  # BOLD_WHITE = "\e[1;37m"
-  # CYAN = "\e[0;36m"
-  # ANSI_END = "\e[0m"
-  # @@type_speed = 0.005
-
   def initialize
     build_board
     create_players
@@ -63,7 +56,7 @@ class Game
   
   def play_game
     start_game
-    # until game_finished? # yet to be written
+    # until game_finished? 
     get_move
     make_move
     # end
@@ -99,7 +92,7 @@ class Game
     
     # binding.pry
     return rescue_against_this_piece_move_rules(moving_piece, move) unless moving_piece.piece_valid_move?(move)
-    # return rescue_against_other_piece_move_rules unless moving_piece.game_valid_move?(move)
+    # return rescue_against_other_piece_move_rules unless moving_piece.game_valid_move?(game, move)
 
     # if game_valid_move?(move)
     puts "************************************"
@@ -125,6 +118,57 @@ class Game
     # If not explain why not and prompt player turn again
   end
 
+  def game_valid_move(move)
+    # if #move_path_clear? 
+    #   next
+    # else 
+    #   #abort_move (except for knight) with GameRuleError, "This move's #{move} path is blocked"
+    # end
+
+    # if currently_in_check?
+    #   move must result in !in_check? 
+    # else
+    #   #abort_move
+    # end
+
+    # if move_creates_own_check?(move)
+    #   #abort_move with GameRuleError, "Move not allowes. This move would result in you being in check"
+    # else
+    #   next
+    # end
+
+    # if #destination_square_occupied?
+      # if with_own_colour?
+        # #abort_move with GameRuleError, 'Destination contains your own piece'
+      # else with_opponents_colur
+        # if opponent in checkmate? (does each player have a @checkmate = false, until #checkmate? is true then sets @checkmate?)
+          # #place_move (delete_piece && move moving piece in)
+          # call #finish_game
+        # elsif check?
+          #  ?
+        # else
+          # #delete_piece(dest square) #move_piece(dest square)
+          # toggle active player & call #get_move
+        # end
+      # end
+    # else
+      # #movepiece(dest square) = (move moving piece in)
+      # toggle active player & call #get_move
+    # end
+  end
+
+  # def check?
+    # could any opponent piece on their next move checkmate the king?
+  # end
+
+  # def checkmate?
+    # an opponent's move takes your king
+  # end
+
+  # def stalemate?
+    # !check?
+    # but any legal move would result in check? being true
+  # end
   
   
   private
@@ -216,23 +260,20 @@ class Game
   def player_start_move?
     active_player.first_move?
   end
+
   def pawn_or_knight_move?(indexed_move)
     piece = board.piece(indexed_move[0].to_i, indexed_move[1].to_i)
     piece.is_a?(Pawn) || piece.is_a?(Knight)
   end
-  
-  def starting_player
-    @active_player = white_player
-  end
-  
+
   def toggle_turn
     active_player == player1 ? (self.active_player = player2) : (self.active_player = player1)
   end
-  
+
   def player1_name
     BLUE + player1.name.capitalize + ANSI_END
   end
-  
+
   def player2_name
     GREEN + player2.name.capitalize + ANSI_END
   end
@@ -240,7 +281,7 @@ class Game
   def white_player
     player1.colour == :white ? player1 : player2
   end
-  
+
   def black_player
     player1.colour == :black ? player1 : player2
   end
@@ -248,11 +289,11 @@ class Game
   def white_player_name
     player1.colour == :white ? player1_name : player2_name
   end
-  
+
   def black_player_name
     player1.colour == :black ? player1_name : player2_name
-  end  
-  
+  end
+
   def active_player_name
     active_player == player1 ? player1_name : player2_name
   end
@@ -261,11 +302,7 @@ class Game
     yaml_file = File.join(__dir__, "data.yml")
     data = YAML.load_file(yaml_file)
   end
-
-  
 end
-
-
 
 # ________ Old unused, but potentially helpful, methods _______________________
 

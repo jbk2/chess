@@ -15,11 +15,11 @@ describe Queen do
     end
   end
 
-  describe '#first_move_made' do
+  describe '#first_move_taken' do
     it "sets queen's @first move to false" do
       white_queen = Queen.new(:white, 0, 3)
       expect(white_queen.first_move?).to be(true)
-      white_queen.first_move_made
+      white_queen.first_move_taken
       expect(white_queen.first_move?).to be(false)
     end
   end

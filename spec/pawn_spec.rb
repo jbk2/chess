@@ -15,11 +15,11 @@ describe Pawn do
     end
   end
 
-  describe '#first_move_made' do
+  describe '#first_move_taken' do
     it "sets pawn's @first move to false" do
       white_pawn = Pawn.new(:white, 1,0)
       expect(white_pawn.first_move?).to be(true)
-      white_pawn.first_move_made
+      white_pawn.first_move_taken
       expect(white_pawn.first_move?).to be(false)
     end
   end
