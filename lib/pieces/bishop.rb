@@ -30,11 +30,11 @@ class Bishop < Piece
   end
 
   def valid_bishop_moves
-    moves = []
-    new_x, new_y = x.dup, y.dup
-    until new_x >= 7 || new_y >= 7
-      new_x += 1
-    end
+    down_right_diag = (x+1..7).zip(y+1..7).delete_if { |e| e.include?(nil) }
+    down_left_diag = (x+1..7).zip((0..y-1).to_a.reverse).delete_if {|e| e.include?(nil) }
+    up_right_diag = ((0..x-1).to_a.reverse).zip(y+1..7).delete_if { |e| e.include?(nil) }
+    up_left_diag = ((0..x-1).to_a.reverse).zip((0..y-1).to_a.reverse).delete_if { |e| e.include?(nil) }
+    moves = down_right_diag + down_left_diag + up_right_diag + up_left_diag
   end
 end
 

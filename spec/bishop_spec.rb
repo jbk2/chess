@@ -29,7 +29,43 @@ describe Bishop do
       it 'returns all correct possible piece moves on an 8x8 board' do
         white_bishop = Bishop.new(:white, 0,2)
         result = white_bishop.valid_bishop_moves
-        expect(result).to eq(['',''])
+        expect(result).to include([1, 3], [2, 4], [3, 5], [4, 6], [5, 7], [1, 1], [2, 0])
+      end
+    end
+    
+    context 'with a bishop in square 4,3' do
+      it 'returns all correct possible piece moves on an 8x8 board' do
+        white_bishop = Bishop.new(:white, 4,3)
+        result = white_bishop.valid_bishop_moves
+        expect(result).to include([5, 4], [6, 5], [7, 6], [3, 4], [2, 5], [1, 6], [0, 7],
+          [3, 2], [2, 1], [1, 0], [5, 2], [6, 1], [7, 0])
+      end
+    end
+    
+    context 'with a bishop in square 3,3' do
+      it 'returns all correct possible piece moves on an 8x8 board' do
+        white_bishop = Bishop.new(:white, 3,3)
+        result = white_bishop.valid_bishop_moves
+        expect(result).to include([4, 4], [5, 5], [6, 6], [4, 2], [5, 1], [6, 0],
+          [2, 4], [1, 5], [0, 6], [2, 2], [1, 1], [0, 0])
+      end
+    end
+   
+    context 'with a bishop in square 2,5' do
+      it 'returns all correct possible piece moves on an 8x8 board' do
+        white_bishop = Bishop.new(:white, 2,5)
+        result = white_bishop.valid_bishop_moves
+        expect(result).to include([3,6], [4,7], [3,4], [4,3], [5, 2], [6, 1],
+          [7, 0], [1, 6], [0, 7], [1, 4], [0, 3])
+      end
+    end
+    
+    context 'with a bishop in square 5,3' do
+      it 'returns all correct possible piece moves on an 8x8 board' do
+        white_bishop = Bishop.new(:white, 5,3)
+        result = white_bishop.valid_bishop_moves
+        expect(result).to include([6, 4], [7, 5], [6, 2], [7, 1], [4, 4], [3, 5],
+          [2, 6], [1, 7], [4, 2], [3, 1], [2, 0])
       end
     end
   end
