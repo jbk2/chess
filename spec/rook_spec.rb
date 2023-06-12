@@ -24,41 +24,49 @@ describe Rook do
     end
   end
 
-  describe 'valid rook moves' do
+  describe '#valid_rook_moves' do
     context 'with a rook in position 0,0' do
       it 'returns all correct possible piece moves on an 8x8 board' do
         white_rook = Rook.new(:white, 0,0)
         result = white_rook.valid_rook_moves
-        expect(result).to eq([[1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [6, 0], [7, 0],
-          [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [0, 6], [0, 7]])
+        expect(result).to eq([[0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [0, 6], [0, 7],
+          [1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [6, 0], [7, 0]])
       end
-      
+    end
+
+    context 'with a rook in position 0,7' do
       it 'returns all correct possible piece moves on an 8x8 board' do
         white_rook = Rook.new(:white, 0,7)
         result = white_rook.valid_rook_moves
-        expect(result).to eq([[1, 7], [2, 7], [3, 7], [4, 7], [5, 7], [6, 7], [7, 7],
-          [0, 6], [0, 5], [0, 4], [0, 3], [0, 2], [0, 1], [0, 0]])
+        expect(result).to eq([[0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [0, 6],
+          [1, 7], [2, 7], [3, 7], [4, 7], [5, 7], [6, 7], [7, 7]])
       end
-      
+    end
+    
+    context 'with a rook in position 7,0' do
       it 'returns all correct possible piece moves on an 8x8 board' do
         white_rook = Rook.new(:white, 7,0)
         result = white_rook.valid_rook_moves
-        expect(result).to eq([[6, 0], [5, 0], [4, 0], [3, 0], [2, 0], [1, 0], [0, 0],
-          [7, 1], [7, 2], [7, 3], [7, 4], [7, 5], [7, 6], [7, 7]])
+        expect(result).to eq([[7, 1], [7, 2], [7, 3], [7, 4], [7, 5], [7, 6], [7, 7],
+          [0, 0], [1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [6, 0]])
       end
-      
+    end
+    
+    context 'with a rook in position 7,7' do
       it 'returns all correct possible piece moves on an 8x8 board' do
         white_rook = Rook.new(:white, 7,7)
         result = white_rook.valid_rook_moves
-        expect(result).to eq([[6, 7], [5, 7], [4, 7], [3, 7], [2, 7], [1, 7], [0, 7],
-          [7, 6], [7, 5], [7, 4], [7, 3], [7, 2], [7, 1], [7, 0]])
+        expect(result).to eq([[7, 0], [7, 1], [7, 2], [7, 3], [7, 4], [7, 5], [7, 6],
+          [0, 7], [1, 7], [2, 7], [3, 7], [4, 7], [5, 7], [6, 7]])
       end
-      
+    end
+    
+    context 'with a rook in position 3,3' do
       it 'returns all correct possible piece moves on an 8x8 board' do
         white_rook = Rook.new(:white, 3,3)
         result = white_rook.valid_rook_moves
-        expect(result).to eq([[4, 3], [5, 3], [6, 3], [7, 3], [2, 3], [1, 3], [0, 3],
-          [3, 4], [3, 5], [3, 6], [3, 7], [3, 2], [3, 1], [3, 0]])
+        expect(result).to eq([[3, 0], [3, 1], [3, 2], [3, 4], [3, 5], [3, 6], [3, 7], 
+          [0, 3], [1, 3], [2, 3], [4, 3], [5, 3], [6, 3], [7, 3]])
       end
     end
   end

@@ -32,24 +32,7 @@ class Rook < Piece
   end
 
   def valid_rook_moves
-    moves = []
-    new_x = x.dup
-    until new_x >= 7
-      new_x += 1; moves.push([new_x, y])
-    end
-    new_x = x.dup
-    until new_x <= 0
-      new_x -= 1; moves.push([new_x, y])
-    end
-    new_y = y.dup
-    until new_y >= 7
-      new_y += 1; moves.push([x, new_y]) 
-    end
-    new_y = y.dup
-    until new_y <= 0
-      new_y -= 1; moves.push([x, new_y]) 
-    end
-    moves
+    moves = ([x]*8).zip(0..7) + (0..7).zip([y]*8) - [[x ,y]]
   end
 
 end

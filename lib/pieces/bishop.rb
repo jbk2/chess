@@ -28,6 +28,14 @@ class Bishop < Piece
   def piece_valid_move?(move)
     # test whether given move is a valid move according to the piece's possible valid moves and a chess board of always 8x8
   end
+
+  def valid_bishop_moves
+    moves = []
+    new_x, new_y = x.dup, y.dup
+    until new_x >= 7 || new_y >= 7
+      new_x += 1
+    end
+  end
 end
 
 # ## Move rules:
@@ -35,5 +43,6 @@ end
 # 2. cannot jump over any other pieces.
 # 3. only ever on same colour square.
 # 4. can move any number of squares, so long as 2 == true
+
 
  

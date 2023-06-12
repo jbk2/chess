@@ -23,4 +23,14 @@ describe Bishop do
       expect(white_bishop.first_move?).to be(false)
     end
   end
+
+  describe '#valid_bishop_move' do
+    context 'with a bishop in square 0,2' do
+      it 'returns all correct possible piece moves on an 8x8 board' do
+        white_bishop = Bishop.new(:white, 0,2)
+        result = white_bishop.valid_bishop_moves
+        expect(result).to eq(['',''])
+      end
+    end
+  end
 end
