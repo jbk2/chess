@@ -25,13 +25,13 @@ describe Pawn do
     end
   end
 
-  describe '#valid_pawn_move' do
+  describe '#all_pawn_move' do
     let(:board) { Board.new }
     context 'with a white pawn' do
       context 'in square 6,0' do
         it 'returns correct moves' do
           white_pawn = Pawn.new(:white, 6,0)
-          result = white_pawn.valid_pawn_moves(board)
+          result = white_pawn.all_pawn_moves(board)
           expect(result).to eq([[5, 0], [4, 0]])
         end
       end
@@ -40,7 +40,7 @@ describe Pawn do
         it 'returns correct moves' do
           white_pawn = Pawn.new(:white, 4,0)
           allow(white_pawn).to receive(:first_move?).and_return(false)
-          result = white_pawn.valid_pawn_moves(board)
+          result = white_pawn.all_pawn_moves(board)
           expect(result).to eq([[3, 0]])
         end
       end
@@ -49,7 +49,7 @@ describe Pawn do
         it 'returns correct moves' do
           white_pawn = Pawn.new(:white, 3,7)
           allow(white_pawn).to receive(:first_move?).and_return(false)
-          result = white_pawn.valid_pawn_moves(board)
+          result = white_pawn.all_pawn_moves(board)
           expect(result).to eq([[2, 7]])
         end
       end
@@ -59,7 +59,7 @@ describe Pawn do
           it 'returns correct moves' do
             white_pawn = Pawn.new(:white, 2,1)
             allow(white_pawn).to receive(:first_move?).and_return(false)
-            result = white_pawn.valid_pawn_moves(board)
+            result = white_pawn.all_pawn_moves(board)
             expect(result).to eq([[1, 0], [1, 2]])
           end
         end
@@ -72,7 +72,7 @@ describe Pawn do
             board.grid[3][3] = Bishop.new(:black, 3, 3)
             board.grid[3][5] = Knight.new(:black, 3, 5)
             allow(white_pawn).to receive(:first_move?).and_return(false)
-            result = white_pawn.valid_pawn_moves(board)
+            result = white_pawn.all_pawn_moves(board)
             expect(result).to eq([[3, 4], [3, 3], [3, 5]])
           end
         end
@@ -84,7 +84,7 @@ describe Pawn do
         it 'returns correct moves' do
           black_pawn = Pawn.new(:black, 1,7)
           allow(black_pawn).to receive(:first_move?).and_return(false)
-          result = black_pawn.valid_pawn_moves(board)
+          result = black_pawn.all_pawn_moves(board)
           expect(result).to eq([[2, 7]])
         end
       end
@@ -94,7 +94,7 @@ describe Pawn do
           black_pawn = Pawn.new(:black, 3,3)
 
           allow(black_pawn).to receive(:first_move?).and_return(false)
-          result = black_pawn.valid_pawn_moves(board)
+          result = black_pawn.all_pawn_moves(board)
           expect(result).to eq([[4, 3]])
         end
       end
@@ -103,7 +103,7 @@ describe Pawn do
         it 'returns correct moves' do
           black_pawn = Pawn.new(:black, 5,7)
           allow(black_pawn).to receive(:first_move?).and_return(false)
-          result = black_pawn.valid_pawn_moves(board)
+          result = black_pawn.all_pawn_moves(board)
           expect(result).to eq([[6, 6]])
         end
       end
@@ -113,7 +113,7 @@ describe Pawn do
           it 'returns correct moves' do
             black_pawn = Pawn.new(:black, 5,2)
             allow(black_pawn).to receive(:first_move?).and_return(false)
-            result = black_pawn.valid_pawn_moves(board)
+            result = black_pawn.all_pawn_moves(board)
             expect(result).to eq([[6, 1], [6, 3]])
           end
         end
@@ -124,7 +124,7 @@ describe Pawn do
             board = Board.new
             board.grid[4][1] = Queen.new(:white, 4, 1)
             allow(black_pawn).to receive(:first_move?).and_return(false)
-            result = black_pawn.valid_pawn_moves(board)
+            result = black_pawn.all_pawn_moves(board)
             expect(result).to eq([[4, 2], [4, 1]])
           end
         end
@@ -136,7 +136,7 @@ describe Pawn do
             board.grid[4][1] = Queen.new(:white, 4, 1)
             board.grid[4][3] = Bishop.new(:white, 4, 3)
             allow(black_pawn).to receive(:first_move?).and_return(false)
-            result = black_pawn.valid_pawn_moves(board)
+            result = black_pawn.all_pawn_moves(board)
             expect(result).to eq([[4, 2], [4, 1], [4, 3]])
           end
         end

@@ -119,14 +119,15 @@ class Game
   end
 
   def game_valid_move(move)
-    # if #move_path_clear? 
+    # if #move_path_clear?
     #   next
-    # else 
-    #   #abort_move (except for knight) with GameRuleError, "This move's #{move} path is blocked"
+    # else
+    #   #abort_move (except for knight) with GameRuleError,
+      # "This move's #{move} path is blocked, you cannot jump over pieces"
     # end
 
     # if currently_in_check?
-    #   move must result in !in_check? 
+    #   move must result in !in_check?
     # else
     #   #abort_move
     # end
@@ -137,8 +138,8 @@ class Game
     #   next
     # end
 
-    # if piece has left or right pawn neighbour && that pawn neighbour took last move as a doubel move,
-    # then en-passant if possibl
+    # if piece has left or right pawn neighbour && that pawn neighbour took last move as a double move,
+    # then en-passant is possible
 
     # if #destination_square_occupied?
       # if with_own_colour?

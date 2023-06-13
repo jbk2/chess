@@ -28,7 +28,25 @@ class King < Piece
     @first_move = false
   end
 
-  def piece_valid_move?(move)
-    # test whether given move is a valid move according to the piece's possible valid moves and a chess board of always 8x8
+  def piece_valid_move?(move, board)
+    destination_square = [move[2].to_i,move[3].to_i]
+    all_king_moves(board).include?(destination_square)
   end
+
+  def all_king_moves(board)
+    moves = []
+    moves.push([x+1, y+1], [x+1, y-1], [x-1, y+1], [x-1, y-1], [x-1, y], [x+1, y], [x, y-1], [x, y+1])
+    moves.delete_if { |move| !board.valid_coord?(move[0], move[1]) }
+    
+
+    # Moves into check - NOT DONE
+    # Castling - NOT DONE
+
+  end
+
+  def in_check?(x, y)
+    # does this position appear in the #valid_moves of any of opponent's pieces next moves?
+  end
+
+
 end

@@ -28,10 +28,11 @@ class Rook < Piece
   end
 
   def piece_valid_move?(move)
-    # test whether given move is a valid move according to the piece's possible valid moves and a chess board of always 8x8
+    destination_square = [move[2].to_i,move[3].to_i]
+    all_rook_moves(board).include?(destination_square)
   end
 
-  def valid_rook_moves
+  def all_rook_moves
     moves = ([x]*8).zip(0..7) + (0..7).zip([y]*8) - [[x ,y]]
   end
 

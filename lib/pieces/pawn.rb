@@ -39,15 +39,12 @@ class Pawn < Piece
   # end
 
   def piece_valid_move?(move, board)
-    # test whether given move is a valid move according to the piece's possible valid moves and a chess board of always 8x8
     destination_square = [move[2].to_i,move[3].to_i]
     valid_pawn_moves(board).include?(destination_square)
-    puts "returning false as placemat here"
-    false
   end
 
-  
-  def valid_pawn_moves(board)
+
+  def all_pawn_moves(board)
     moves = []
     if @colour == :white 
       # straight white moves

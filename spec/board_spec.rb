@@ -129,4 +129,14 @@ describe Board do
     end
   end
   
+  describe '#valid_coord(x, y)' do
+  it 'returns true if index value on an 8x8 grid' do
+    expect(board.valid_coord?(2,0)). to be(true)
+  end
+  
+  it 'returns false if index value not on an 8x8 grid' do
+    expect(board.valid_coord?(8, 3)). to be(false)
+  end
+end
+  
 end

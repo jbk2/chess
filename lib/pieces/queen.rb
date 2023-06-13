@@ -25,10 +25,11 @@ class Queen < Piece
   end
 
   def piece_valid_move?(move)
-    # test whether given move is a valid move according to the piece's possible valid moves and a chess board of always 8x8
+    destination_square = [move[2].to_i,move[3].to_i]
+    all_queen_moves(board).include?(destination_square)
   end
 
-  def valid_queen_moves
+  def all_queen_moves
     down_right = (x+1..7).zip(y+1..7).delete_if { |e| e.include?(nil) }
     down_left = (x+1..7).zip((0..y-1).to_a.reverse).delete_if {|e| e.include?(nil) }
     up_right = ((0..x-1).to_a.reverse).zip(y+1..7).delete_if { |e| e.include?(nil) }

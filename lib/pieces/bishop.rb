@@ -26,10 +26,11 @@ class Bishop < Piece
   end
 
   def piece_valid_move?(move)
-    # test whether given move is a valid move according to the piece's possible valid moves and a chess board of always 8x8
+    destination_square = [move[2].to_i,move[3].to_i]
+    all_bishop_moves(board).include?(destination_square)
   end
 
-  def valid_bishop_moves
+  def all_bishop_moves
     down_right_diag = (x+1..7).zip(y+1..7).delete_if { |e| e.include?(nil) }
     down_left_diag = (x+1..7).zip((0..y-1).to_a.reverse).delete_if {|e| e.include?(nil) }
     up_right_diag = ((0..x-1).to_a.reverse).zip(y+1..7).delete_if { |e| e.include?(nil) }
