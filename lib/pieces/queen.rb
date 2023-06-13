@@ -24,9 +24,9 @@ class Queen < Piece
     @first_move = false
   end
 
-  def piece_valid_move?(move)
+  def piece_valid_move?(move, board)
     destination_square = [move[2].to_i,move[3].to_i]
-    all_queen_moves(board).include?(destination_square)
+    all_queen_moves.include?(destination_square)
   end
 
   def all_queen_moves

@@ -40,7 +40,7 @@ class Pawn < Piece
 
   def piece_valid_move?(move, board)
     destination_square = [move[2].to_i,move[3].to_i]
-    valid_pawn_moves(board).include?(destination_square)
+    all_pawn_moves(board).include?(destination_square)
   end
 
 
@@ -65,7 +65,7 @@ class Pawn < Piece
       # straight black moves
       if first_move?
         moves << [x+1, y] if board.valid_coord?(x+1, y) && board.empty_square?(x+1, y)
-        moves << [x+2, y] if board.valid_coord?(x+2, y) && board.empty_square?(x_2, y)
+        moves << [x+2, y] if board.valid_coord?(x+2, y) && board.empty_square?(x+2, y)
       else
         moves << [x+1, y] if board.valid_coord?(x+1, y) && board.empty_square?(x+1, y)
       end

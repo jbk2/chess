@@ -25,7 +25,7 @@ class Bishop < Piece
     @first_move = false
   end
 
-  def piece_valid_move?(move)
+  def piece_valid_move?(move, board)
     destination_square = [move[2].to_i,move[3].to_i]
     all_bishop_moves(board).include?(destination_square)
   end

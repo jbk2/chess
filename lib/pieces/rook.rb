@@ -27,9 +27,9 @@ class Rook < Piece
     @first_move = false
   end
 
-  def piece_valid_move?(move)
+  def piece_valid_move?(move, board)
     destination_square = [move[2].to_i,move[3].to_i]
-    all_rook_moves(board).include?(destination_square)
+    all_rook_moves.include?(destination_square)
   end
 
   def all_rook_moves

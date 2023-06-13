@@ -2,6 +2,7 @@
 # Can jump over other pieces
 # L shaped two and one square moves
 require_relative 'piece'
+require_relative '../board'
 
 class Knight < Piece
   attr_writer :first_move
@@ -24,7 +25,7 @@ class Knight < Piece
     @first_move = false
   end
   
-  def piece_valid_move?(move)
+  def piece_valid_move?(move, board)
     destination_square = [move[2].to_i,move[3].to_i]
     all_knight_moves.include?(destination_square)
   end

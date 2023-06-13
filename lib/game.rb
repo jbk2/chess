@@ -110,7 +110,7 @@ class Game
       # end
     # else
       
-      
+      # rescue_first_move_piece_error
     # end
     # check whether valid piece move
     # if so:
