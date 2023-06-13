@@ -91,7 +91,7 @@ class Game
     move_square_occupant = board.grid[move[2].to_i][move[3].to_i] # either a Piece or nil
     
     # binding.pry
-    return rescue_against_this_piece_move_rules(moving_piece, move) unless moving_piece.piece_valid_move?(move)
+    return rescue_against_this_piece_move_rules(moving_piece, move) unless moving_piece.piece_valid_move?(move, board)
     # return rescue_against_other_piece_move_rules unless moving_piece.game_valid_move?(game, move)
 
     # if game_valid_move?(move)
@@ -136,6 +136,9 @@ class Game
     # else
     #   next
     # end
+
+    # if piece has left or right pawn neighbour && that pawn neighbour took last move as a doubel move,
+    # then en-passant if possibl
 
     # if #destination_square_occupied?
       # if with_own_colour?

@@ -11,6 +11,7 @@
 # queen, rook, knight or bishop (usually queen, not mandatory).   
 
 require_relative 'piece'
+# require_relative '../lib/board'
 
 class Pawn < Piece
   attr_writer :first_move
@@ -37,11 +38,58 @@ class Pawn < Piece
   #   super
   # end
 
-  def piece_valid_move?(move)
+  def piece_valid_move?(move, board)
     # test whether given move is a valid move according to the piece's possible valid moves and a chess board of always 8x8
+    destination_square = [move[2].to_i,move[3].to_i]
+    valid_pawn_moves(board).include?(destination_square)
     puts "returning false as placemat here"
     false
   end
-  
 
+  
+  def valid_pawn_moves(board)
+    moves = []
+    if @colour == :white 
+      # straight white moves
+      if first_move?
+        moves << [x-1, y] if board.valid_coord?(x-1, y) && board.empty_square?(x-1, y)
+        moves << [x-2, y] if board.valid_coord?(x-2, y) && board.empty_square?(x-2, y)
+      else
+        moves << [x-1, y] if board.valid_coord?(x-1, y) && board.empty_square?(x-1, y)
+      end
+      # diagonal white moves
+      if board.valid_coord?(x-1, y-1)
+        moves << [x-1, y-1] if board.opponent_piece?(x-1, y-1, @colour)
+      end
+      if board.valid_coord?(x-1, y+1)
+        moves << [x-1, y+1] if board.opponent_piece?(x-1, y+1, @colour)
+      end
+    else # must be a :black piece
+      # straight black moves
+      if first_move?
+        moves << [x+1, y] if board.valid_coord?(x+1, y) && board.empty_square?(x+1, y)
+        moves << [x+2, y] if board.valid_coord?(x+2, y) && board.empty_square?(x_2, y)
+      else
+        moves << [x+1, y] if board.valid_coord?(x+1, y) && board.empty_square?(x+1, y)
+      end
+      # diagonal black moves
+      if board.valid_coord?(x+1, y-1)
+        moves.push([x+1, y-1]) if board.opponent_piece?(x+1, y-1, @colour)
+      end
+      if board.valid_coord?(x+1, y+1)
+        moves.push([x+1, y+1]) if board.opponent_piece?(x+1, y+1, @colour)
+      end
+    end
+    moves
+    # if first_move? x2 moves forward - DONE
+    # else x1 square forward  - DONE
+    # cannot move backwards - DONE
+    # if reached_end_row #promote - 
+    # if first_move_double_step then set @passantable to true
+  end
+  
+  def promotable?(x, y)
+    (@colour == :white && x == 0) || (@colour == :black && x == 7) ? true : false
+  end
+  
 end

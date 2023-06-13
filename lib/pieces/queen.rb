@@ -39,9 +39,6 @@ class Queen < Piece
     left = Array.new(y, x).zip(0..y)
     right = Array.new(7-y, x).zip(y+1..7)
 
-    diagonal_moves = down_right + down_left + up_right + up_left
-    straight_moves = up + down + left + right
-
-    diagonal_moves + straight_moves
+    moves = down_right + down_left + up_right + up_left + up + down + left + right
   end
 end

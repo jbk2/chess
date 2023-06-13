@@ -1,4 +1,5 @@
 Dir[File.join(__dir__, 'pieces', '*.rb')].each { |file| require_relative file }
+require_relative '../lib/errors/input_errors'
 
 class Board
   attr_accessor :grid
@@ -23,13 +24,16 @@ class Board
     populate_kings
   end
 
-  def piece(x,y)
+  def piece(x, y)
     if (0..7).include?(x && y)
       grid[x][y]
     else
       raise InputError.new("#{x},#{y} is not a valid coordinate. Try again...")
-      # puts 'those coordinates were not in valid indexed 0-7 format'
     end
+  end
+
+  def empty_square?(x, y)
+    piece(x, y).nil? ? true : false
   end
   
   def square_colour(x,y)
@@ -68,6 +72,15 @@ class Board
     end
     puts "\n\n"
   end
+
+  def opponent_piece?(x, y, colour)
+    piece(x, y).nil? || piece(x, y).colour == colour ? false : true
+  end
+
+  def valid_coord?(x, y)
+    [x, y].all? { |e| (0..7).include?(e) } ? true : false
+  end
+
 
   private
   def build_colour_grid

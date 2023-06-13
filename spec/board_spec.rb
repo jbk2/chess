@@ -96,5 +96,37 @@ describe Board do
       expect(board.square_colour(0,0)).to eq(:white)
     end
   end
+
+  describe '#opponent_piece(x, y, colour)' do
+    it 'returns true when a different colour piece resides in given square' do
+      result = board.opponent_piece?(1, 0, :white)
+      expect(result).to be(true)
+    end
+    
+    it 'returns true when a different colour piece resides in given square' do
+      result = board.opponent_piece?(7, 7, :black)
+      expect(result).to be(true)
+    end
+    
+    it 'returns false when a different colour piece resides in given square' do
+      result = board.opponent_piece?(6, 0, :white)
+      expect(result).to be(false)
+    end
+    
+    it 'returns false when a different colour piece resides in given square' do
+      result = board.opponent_piece?(0, 4, :black)
+      expect(result).to be(false)
+    end
+  end
+
+  describe '#empty_square?(x, y)' do
+    it 'returns true if square is empty' do
+      expect(board.empty_square?(2,0)). to be(true)
+    end
+    
+    it 'returns false if square is occupied' do
+      expect(board.empty_square?(1,0)). to be(false)
+    end
+  end
   
 end
