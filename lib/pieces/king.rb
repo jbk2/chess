@@ -33,10 +33,10 @@ class King < Piece
     all_king_moves(board).include?(destination_square)
   end
 
-  def all_king_moves(board)
+  def all_king_moves
     moves = []
     moves.push([x+1, y+1], [x+1, y-1], [x-1, y+1], [x-1, y-1], [x-1, y], [x+1, y], [x, y-1], [x, y+1])
-    moves.delete_if { |move| !board.valid_coord?(move[0], move[1]) }
+    moves.delete_if { |move| !Board.valid_coord?(move[0], move[1]) }
     
 
     # Moves into check - NOT DONE

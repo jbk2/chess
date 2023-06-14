@@ -77,19 +77,27 @@ class Board
     piece(x, y).nil? || piece(x, y).colour == colour ? false : true
   end
 
-  def valid_coord?(x, y)
+  def self.valid_coord?(x, y)
     [x, y].all? { |e| (0..7).include?(e) } ? true : false
   end
 
   def find_pieces(type, colour)
     locations = []
-    colour
     grid.each_with_index do |row, row_index|
       row.each_with_index do |piece, column_index|
         if (piece.is_a?(Object.const_get(type.capitalize)) && piece.colour == colour)
           locations << [row_index, column_index] 
         end
       end
+    end
+    locations
+  end
+
+  def all_pieces(colour)
+    types = ['pawn', 'rook', 'knight', 'bishop', 'queen', 'king']
+    locations = []
+    types.each do |type|
+      find_pieces(type, colour).each { |coord| locations << coord }
     end
     locations
   end

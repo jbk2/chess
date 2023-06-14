@@ -138,11 +138,11 @@ describe Board do
   
   describe '#valid_coord(x, y)' do
     it 'returns true if index value on an 8x8 grid' do
-      expect(board.valid_coord?(2,0)). to be(true)
+      expect(Board.valid_coord?(2,0)). to be(true)
     end
     
     it 'returns false if index value not on an 8x8 grid' do
-      expect(board.valid_coord?(8, 3)). to be(false)
+      expect(Board.valid_coord?(8, 3)). to be(false)
     end
   end
     
@@ -177,4 +177,21 @@ describe Board do
       end
     end
   end
+
+  describe '#all_pieces(colour)' do
+    it 'returns all white pieces' do
+      result = board.all_pieces(:white)
+      pieces = [[6, 0], [6, 1], [6, 2], [6, 3], [6, 4], [6, 5], [6, 6], [6, 7], [7, 0], [7, 7],
+        [7, 1], [7, 6], [7, 2], [7, 5], [7, 3], [7, 4]]
+      expect(result).to eq(pieces)
+    end
+    
+    it 'returns all black pieces' do
+      result = board.all_pieces(:black)
+      pieces = [[1, 0], [1, 1], [1, 2], [1, 3], [1, 4], [1, 5], [1, 6], [1, 7], [0, 0], [0, 7],
+        [0, 1], [0, 6], [0, 2], [0, 5], [0, 3], [0, 4]]
+      expect(result).to eq(pieces)
+    end
+  end
+
 end

@@ -158,11 +158,24 @@ class Game
     # end
   end
 
-  def check?
+  def in_check?(player)
+    kings_location = board.find_pieces('king', player.colour)[0]
+    puts "kings location here #{kings_location}"
+    player.colour == :white ? opponent_colour = :black : opponent_colour = :white
+    opponent_pieces = board.all_pieces(opponent_colour)
+
+    opponent_pieces.each do |coord|
+      piece = board.piece(coord[0], coord[1])
+      all_moves_method_name = "all_#{piece.class.to_s.downcase}_moves"
+      if piece.class.to_s == 'Pawn'
+        return true if piece.send(all_moves_method_name, board).include?(kings_location)
+      else
+        return true if piece.send(all_moves_method_name).include?(kings_location)
+      end
+    end
+    false
     # could any opponent piece on their next move checkmate (move into king's position) the king?
     # call piece valid move on all opponent's pieces
-
-
   end
 
   # def checkmate?

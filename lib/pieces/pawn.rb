@@ -49,31 +49,31 @@ class Pawn < Piece
     if @colour == :white 
       # straight white moves
       if first_move?
-        moves << [x-1, y] if board.valid_coord?(x-1, y) && board.empty_square?(x-1, y)
-        moves << [x-2, y] if board.valid_coord?(x-2, y) && board.empty_square?(x-2, y)
+        moves << [x-1, y] if Board.valid_coord?(x-1, y) && board.empty_square?(x-1, y)
+        moves << [x-2, y] if Board.valid_coord?(x-2, y) && board.empty_square?(x-2, y)
       else
-        moves << [x-1, y] if board.valid_coord?(x-1, y) && board.empty_square?(x-1, y)
+        moves << [x-1, y] if Board.valid_coord?(x-1, y) && board.empty_square?(x-1, y)
       end
       # diagonal white moves
-      if board.valid_coord?(x-1, y-1)
+      if Board.valid_coord?(x-1, y-1)
         moves << [x-1, y-1] if board.opponent_piece?(x-1, y-1, @colour)
       end
-      if board.valid_coord?(x-1, y+1)
+      if Board.valid_coord?(x-1, y+1)
         moves << [x-1, y+1] if board.opponent_piece?(x-1, y+1, @colour)
       end
     else # must be a :black piece
       # straight black moves
       if first_move?
-        moves << [x+1, y] if board.valid_coord?(x+1, y) && board.empty_square?(x+1, y)
-        moves << [x+2, y] if board.valid_coord?(x+2, y) && board.empty_square?(x+2, y)
+        moves << [x+1, y] if Board.valid_coord?(x+1, y) && board.empty_square?(x+1, y)
+        moves << [x+2, y] if Board.valid_coord?(x+2, y) && board.empty_square?(x+2, y)
       else
-        moves << [x+1, y] if board.valid_coord?(x+1, y) && board.empty_square?(x+1, y)
+        moves << [x+1, y] if Board.valid_coord?(x+1, y) && board.empty_square?(x+1, y)
       end
       # diagonal black moves
-      if board.valid_coord?(x+1, y-1)
+      if Board.valid_coord?(x+1, y-1)
         moves.push([x+1, y-1]) if board.opponent_piece?(x+1, y-1, @colour)
       end
-      if board.valid_coord?(x+1, y+1)
+      if Board.valid_coord?(x+1, y+1)
         moves.push([x+1, y+1]) if board.opponent_piece?(x+1, y+1, @colour)
       end
     end

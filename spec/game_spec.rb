@@ -4,7 +4,7 @@ describe Game do
   let(:game) {Game.new}
   before do
     allow($stdin).to receive(:gets).and_return("John", "James")
-    allow($stdout).to receive(:write) # comment if debugging as this will stop pry output also 
+    # allow($stdout).to receive(:write) # comment if debugging as this will stop pry output also 
     allow_any_instance_of(Game).to receive(:sleep) # stubs any #sleep's for test running speed
   end
   
@@ -453,6 +453,63 @@ describe Game do
           result = game.send(:move_path_clear?, '6723')
           expect(result).to be(false)
         end
+      end
+    end
+  end
+
+  describe '#in_check?(player)' do
+    context 'when given player is not in check' do
+      it 'returns false' do
+        result = game.in_check?(game.active_player)
+        expect(result).to be(false)
+      end
+      
+      it 'returns false' do
+        game.board.grid[6][4] = nil
+        # game.board.grid[5][4] = Rook.new(:black, 5, 4)
+        game.board.grid[5][4] = Rook.new(:white, 5, 4)
+        result = game.in_check?(game.active_player)
+        expect(result).to be(false)
+      end
+    end
+    
+    context 'when given player is in check' do
+      it 'returns true' do
+        game.board.grid[6][4] = nil
+        game.board.grid[5][4] = Rook.new(:black, 5, 4)
+        result = game.in_check?(game.active_player)
+        expect(result).to be(true)
+      end
+      
+      it 'returns true' do
+        game.board.grid[6][4] = nil
+        game.board.grid[6][5] = nil
+        game.board.grid[4][7] = Bishop.new(:black, 4, 7)
+        result = game.in_check?(game.active_player)
+        expect(result).to be(true)
+      end
+      
+      it 'returns true' do
+        game.board.grid[7][4] = nil
+        game.board.grid[5][4] = King.new(:white, 5, 4)
+        game.board.grid[1][0] = Bishop.new(:black, 1, 0)
+        result = game.in_check?(game.active_player)
+        expect(result).to be(true)
+      end
+      
+      it 'returns true' do
+        game.board.grid[7][4] = nil
+        game.board.grid[5][4] = King.new(:white, 5, 4)
+        game.board.grid[4][3] = Pawn.new(:black, 4, 3)
+        result = game.in_check?(game.active_player)
+        expect(result).to be(true)
+      end
+      
+      it 'returns true' do
+        game.board.grid[1][3] = Pawn.new(:white, 1, 3)
+        game.send(:toggle_turn)
+        result = game.in_check?(game.active_player)
+        expect(result).to be(true)
       end
     end
   end
