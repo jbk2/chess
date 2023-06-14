@@ -1,7 +1,14 @@
 require_relative '../lib/board'
+require_relative '../lib/game'
 
 describe Board do
   let(:board) {Board.new}
+  # let(:game) {Game.new}
+  before do
+    allow($stdin).to receive(:gets).and_return("John", "James")
+    # allow($stdout).to receive(:write) # comment if debugging as this will stop pry output also 
+    allow_any_instance_of(Game).to receive(:sleep) # stubs any #sleep's for test running speed
+  end
   
   it 'has a grid with 8 rows' do
     row_count = board.grid.count
@@ -130,13 +137,44 @@ describe Board do
   end
   
   describe '#valid_coord(x, y)' do
-  it 'returns true if index value on an 8x8 grid' do
-    expect(board.valid_coord?(2,0)). to be(true)
+    it 'returns true if index value on an 8x8 grid' do
+      expect(board.valid_coord?(2,0)). to be(true)
+    end
+    
+    it 'returns false if index value not on an 8x8 grid' do
+      expect(board.valid_coord?(8, 3)). to be(false)
+    end
   end
-  
-  it 'returns false if index value not on an 8x8 grid' do
-    expect(board.valid_coord?(8, 3)). to be(false)
+    
+  describe '#find_pieces(type, colour)' do
+    context 'with white pieces' do
+      it 'returns the position of the king' do
+        game = Game.new
+        result = board.find_pieces('king', game.active_player.colour)
+        expect(result).to eq([[7, 4]])
+      end
+      
+      it 'returns the position of the rooks' do
+        game = Game.new
+        result = board.find_pieces('rook', game.active_player.colour)
+        expect(result).to eq([[7, 0], [7, 7]])
+      end
+    end
+    
+    context 'with black pieces' do
+      it 'returns the position of the king' do
+        game = Game.new
+        game.send(:toggle_turn)
+        result = board.find_pieces('king', game.active_player.colour)
+        expect(result).to eq([[0, 4]])
+      end
+      
+      it 'returns the position of the king for the given colour' do
+        game = Game.new
+        game.send(:toggle_turn)
+        result = board.find_pieces('pawn', game.active_player.colour)
+        expect(result).to eq([[1, 0], [1, 1], [1, 2], [1, 3], [1, 4], [1, 5], [1, 6], [1, 7]])
+      end
+    end
   end
-end
-  
 end

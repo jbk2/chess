@@ -81,6 +81,18 @@ class Board
     [x, y].all? { |e| (0..7).include?(e) } ? true : false
   end
 
+  def find_pieces(type, colour)
+    locations = []
+    colour
+    grid.each_with_index do |row, row_index|
+      row.each_with_index do |piece, column_index|
+        if (piece.is_a?(Object.const_get(type.capitalize)) && piece.colour == colour)
+          locations << [row_index, column_index] 
+        end
+      end
+    end
+    locations
+  end
 
   private
   def build_colour_grid

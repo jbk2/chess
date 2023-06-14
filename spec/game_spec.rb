@@ -321,4 +321,141 @@ describe Game do
   # end
   # describe 'is in check?' do
   # end
+
+  describe '#move_path_clear(move)' do
+    context 'when move path is clear' do
+      context 'with a neigbouring square move' do
+        it "returns true because move is a neighbouring square" do
+          result = game.send(:move_path_clear?, '2030')
+          expect(result).to be(true)
+        end
+      end
+      
+      context 'with a straight down move of 2 squares' do
+        it "returns true because there are no pieces inbetween" do
+          result = game.send(:move_path_clear?, '2040')
+          expect(result).to be(true)
+        end
+      end
+      
+      context 'with a straight up move of 3 squares' do
+        it "returns true because there's no pieces inbetween" do
+          result = game.send(:move_path_clear?, '6030')
+          expect(result).to be(true)
+        end
+      end
+      
+      context 'with a left move of 3 squares' do
+        it "returns true because there's no pieces inbetween" do
+          result = game.send(:move_path_clear?, '5350')
+          expect(result).to be(true)
+        end
+      end
+      
+      context 'with a right move of 4 squares' do
+        it "returns true because there's no pieces inbetween" do
+          result = game.send(:move_path_clear?, '5054')
+          expect(result).to be(true)
+        end
+      end
+      
+      context 'with a down right move of 3 squares' do
+        it "returns true because there's no pieces inbetween" do
+          result = game.send(:move_path_clear?, '2053')
+          expect(result).to be(true)
+        end
+      end
+      
+      context 'with a down left move of 4 squares' do
+        it "returns true because there's no pieces inbetween" do
+          result = game.send(:move_path_clear?, '1753')
+          expect(result).to be(true)
+        end
+      end
+      
+      context 'with up right move of 4 squares' do
+        it "returns true because there's no pieces inbetween" do
+          result = game.send(:move_path_clear?, '6226')
+          expect(result).to be(true)
+        end
+      end
+      
+      context 'with up left move of 4 squares' do
+        it "returns true because there's no pieces inbetween" do
+          result = game.send(:move_path_clear?, '6723')
+          expect(result).to be(true)
+        end
+      end
+    end
+    
+    context 'when move path is not clear' do
+      context 'with a straight down move of 2 squares' do
+        it "returns false because there's a piece inbetween" do
+          result = game.send(:move_path_clear?, '0020')
+          expect(result).to be(false)
+        end
+      end
+     
+      context 'with a straight up move of 3 squares' do
+        it "returns false because there's a piece inbetween" do
+          game.board.grid[5][0] = Pawn.new(:white, 5, 0)
+          result = game.send(:move_path_clear?, '7040')
+          expect(result).to be(false)
+        end
+      end
+      
+      context 'with a left move of 3 squares' do
+        it "returns false because there's a piece inbetween" do
+          result = game.send(:move_path_clear?, '6360')
+          expect(result).to be(false)
+        end
+      end
+      
+      context 'with a right move of 4 squares' do
+        it "returns false because there's a piece inbetween" do
+          result = game.send(:move_path_clear?, '7074')
+          expect(result).to be(false)
+        end
+      end
+
+      context 'with a down right move of 3 squares' do
+        it "returns false because there's pieces inbetween" do
+          game.board.grid[3][1] = Pawn.new(:white, 3, 1)
+          game.board.grid[4][2] = Pawn.new(:white, 4, 2)
+          result = game.send(:move_path_clear?, '2053')
+          expect(result).to be(false)
+        end
+      end
+
+      context 'with a down left move of 4 squares' do
+        it "returns false because there's pieces inbetween" do
+          game.board.grid[2][6] = Pawn.new(:white, 2, 6)
+          game.board.grid[4][4] = Pawn.new(:white, 4, 4)
+          result = game.send(:move_path_clear?, '1753')
+          expect(result).to be(false)
+        end
+      end
+
+      context 'with up right move of 4 squares' do
+        it "returns false because there's pieces inbetween" do
+          game.board.grid[4][4] = Pawn.new(:white, 4, 4)
+          game.board.grid[3][5] = Pawn.new(:white, 3, 5)
+          result = game.send(:move_path_clear?, '6226')
+          expect(result).to be(false)
+        end
+      end
+
+      context 'with up left move of 4 squares' do
+        it "returns false because there's pieces inbetween" do
+          game.board.grid[5][6] = Pawn.new(:white, 5, 6)
+          game.board.grid[4][5] = Pawn.new(:white, 4, 5)
+          game.board.grid[2][3] = Pawn.new(:white, 2, 3)
+          result = game.send(:move_path_clear?, '6723')
+          expect(result).to be(false)
+        end
+      end
+    end
+  end
+
+
 end

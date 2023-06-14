@@ -119,13 +119,10 @@ class Game
   end
 
   def game_valid_move(move)
-    # if #move_path_clear?
-    #   next
-    # else
-    #   #abort_move (except for knight) with GameRuleError,
-      # "This move's #{move} path is blocked, you cannot jump over pieces"
-    # end
-
+    unless board.piece(move[0], move[1]).is_a(Knight)
+      abort_move(move, "Your move's; #{chess_format(move)} path is not clear, try again.") unless move_path_clear?(move)
+    end
+    
     # if currently_in_check?
     #   move must result in !in_check?
     # else
@@ -161,9 +158,12 @@ class Game
     # end
   end
 
-  # def check?
-    # could any opponent piece on their next move checkmate the king?
-  # end
+  def check?
+    # could any opponent piece on their next move checkmate (move into king's position) the king?
+    # call piece valid move on all opponent's pieces
+
+
+  end
 
   # def checkmate?
     # an opponent's move takes your king
@@ -176,6 +176,39 @@ class Game
   
   
   private
+  def abort_move(move, message)
+    puts "#{message}"
+    moves.pop
+    get_move
+  end
+
+  def move_path_clear?(move)
+    src_x, src_y, dst_x, dst_y = move[0].to_i, move[1].to_i, move[2].to_i, move[3].to_i 
+    
+    neighbouring_squares = [[src_x+1, src_y+1], [src_x+1, src_y-1], [src_x-1, src_y-1], [src_x-1, src_y+1],
+    [src_x-1, src_y],[src_x+1, src_y],[src_x, src_y-1],[src_x, src_y+1]].delete_if {|sq| sq.any? {|e| e < 0 || e > 7}} 
+    return true if neighbouring_squares.include?([dst_x, dst_y])
+    
+    if src_x < dst_x && src_y == dst_y # down
+      (src_x+1...dst_x).each { |e| return false unless board.piece(e, src_y).nil? }
+    elsif src_x > dst_x && src_y == dst_y # up
+      (dst_x+1...src_x).each { |e| return false unless board.piece(e, src_y).nil? }
+    elsif src_x == dst_x && src_y > dst_y # left
+      (dst_y+1...src_y).each { |e| return false unless board.piece(src_x, e).nil? }
+    elsif src_x == dst_x && src_y < dst_y # right
+      (src_y+1...dst_y).each { |e| return false unless board.piece(src_x, e).nil? }
+    elsif src_x < dst_x && src_y < dst_y # down right
+      (src_x+1...dst_x).zip(src_y+1...dst_y).each { |e| return false unless board.piece(e[0], e[1]).nil? }
+    elsif src_x < dst_x && src_y > dst_y # down left
+      (src_x+1...dst_x).zip((dst_y+1...src_y).to_a.reverse).each { |e| return false unless board.piece(e[0], e[1]).nil? }
+    elsif src_x > dst_x && src_y < dst_y # up right
+      (dst_x+1...src_x).to_a.reverse.zip(src_y+1...dst_y).each { |e| return false unless board.piece(e[0], e[1]).nil? }
+    elsif src_x > dst_x && src_y > dst_y # up left
+      (dst_x+1...src_x).zip(dst_y+1...src_y).each { |e| return false unless board.piece(e[0], e[1]).nil?  }
+    end
+    return true
+  end
+
   def create_player1
     player1_name = get_input
     if player1_name == ''
@@ -196,15 +229,15 @@ class Game
     end
     @player2 = Player.new(player2_name)
   end
-
+  
   def random_colour
     [:white, :black].sample
   end
-
+  
   def true_move?(move)
     move[0..1] != move[2..3]
   end
-
+  
   def last_move
     moves.last
   end
@@ -220,7 +253,7 @@ class Game
     (return rescue_first_move_piece_error(move) unless pawn_or_knight_move?(indexed_move)) if active_player.first_move?
     add_move(indexed_move)
   end
-
+  
   def rescue_invalid_format_error(move)
     puts "your move; '#{CYAN}#{move}#{ANSI_END}' was not formated correctly, it shoud be formatted like; 'a1,a2', try again..."
     get_move
@@ -240,7 +273,7 @@ class Game
     puts "Your first move can only be a Pawn or a Knight, this '#{CYAN}#{move}#{ANSI_END}' was neither, try again..."
     get_move
   end
-
+  
   def rescue_against_this_piece_move_rules(moving_piece, move)
     puts "A #{CYAN}#{moving_piece.class}#{ANSI_END} is not allowed to make the move; '#{CYAN}#{chess_format(move)}#{ANSI_END}', try again..."
     board.display_board_utf
@@ -256,28 +289,28 @@ class Game
     get_move
     make_move
   end
-
+  
   def has_piece?(r, c)
     board.grid[r][c] ? true : false
   end
-
+  
   def player_start_move?
     active_player.first_move?
   end
-
+  
   def pawn_or_knight_move?(indexed_move)
     piece = board.piece(indexed_move[0].to_i, indexed_move[1].to_i)
     piece.is_a?(Pawn) || piece.is_a?(Knight)
   end
-
+  
   def toggle_turn
     active_player == player1 ? (self.active_player = player2) : (self.active_player = player1)
   end
-
+  
   def player1_name
     BLUE + player1.name.capitalize + ANSI_END
   end
-
+  
   def player2_name
     GREEN + player2.name.capitalize + ANSI_END
   end
@@ -285,23 +318,23 @@ class Game
   def white_player
     player1.colour == :white ? player1 : player2
   end
-
+  
   def black_player
     player1.colour == :black ? player1 : player2
   end
-
+  
   def white_player_name
     player1.colour == :white ? player1_name : player2_name
   end
-
+  
   def black_player_name
     player1.colour == :black ? player1_name : player2_name
   end
-
+  
   def active_player_name
     active_player == player1 ? player1_name : player2_name
   end
-
+  
   def yaml_data
     yaml_file = File.join(__dir__, "data.yml")
     data = YAML.load_file(yaml_file)
@@ -309,6 +342,36 @@ class Game
 end
 
 # ________ Old unused, but potentially helpful, methods _______________________
+
+# From #move_path_clear?:
+#  _______ CASE VERSION __________
+  # move_direction = :down if src_x < dst_x && src_y == dst_y
+  # move_direction = :up if src_x > dst_x && src_y == dst_y
+  # move_direction = :left if src_x == dst_x && src_y > dst_y
+  # move_direction = :right if src_x == dst_x && src_y < dst_y
+  # move_direction = :down_right if src_x < dst_x && src_y < dst_y
+  # move_direction = :down_left if src_x < dst_x && src_y > dst_y
+  # move_direction = :up_right if src_x > dst_x && src_y < dst_y
+  # move_direction = :up_left if src_x > dst_x && src_y > dst_y
+  # case move_direction
+  # when :down
+  #   (src_x+1...dst_x).each { |e| return false unless board.piece(e, src_y).nil? }
+  # when :up
+  #   (dst_x+1...src_x).each { |e| return false unless board.piece(e, src_y).nil? }
+  # when :left
+  #   (dst_y+1...src_y).each { |e| return false unless board.piece(src_x, e).nil? }
+  # when :right
+  #   (src_y+1...dst_y).each { |e| return false unless board.piece(src_x, e).nil? }
+  # when :down_right
+  #   (src_x+1...dst_x).zip(src_y+1...dst_y).each { |e| return false unless board.piece(e[0], e[1]).nil? }
+  # when :down_left
+  #   (src_x+1...dst_x).zip((dst_y+1...src_y).to_a.reverse).each { |e| return false unless board.piece(e[0], e[1]).nil? }
+  # when :up_right
+  #   (dst_x+1...src_x).to_a.reverse.zip(src_y+1...dst_y).each { |e| return false unless board.piece(e[0], e[1]).nil? }
+  # when :up_left
+  #   (dst_x+1...src_x).zip(dst_y+1...src_y).each { |e| return false unless board.piece(e[0], e[1]).nil?  }
+  # end
+  # ________________________________
 
 
 # ________ Rules ______________________________________________________________
