@@ -11,7 +11,7 @@ Dir[File.join(__dir__, 'pieces', '*.rb')].each { |file| require_relative file }
 class Game
   include UiModule
   attr_accessor :player1, :player2, :active_player, :active_user_move, :moves
-  attr_reader :board
+  attr_reader :board, :taken_pieces
 
   def initialize
     build_board
@@ -19,6 +19,7 @@ class Game
     assign_colour
     @active_player = white_player
     @moves = []
+    @taken_pieces = []
   end
 
   def build_board
@@ -90,7 +91,6 @@ class Game
     move_square = move[2] + move[3] # a 2 integer string
     move_square_occupant = board.grid[move[2].to_i][move[3].to_i] # either a Piece or nil
     
-    # binding.pry
     return rescue_against_this_piece_move_rules(moving_piece, move) unless moving_piece.piece_valid_move?(move, board)
     # return rescue_against_other_piece_move_rules unless moving_piece.game_valid_move?(game, move)
 
@@ -123,7 +123,14 @@ class Game
       abort_move(move, "Your move's; #{chess_format(move)} path is not clear, try again.") unless move_path_clear?(move)
     end
     
-    # if currently_in_check?
+    if in_check?(active_player)
+      place_move
+      if in_check?(active_player)
+        rollback_move
+        abort_move(move, "You're in check and your move #{chess_format(move)} did not move you out of check, try again.")
+      end
+      rollback_move
+    end
     #   move must result in !in_check?
     # else
     #   #abort_move
@@ -158,12 +165,31 @@ class Game
     # end
   end
 
+  def place_move(move)
+    src_x, src_y, dst_x, dst_y = move[0].to_i, move[1].to_i, move[2].to_i, move[3].to_i
+    dst_taken_piece = board.grid[dst_x][dst_y]
+    @taken_pieces << [dst_taken_piece, move] unless dst_taken_piece.nil?
+    board.grid[dst_x][dst_y] = board.grid[src_x][src_y]
+    board.grid[src_x][src_y] = nil
+    puts @taken_pieces.inspect
+  end
+
+  def rollback_move(move)
+    src_x, src_y, dst_x, dst_y = move[0].to_i, move[1].to_i, move[2].to_i, move[3].to_i
+    board.grid[src_x][src_y] = board.grid[dst_x][dst_y]
+    if @taken_pieces.last[1] == move # WARNING - there is the minimal possibility of a previous taken piece's move being the same as this move
+      board.grid[dst_x][dst_y] = @taken_pieces.last[0]
+      @taken_pieces.pop 
+    else
+      board.grid[dst_x][dst_y] = nil
+    end
+  end
+
   def in_check?(player)
     kings_location = board.find_pieces('king', player.colour)[0]
     puts "kings location here #{kings_location}"
     player.colour == :white ? opponent_colour = :black : opponent_colour = :white
     opponent_pieces = board.all_pieces(opponent_colour)
-
     opponent_pieces.each do |coord|
       piece = board.piece(coord[0], coord[1])
       all_moves_method_name = "all_#{piece.class.to_s.downcase}_moves"
@@ -174,8 +200,6 @@ class Game
       end
     end
     false
-    # could any opponent piece on their next move checkmate (move into king's position) the king?
-    # call piece valid move on all opponent's pieces
   end
 
   # def checkmate?

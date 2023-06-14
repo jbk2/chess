@@ -4,7 +4,7 @@ describe Game do
   let(:game) {Game.new}
   before do
     allow($stdin).to receive(:gets).and_return("John", "James")
-    # allow($stdout).to receive(:write) # comment if debugging as this will stop pry output also 
+    allow($stdout).to receive(:write) # comment if debugging as this will stop pry output also 
     allow_any_instance_of(Game).to receive(:sleep) # stubs any #sleep's for test running speed
   end
   
@@ -466,8 +466,14 @@ describe Game do
       
       it 'returns false' do
         game.board.grid[6][4] = nil
-        # game.board.grid[5][4] = Rook.new(:black, 5, 4)
         game.board.grid[5][4] = Rook.new(:white, 5, 4)
+        result = game.in_check?(game.active_player)
+        expect(result).to be(false)
+      end
+      
+      it 'returns false' do
+        game.send(:toggle_turn)
+        game.board.grid[1][4] = Pawn.new(:white, 1, 4)
         result = game.in_check?(game.active_player)
         expect(result).to be(false)
       end
@@ -514,5 +520,48 @@ describe Game do
     end
   end
 
+  describe '#place_move(move)' do
+    context 'with no piece taking' do
+      it 'moves piece from src to dst square' do
+        expect(game.board.grid[2][0]).to be_nil
+        game.place_move('1020')
+        expect(game.board.grid[2][0]).to be_a(Pawn)
+        expect(game.board.grid[1][0]).to be_nil
+      end
+    end
+    
+    context 'with piece taking' do
+      it 'moves piece from src to dst & taken piece into @taken_pieces with move record' do
+        move = '1020'
+        game.board.grid[2][0] = Rook.new(:white, 2, 0)
+        expect(game.board.grid[2][0]).to be_a(Rook)
+        expect(game.board.grid[1][0]).to be_a(Pawn)
+        game.place_move(move)
+        expect(game.board.grid[2][0]).to be_a(Pawn)
+        expect(game.board.grid[1][0]).to be_nil
+        expect(game.taken_pieces.last[0]).to be_a(Rook)
+        expect(game.taken_pieces.last[1]).to eq(move)
+      end
+    end
+  end
+
+  describe '#rollback_move(move)' do
+    context 'without a taken piece on last move' do
+      it 'reverses back the last move' do
+        move = '1020'
+        game.board.grid[2][0] = Rook.new(:white, 2, 0)
+        game.place_move(move)
+        expect(game.board.grid[2][0]).to be_a(Pawn)
+        expect(game.board.grid[1][0]).to be_nil
+        expect(game.taken_pieces.last[0]).to be_a(Rook)
+        expect(game.taken_pieces.last[1]).to eq(move)
+        game.rollback_move(move)
+        expect(game.board.grid[1][0]).to be_a(Pawn)
+        expect(game.board.grid[2][0]).to be_a(Rook)
+        expect(game.taken_pieces.last).to satisfy { |piece| piece.nil? || !piece.is_a?(Rook) }
+        expect(game.taken_pieces.last).to satisfy { |piece| piece.nil? || !piece.eq(move) }
+      end
+    end
+  end
 
 end
