@@ -37,6 +37,16 @@
   - reload from file
   - introduce Error classes for why a move cannot be made, e.g. off board, against piece's rules, other piece blocks you, wrong colour square?
 
+# #################### NEXT TODO'S ###############
+
+  # Must program each valid_piece_moves in each piece type to not just return all possible moves, 
+  # but only all possible moves that are valid for the current game status. Currently #in_check?
+  # validates king's check status based upon all possible piece moves for all pieces, so it asserts
+  # #in_check? true for other pieces moves that meet piece rules, but not current game context rules.
+
+
+  # Must validate that a givem move is on a piece of the same color as the active player
+
 
 ## Potential Refactorings
 
