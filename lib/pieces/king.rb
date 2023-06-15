@@ -37,11 +37,8 @@ class King < Piece
     moves = []
     moves.push([x+1, y+1], [x+1, y-1], [x-1, y+1], [x-1, y-1], [x-1, y], [x+1, y], [x, y-1], [x, y+1])
     moves.delete_if { |move| !Board.valid_coord?(move[0], move[1]) }
-    
-
     # Moves into check - NOT DONE
     # Castling - NOT DONE
-
   end
 
   def in_check?(x, y)

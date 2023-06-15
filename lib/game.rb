@@ -163,28 +163,37 @@ class Game
     # end
   end
 
-  def uncheck_possible(player)
-    if in_check(player)
-      players_king = board.find_pieces('king', player.colour)
-      all_kings_moves = players_king.all_king_moves
-      valid_moves = []
+  def king_move_to_uncheck_itself?(player)
+    if in_check?(player)
+      players_king = board.find_pieces('king', player.colour)[0]
+      puts "\n__ players king location from within #king_uncheck_itself...: #{players_king} *****_____"
+      all_kings_moves = board.piece(players_king[0], players_king[1]).all_king_moves
+      puts "\n********** all kings options:#{all_kings_moves.inspect} ************" 
+      valid_squares = []
       
       all_kings_moves.each do |move|
         square = board.grid[move[0]][move[1]]
-        valid_moves << square if square.nil? || (square.colour != player.colour)
+        valid_squares << move if square.nil? || (square.colour != player.colour)
       end
+      puts "\n___VALID options____ #{valid_squares.inspect} ________"
 
-      valid_moves.each do |move|
+      valid_squares.each do |square|
+        move = players_king[0].to_s + players_king[1].to_s + square[0].to_s + square[1].to_s
+        puts "\nvalid move from valid squares #each; #{move} ************"
         place_move(move)
-        uncheckable = true if !in_check?(player)
+        if !in_check?(player)
+          puts "  YAY KING NO LONGER IN CHECK"
+          uncheck_possible = true 
+          puts "uncheck_possible is set to #{uncheck_possible.inspect}"
+          rollback_move(move)
+          return true if uncheck_possible == true
+        end
         rollback_move(move)
-        return true if uncheckable
       end
       return false
     else
       puts '#{player.name} is not in check'
-    end
-    
+    end    
   end
 
   def place_move(move)
@@ -193,13 +202,13 @@ class Game
     @taken_pieces << [dst_taken_piece, move] unless dst_taken_piece.nil?
     board.grid[dst_x][dst_y] = board.grid[src_x][src_y]
     board.grid[src_x][src_y] = nil
-    puts @taken_pieces.inspect
+    puts "\nMove made, taken pieces from move are; #{@taken_pieces.inspect}"
   end
 
   def rollback_move(move)
     src_x, src_y, dst_x, dst_y = move[0].to_i, move[1].to_i, move[2].to_i, move[3].to_i
     board.grid[src_x][src_y] = board.grid[dst_x][dst_y]
-    if @taken_pieces.last[1] == move # WARNING - there is the minimal possibility of a previous taken piece's move being the same as this move
+    if @taken_pieces.last && @taken_pieces.last[1] == move # WARNING - there is the minimal possibility of a previous taken piece's move being the same as this move
       board.grid[dst_x][dst_y] = @taken_pieces.last[0]
       @taken_pieces.pop 
     else
@@ -209,16 +218,22 @@ class Game
 
   def in_check?(player)
     kings_location = board.find_pieces('king', player.colour)[0]
-    puts "kings location here #{kings_location}"
+    puts "kings location, from within #in_check?; #{kings_location}"
     player.colour == :white ? opponent_colour = :black : opponent_colour = :white
     opponent_pieces = board.all_pieces(opponent_colour)
     opponent_pieces.each do |coord|
       piece = board.piece(coord[0], coord[1])
       all_moves_method_name = "all_#{piece.class.to_s.downcase}_moves"
       if piece.class.to_s == 'Pawn'
-        return [piece, coord] if piece.send(all_moves_method_name, board).include?(kings_location)
+        if piece.send(all_moves_method_name, board).include?(kings_location)
+          puts "from #in_check? kings location IS in check by: \n Piece; #{piece} Location; #{coord}"
+          return [piece, coord] 
+        end
       else
-        return [piece, coord] if piece.send(all_moves_method_name).include?(kings_location)
+        if piece.send(all_moves_method_name).include?(kings_location)
+          puts "from #in_check? kings location IS in, other than Pawn piece, moves list, by: \n Piece; #{piece} Location; #{coord}"
+          return [piece, coord] 
+        end
       end
     end
     false
@@ -309,12 +324,18 @@ class Game
     return rescue_untrue_move_error(move) unless true_move?(move)
     indexed_move = index_format(move)
     return rescue_empty_square_error(move) unless has_piece?(indexed_move[0].to_i, indexed_move[1].to_i)
+    return rescue_unowned_piece_error(move) unless own_piece?(indexed_move)
     (return rescue_first_move_piece_error(move) unless pawn_or_knight_move?(indexed_move)) if active_player.first_move?
     add_move(indexed_move)
   end
   
   def rescue_invalid_format_error(move)
     puts "your move; '#{CYAN}#{move}#{ANSI_END}' was not formated correctly, it shoud be formatted like; 'a1,a2', try again..."
+    get_move
+  end
+  
+  def rescue_unowned_piece_error(move)
+    puts "your move; '#{CYAN}#{move}#{ANSI_END}' was not on your piece, try again..."
     get_move
   end
   
@@ -349,6 +370,12 @@ class Game
     make_move
   end
   
+  def own_piece?(indexed_move)
+    x, y = indexed_move[0].to_i, indexed_move[1].to_i
+    puts "#{board.piece(x, y).inspect}"
+    active_player.colour == board.piece(x, y).colour
+  end
+
   def has_piece?(r, c)
     board.grid[r][c] ? true : false
   end

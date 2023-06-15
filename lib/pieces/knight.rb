@@ -28,7 +28,15 @@ class Knight < Piece
   def piece_valid_move?(move, board)
     destination_square = [move[2].to_i,move[3].to_i]
     all_knight_moves.include?(destination_square)
+    # all_valid_knight_moves(board).include?(destination_square)
   end
+
+  # def all_valid_knight_moves(move, board)
+  #   all_moves = all_knight_moves
+  #   all_moves.delete_if do |move|
+  #     board.grid
+  #   end
+  # end
 
   def all_knight_moves
     moves = []
@@ -36,5 +44,7 @@ class Knight < Piece
     moves.delete_if { |move| move[0] < 0 || move[1] < 0}
     return moves
   end
+
+
 
 end
