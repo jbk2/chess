@@ -119,25 +119,23 @@ class Game
   end
 
   def game_valid_move(move)
+    # MOVE PATH CLEAR
     unless board.piece(move[0], move[1]).is_a(Knight)
       abort_move(move, "Your move's; #{chess_format(move)} path is not clear, try again.") unless move_path_clear?(move)
     end
-    
+    # IF IN CHECK, MOVE MUST REMOVE FROM CHECK
     if in_check?(active_player)
       place_move
       if in_check?(active_player)
         rollback_move
-        abort_move(move, "You're in check and your move #{chess_format(move)} did not move you out of check, try again.")
+        abort_move(move, "Your king's in check, your move #{chess_format(move)} did not move it out of check. Take checking piece, move king, or block path. Try again.")
       end
       rollback_move
     end
-    #   move must result in !in_check?
-    # else
-    #   #abort_move
-    # end
+
 
     # if move_creates_own_check?(move)
-    #   #abort_move with GameRuleError, "Move not allowes. This move would result in you being in check"
+    #   #abort_move with GameRuleError, "Move not allowed. This move would result in you being in check"
     # else
     #   next
     # end
@@ -148,7 +146,7 @@ class Game
     # if #destination_square_occupied?
       # if with_own_colour?
         # #abort_move with GameRuleError, 'Destination contains your own piece'
-      # else with_opponents_colur
+      # else with_opponents_colour
         # if opponent in checkmate? (does each player have a @checkmate = false, until #checkmate? is true then sets @checkmate?)
           # #place_move (delete_piece && move moving piece in)
           # call #finish_game
@@ -163,6 +161,30 @@ class Game
       # #movepiece(dest square) = (move moving piece in)
       # toggle active player & call #get_move
     # end
+  end
+
+  def uncheck_possible(player)
+    if in_check(player)
+      players_king = board.find_pieces('king', player.colour)
+      all_kings_moves = players_king.all_king_moves
+      valid_moves = []
+      
+      all_kings_moves.each do |move|
+        square = board.grid[move[0]][move[1]]
+        valid_moves << square if square.nil? || (square.colour != player.colour)
+      end
+
+      valid_moves.each do |move|
+        place_move(move)
+        uncheckable = true if !in_check?(player)
+        rollback_move(move)
+        return true if uncheckable
+      end
+      return false
+    else
+      puts '#{player.name} is not in check'
+    end
+    
   end
 
   def place_move(move)
@@ -194,16 +216,16 @@ class Game
       piece = board.piece(coord[0], coord[1])
       all_moves_method_name = "all_#{piece.class.to_s.downcase}_moves"
       if piece.class.to_s == 'Pawn'
-        return true if piece.send(all_moves_method_name, board).include?(kings_location)
+        return [piece, coord] if piece.send(all_moves_method_name, board).include?(kings_location)
       else
-        return true if piece.send(all_moves_method_name).include?(kings_location)
+        return [piece, coord] if piece.send(all_moves_method_name).include?(kings_location)
       end
     end
     false
   end
 
   # def checkmate?
-    # an opponent's move takes your king
+    # no legal move that a king can make gets it out of check
   # end
 
   # def stalemate?

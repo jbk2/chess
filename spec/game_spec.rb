@@ -484,7 +484,8 @@ describe Game do
         game.board.grid[6][4] = nil
         game.board.grid[5][4] = Rook.new(:black, 5, 4)
         result = game.in_check?(game.active_player)
-        expect(result).to be(true)
+        expect(result[0]).to be_a(Rook)
+        expect(result[1]).to eq([5, 4])
       end
       
       it 'returns true' do
@@ -492,7 +493,8 @@ describe Game do
         game.board.grid[6][5] = nil
         game.board.grid[4][7] = Bishop.new(:black, 4, 7)
         result = game.in_check?(game.active_player)
-        expect(result).to be(true)
+        expect(result[0]).to be_a(Bishop)
+        expect(result[1]).to eq([4, 7])
       end
       
       it 'returns true' do
@@ -500,7 +502,8 @@ describe Game do
         game.board.grid[5][4] = King.new(:white, 5, 4)
         game.board.grid[1][0] = Bishop.new(:black, 1, 0)
         result = game.in_check?(game.active_player)
-        expect(result).to be(true)
+        expect(result[0]).to be_a(Bishop)
+        expect(result[1]).to eq([1, 0])
       end
       
       it 'returns true' do
@@ -508,14 +511,16 @@ describe Game do
         game.board.grid[5][4] = King.new(:white, 5, 4)
         game.board.grid[4][3] = Pawn.new(:black, 4, 3)
         result = game.in_check?(game.active_player)
-        expect(result).to be(true)
+        expect(result[0]).to be_a(Pawn)
+        expect(result[1]).to eq([4, 3])
       end
       
       it 'returns true' do
         game.board.grid[1][3] = Pawn.new(:white, 1, 3)
         game.send(:toggle_turn)
         result = game.in_check?(game.active_player)
-        expect(result).to be(true)
+        expect(result[0]).to be_a(Pawn)
+        expect(result[1]).to eq([1, 3])
       end
     end
   end
@@ -563,5 +568,14 @@ describe Game do
       end
     end
   end
+
+  # describe '#uncheck_possible(player)' do
+  #   context 'when possible' do
+  #     it 'returns true' do
+  #       game.board.grid[2][0] = Rook.new(:white, 2, 0)
+
+  #     end
+  #   end
+  # end
 
 end
