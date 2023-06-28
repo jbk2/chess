@@ -43,7 +43,7 @@ class Pawn < Piece
     all_pawn_moves(board).include?(destination_square)
   end
 
-
+# implements diagonal taking move logic & 1st move 2 square logic.
   def all_pawn_moves(board)
     moves = []
     if @colour == :white 
@@ -81,8 +81,8 @@ class Pawn < Piece
     # if first_move? x2 moves forward - DONE
     # else x1 square forward  - DONE
     # cannot move backwards - DONE
-    # if reached_end_row #promote - 
-    # if first_move_double_step then set @passantable to true
+    # if reached_end_row #promote - NOT DONE
+    # if first_move_double_step then set @passantable to true NOT DONE
   end
   
   def promotable?(x, y)

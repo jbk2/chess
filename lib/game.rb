@@ -165,9 +165,9 @@ class Game
 
   def king_move_to_uncheck_itself?(player)
     if in_check?(player)
-      players_king = board.find_pieces('king', player.colour)[0]
-      puts "\n__ players king location from within #king_uncheck_itself...: #{players_king} *****_____"
-      all_kings_moves = board.piece(players_king[0], players_king[1]).all_king_moves
+      players_king_location = board.find_pieces('king', player.colour)[0]
+      puts "\n__ players king location from within #king_uncheck_itself...: #{players_king_location} *****_____"
+      all_kings_moves = board.piece(players_king_location[0], players_king_location[1]).all_king_moves
       puts "\n********** all kings options:#{all_kings_moves.inspect} ************" 
       valid_squares = []
       
@@ -178,8 +178,8 @@ class Game
       puts "\n___VALID options____ #{valid_squares.inspect} ________"
 
       valid_squares.each do |square|
-        move = players_king[0].to_s + players_king[1].to_s + square[0].to_s + square[1].to_s
-        puts "\nvalid move from valid squares #each; #{move} ************"
+        move = players_king_location[0].to_s + players_king_location[1].to_s + square[0].to_s + square[1].to_s
+        puts "\nValid move from valid squares #each; #{move} ************"
         place_move(move)
         if !in_check?(player)
           puts "  YAY KING NO LONGER IN CHECK"
@@ -217,8 +217,8 @@ class Game
   end
 
   def in_check?(player)
-    kings_location = board.find_pieces('king', player.colour)[0]
-    puts "kings location, from within #in_check?; #{kings_location}"
+    kings_location = board.find_pieces('king', player.colour)[0] # change the [0] to first as it'll read easier
+    puts "#{player.name}'s (#{player.colour} player) king's location, from within #in_check? is; #{kings_location}"
     player.colour == :white ? opponent_colour = :black : opponent_colour = :white
     opponent_pieces = board.all_pieces(opponent_colour)
     opponent_pieces.each do |coord|
@@ -231,7 +231,7 @@ class Game
         end
       else
         if piece.send(all_moves_method_name).include?(kings_location)
-          puts "from #in_check? kings location IS in, other than Pawn piece, moves list, by: \n Piece; #{piece} Location; #{coord}"
+          puts "from #in_check? kings location IS in opponents next move options (except Pawn): \n Piece; #{piece} Location; #{coord}"
           return [piece, coord] 
         end
       end

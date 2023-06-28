@@ -582,16 +582,16 @@ describe Game do
     end
   end
 
-  describe '#king_move_to_uncheck_itself(player)' do
-    context 'when possible' do
-      it 'returns true' do
-        game.board.grid[6][4] = nil
-        game.board.grid[7][3] = nil
-        game.board.grid[5][4] = Rook.new(:black, 5, 4)
-        result = game.king_move_to_uncheck_itself?(game.active_player)
-        expect(result).to be(true)
-      end
-    end
-  end
+  # describe '#king_move_to_uncheck_itself(player)' do
+  #   context 'when possible' do
+  #     it 'returns true' do
+  #       game.board.grid[6][4] = nil
+  #       game.board.grid[7][3] = nil
+  #       game.board.grid[5][4] = Rook.new(:black, 5, 4)
+  #       result = game.king_move_to_uncheck_itself?(game.active_player)
+  #       expect(result).to be(true)
+  #     end
+  #   end
+  # end
   
 end

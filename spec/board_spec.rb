@@ -104,7 +104,7 @@ describe Board do
     end
   end
 
-  describe '#opponent_piece(x, y, colour)' do
+  describe '#opponent_piece?(x, y, colour)' do
     it 'returns true when a different colour piece resides in given square' do
       result = board.opponent_piece?(1, 0, :white)
       expect(result).to be(true)

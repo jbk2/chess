@@ -45,7 +45,7 @@
   # #in_check? true for other pieces moves that meet piece rules, but not current game context rules.
 
 
-  # Must validate that a givem move is on a piece of the same color as the active player
+  # Must validate that a given move is on a piece of the same color as the active player
 
 
 ## Potential Refactorings
@@ -55,4 +55,6 @@
 - there's the concept of a move ('a1,b1', formatted into index '0111'), which is saved on the players @ moves. The Piece also has its own x and y variables, and the board.grid also hosts the pice objects in it;s x and y location. Can we eliminate the piece's x and y, and just use the board.grids locations, does a piece need to know its own location?
 - Perhaps instead of individual piece classes inheriting from the Piece class I can turn that Piece class into a module and just extend it to all individual piece type classes?
 _ Two types of errors are currently used, custom written methods e.g. in get_move and a custom InputError class as used in add_move and board#piece. Unify this into one error handling strategy.
+- Use Struct objects to create x & y named variables for square values instead of keeping referring to array indexes.
+
 
