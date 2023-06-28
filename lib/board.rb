@@ -24,20 +24,20 @@ class Board
     populate_kings
   end
 
-  def piece(x, y)
-    if (0..7).include?(x && y)
-      grid[x][y]
+  def piece(r, c)
+    if (0..7).include?(r && c)
+      grid[r][c]
     else
-      raise InputError.new("#{x},#{y} is not a valid coordinate. Try again...")
+      raise InputError.new("#{r},#{c} is not a valid coordinate. Try again...")
     end
   end
 
-  def empty_square?(x, y)
-    piece(x, y).nil? ? true : false
+  def empty_square?(r, c)
+    piece(r, c).nil? ? true : false
   end
   
-  def square_colour(x,y)
-    colour_grid[x][y]
+  def square_colour(r, c)
+    colour_grid[r][c]
   end
   
   def display_colour_grid_utf
@@ -73,12 +73,12 @@ class Board
     puts "\n\n"
   end
 
-  def opponent_piece?(x, y, colour)
-    piece(x, y).nil? || piece(x, y).colour == colour ? false : true
+  def opponent_piece?(r, c, colour)
+    piece(r, c).nil? || piece(r, c).colour == colour ? false : true
   end
 
-  def self.valid_coord?(x, y)
-    [x, y].all? { |e| (0..7).include?(e) } ? true : false
+  def self.valid_coord?(r, c)
+    [r, c].all? { |e| (0..7).include?(e) } ? true : false
   end
 
   def find_pieces(type, colour)

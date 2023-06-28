@@ -3,11 +3,11 @@ require_relative '../lib/board'
 
 describe Pawn do
   describe "a pawn's instantiation" do
-    it 'sets and makes readable colour, x, y and first_movevariables' do
+    it 'sets and makes readable colour, r, c and first_movevariables' do
       white_pawn = Pawn.new(:white, 6,0)
       pawns_colour = white_pawn.colour
-      pawns_x_coor = white_pawn.x
-      pawns_y_coor = white_pawn.y
+      pawns_x_coor = white_pawn.r
+      pawns_y_coor = white_pawn.c
       pawns_first_move = white_pawn.first_move?
       expect(pawns_colour).to equal(:white)
       expect(pawns_x_coor).to equal(6)

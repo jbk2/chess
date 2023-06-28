@@ -2,11 +2,11 @@ require_relative '../lib/pieces/knight'
 
 describe Knight do
   describe "a knight's instantiation" do
-    it 'sets and makes readable colour, x, y and first_movevariables' do
+    it 'sets and makes readable colour, r, c and first_movevariables' do
       white_knight = Knight.new(:white, 3,3)
       knights_colour = white_knight.colour
-      knights_x_coor = white_knight.x
-      knights_y_coor = white_knight.y
+      knights_x_coor = white_knight.r
+      knights_y_coor = white_knight.c
       knights_first_move = white_knight.first_move?
       expect(knights_colour).to equal(:white)
       expect(knights_x_coor).to equal(3)

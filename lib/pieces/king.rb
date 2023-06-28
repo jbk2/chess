@@ -8,16 +8,16 @@ require_relative 'piece'
 
 class King < Piece
   attr_writer :first_move
-  attr_accessor :colour, :x, :y
+  attr_accessor :colour, :r, :c
   attr_reader :black_char, :white_char
   
   BLACK_CHAR = "\u265A"
   WHITE_CHAR = "\u2654"
 
 
-  def initialize(colour, x, y)
+  def initialize(colour, r, c)
     @first_move = true
-    super(colour, x, y)
+    super(colour, r, c)
   end
 
   def first_move?
@@ -35,13 +35,13 @@ class King < Piece
 
   def all_king_moves
     moves = []
-    moves.push([x+1, y+1], [x+1, y-1], [x-1, y+1], [x-1, y-1], [x-1, y], [x+1, y], [x, y-1], [x, y+1])
+    moves.push([r+1, c+1], [r+1, c-1], [r-1, c+1], [r-1, c-1], [r-1, c], [r+1, c], [r, c-1], [r, c+1])
     moves.delete_if { |move| !Board.valid_coord?(move[0], move[1]) }
     # Moves into check - NOT DONE
     # Castling - NOT DONE
   end
 
-  def in_check?(x, y)
+  def in_check?(r, c)
     # does this position appear in the #valid_moves of any of opponent's pieces next moves?
   end
 

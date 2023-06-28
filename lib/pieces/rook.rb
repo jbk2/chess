@@ -9,14 +9,14 @@ require_relative 'piece'
 class Rook < Piece
   attr_writer :first_move
   attr_reader :black_char, :white_char
-  attr_accessor :colour, :x, :y
+  attr_accessor :colour, :r, :c
 
   BLACK_CHAR = "\u265C"
   WHITE_CHAR = "\u2656"
 
-  def initialize(colour, x, y)
+  def initialize(colour, r, c)
     @first_move = true
-    super(colour, x, y)
+    super(colour, r, c)
   end
 
   def first_move?
@@ -33,7 +33,7 @@ class Rook < Piece
   end
 
   def all_rook_moves
-    moves = ([x]*8).zip(0..7) + (0..7).zip([y]*8) - [[x ,y]]
+    moves = ([r]*8).zip(0..7) + (0..7).zip([c]*8) - [[r ,c]]
   end
 
 end

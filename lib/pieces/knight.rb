@@ -7,14 +7,14 @@ require_relative '../board'
 class Knight < Piece
   attr_writer :first_move
   attr_reader :black_char, :white_char
-  attr_accessor :colour, :x, :y
+  attr_accessor :colour, :r, :c
 
   BLACK_CHAR = "\u265E"
   WHITE_CHAR = "\u2658"
 
-  def initialize(colour, x, y)
+  def initialize(colour, r, c)
     @first_move = true
-    super(colour, x, y)
+    super(colour, r, c)
   end
 
   def first_move?
@@ -40,11 +40,9 @@ class Knight < Piece
 
   def all_knight_moves
     moves = []
-    moves.push([x+2, y+1],[x+2, y-1],[x-2, y+1],[x-2, y-1],[x+1, y+2],[x-1, y+2],[x+1, y-2],[x-1, y-2])
+    moves.push([r+2, c+1],[r+2, c-1],[r-2, c+1],[r-2, c-1],[r+1, c+2],[r-1, c+2],[r+1, c-2],[r-1, c-2])
     moves.delete_if { |move| move[0] < 0 || move[1] < 0}
     return moves
   end
-
-
-
+  
 end

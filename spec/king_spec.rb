@@ -3,11 +3,11 @@ require_relative '../lib/board'
 
 describe King do
   describe "a king's instantiation" do
-    it 'sets and makes readable colour, x, y and first_movevariables' do
+    it 'sets and makes readable colour, r, c and first_movevariables' do
       white_king = King.new(:white, 0,4)
       kings_colour = white_king.colour
-      kings_x_coor = white_king.x
-      kings_y_coor = white_king.y
+      kings_x_coor = white_king.r
+      kings_y_coor = white_king.c
       kings_first_move = white_king.first_move?
       expect(kings_colour).to equal(:white)
       expect(kings_x_coor).to equal(0)

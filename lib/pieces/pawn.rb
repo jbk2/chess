@@ -16,14 +16,14 @@ require_relative 'piece'
 class Pawn < Piece
   attr_writer :first_move
   attr_reader :black_char, :white_char
-  attr_accessor :colour, :x, :y
+  attr_accessor :colour, :r, :c
 
  BLACK_CHAR = "\u265F"
  WHITE_CHAR = "\u2659"
 
-  def initialize(colour, x, y)
+  def initialize(colour, r, c)
     @first_move = true
-    super(colour, x, y)
+    super(colour, r, c)
   end
 
   def first_move?
@@ -49,32 +49,32 @@ class Pawn < Piece
     if @colour == :white 
       # straight white moves
       if first_move?
-        moves << [x-1, y] if Board.valid_coord?(x-1, y) && board.empty_square?(x-1, y)
-        moves << [x-2, y] if Board.valid_coord?(x-2, y) && board.empty_square?(x-2, y)
+        moves << [r-1, c] if Board.valid_coord?(r-1, c) && board.empty_square?(r-1, c)
+        moves << [r-2, c] if Board.valid_coord?(r-2, c) && board.empty_square?(r-2, c)
       else
-        moves << [x-1, y] if Board.valid_coord?(x-1, y) && board.empty_square?(x-1, y)
+        moves << [r-1, c] if Board.valid_coord?(r-1, c) && board.empty_square?(r-1, c)
       end
       # diagonal white moves
-      if Board.valid_coord?(x-1, y-1)
-        moves << [x-1, y-1] if board.opponent_piece?(x-1, y-1, @colour)
+      if Board.valid_coord?(r-1, c-1)
+        moves << [r-1, c-1] if board.opponent_piece?(r-1, c-1, @colour)
       end
-      if Board.valid_coord?(x-1, y+1)
-        moves << [x-1, y+1] if board.opponent_piece?(x-1, y+1, @colour)
+      if Board.valid_coord?(r-1, c+1)
+        moves << [r-1, c+1] if board.opponent_piece?(r-1, c+1, @colour)
       end
     else # must be a :black piece
       # straight black moves
       if first_move?
-        moves << [x+1, y] if Board.valid_coord?(x+1, y) && board.empty_square?(x+1, y)
-        moves << [x+2, y] if Board.valid_coord?(x+2, y) && board.empty_square?(x+2, y)
+        moves << [r+1, c] if Board.valid_coord?(r+1, c) && board.empty_square?(r+1, c)
+        moves << [r+2, c] if Board.valid_coord?(r+2, c) && board.empty_square?(r+2, c)
       else
-        moves << [x+1, y] if Board.valid_coord?(x+1, y) && board.empty_square?(x+1, y)
+        moves << [r+1, c] if Board.valid_coord?(r+1, c) && board.empty_square?(r+1, c)
       end
       # diagonal black moves
-      if Board.valid_coord?(x+1, y-1)
-        moves.push([x+1, y-1]) if board.opponent_piece?(x+1, y-1, @colour)
+      if Board.valid_coord?(r+1, c-1)
+        moves.push([r+1, c-1]) if board.opponent_piece?(r+1, c-1, @colour)
       end
-      if Board.valid_coord?(x+1, y+1)
-        moves.push([x+1, y+1]) if board.opponent_piece?(x+1, y+1, @colour)
+      if Board.valid_coord?(r+1, c+1)
+        moves.push([r+1, c+1]) if board.opponent_piece?(r+1, c+1, @colour)
       end
     end
     moves
@@ -85,8 +85,8 @@ class Pawn < Piece
     # if first_move_double_step then set @passantable to true NOT DONE
   end
   
-  def promotable?(x, y)
-    (@colour == :white && x == 0) || (@colour == :black && x == 7) ? true : false
+  def promotable?(r, c)
+    (@colour == :white && r == 0) || (@colour == :black && r == 7) ? true : false
   end
   
 end

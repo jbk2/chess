@@ -6,15 +6,15 @@ require_relative 'piece'
 
 class Bishop < Piece
   attr_writer :first_move
-  attr_accessor :colour, :x, :y
+  attr_accessor :colour, :r, :c
   attr_reader :black_char, :white_char
 
   BLACK_CHAR = "\u265D"
   WHITE_CHAR = "\u2657"
 
-  def initialize(colour, x, y)
+  def initialize(colour, r, c)
     @first_move = true
-    super(colour, x, y)
+    super(colour, r, c)
   end
 
   def first_move?
@@ -31,10 +31,10 @@ class Bishop < Piece
   end
 
   def all_bishop_moves
-    down_right_diag = (x+1..7).zip(y+1..7).delete_if { |e| e.include?(nil) }
-    down_left_diag = (x+1..7).zip((0..y-1).to_a.reverse).delete_if {|e| e.include?(nil) }
-    up_right_diag = ((0..x-1).to_a.reverse).zip(y+1..7).delete_if { |e| e.include?(nil) }
-    up_left_diag = ((0..x-1).to_a.reverse).zip((0..y-1).to_a.reverse).delete_if { |e| e.include?(nil) }
+    down_right_diag = (r+1..7).zip(c+1..7).delete_if { |e| e.include?(nil) }
+    down_left_diag = (r+1..7).zip((0..c-1).to_a.reverse).delete_if {|e| e.include?(nil) }
+    up_right_diag = ((0..r-1).to_a.reverse).zip(c+1..7).delete_if { |e| e.include?(nil) }
+    up_left_diag = ((0..r-1).to_a.reverse).zip((0..c-1).to_a.reverse).delete_if { |e| e.include?(nil) }
     moves = down_right_diag + down_left_diag + up_right_diag + up_left_diag
   end
 end

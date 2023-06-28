@@ -6,7 +6,7 @@ describe Board do
   # let(:game) {Game.new}
   before do
     allow($stdin).to receive(:gets).and_return("John", "James")
-    # allow($stdout).to receive(:write) # comment if debugging as this will stop pry output also 
+    allow($stdout).to receive(:write) # comment if debugging as this will stop pry output also 
     allow_any_instance_of(Game).to receive(:sleep) # stubs any #sleep's for test running speed
   end
   
@@ -75,10 +75,10 @@ describe Board do
         expect(piece).to be_instance_of(Pawn)
       end
       
-      it "the returned piece's x and y values match the grid position looked up" do
+      it "the returned piece's r and c values match the grid position looked up" do
         piece = board.piece(1,0)
-        expect(piece.x).to eq(1)
-        expect(piece.y).to eq(0)
+        expect(piece.r).to eq(1)
+        expect(piece.c).to eq(0)
       end
     end
 
@@ -104,7 +104,7 @@ describe Board do
     end
   end
 
-  describe '#opponent_piece?(x, y, colour)' do
+  describe '#opponent_piece?(r, c, colour)' do
     it 'returns true when a different colour piece resides in given square' do
       result = board.opponent_piece?(1, 0, :white)
       expect(result).to be(true)
@@ -126,7 +126,7 @@ describe Board do
     end
   end
 
-  describe '#empty_square?(x, y)' do
+  describe '#empty_square?(r, c)' do
     it 'returns true if square is empty' do
       expect(board.empty_square?(2,0)). to be(true)
     end
@@ -136,7 +136,7 @@ describe Board do
     end
   end
   
-  describe '#valid_coord(x, y)' do
+  describe '#valid_coord(r, c)' do
     it 'returns true if index value on an 8x8 grid' do
       expect(Board.valid_coord?(2,0)). to be(true)
     end

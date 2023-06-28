@@ -2,12 +2,12 @@ require 'pry-byebug'
 
 class Piece
 
-  attr_reader :colour, :x, :y
+  attr_reader :colour, :r, :c
 
-  def initialize(colour, x, y)
+  def initialize(colour, r, c)
     @colour = colour
-    @x = x
-    @y = y
+    @r = r
+    @c = c
   end
 
   def uni_char
