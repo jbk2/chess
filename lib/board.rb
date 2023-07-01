@@ -73,8 +73,12 @@ class Board
     puts "\n\n"
   end
 
-  def opponent_piece?(r, c, colour)
-    piece(r, c).nil? || piece(r, c).colour == colour ? false : true
+  def opponent_piece?(r, c, self_colour)
+    piece(r, c).nil? || piece(r, c).colour == self_colour ? false : true
+  end
+
+  def own_piece?(r, c, self_colour)
+    piece(r, c).colour == self_colour ? true : false
   end
 
   def self.valid_coord?(r, c)

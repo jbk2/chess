@@ -4,7 +4,7 @@ describe Game do
   let(:game) {Game.new}
   before do
     allow($stdin).to receive(:gets).and_return("John", "James")
-    allow($stdout).to receive(:write) # comment if debugging as this will stop pry output also 
+    # allow($stdout).to receive(:write) # comment if debugging as this will stop pry output also 
     allow_any_instance_of(Game).to receive(:sleep) # stubs any #sleep's for test running speed
   end
   
@@ -78,11 +78,8 @@ describe Game do
     let(:active_player) { double(Player) }
     
     context 'when move is valid' do
-      before do
-        allow(game).to receive(:get_input).and_return('7a,6a') # Pawn
-      end
-      
       it "saves the move in the Game @moves array" do
+        allow(game).to receive(:get_input).and_return('7a,6a') # Pawn
         allow(game).to receive(:moves).and_return(['6050'])
         expect(game).to receive(:add_move).with('6050').once #Pawn
         expect(game.moves.last).to eq('6050')
@@ -470,86 +467,103 @@ describe Game do
     end
   end
 
-  describe '#in_check?(player)' do
+  describe '#in_check(player)' do
     context 'when given player is not in check' do
       it 'returns false' do
-        result = game.in_check?(game.active_player)
+        result = game.in_check(game.active_player)
         expect(result).to be(false)
       end
       
       it 'returns false' do
         game.board.grid[6][4] = nil
         game.board.grid[5][4] = Rook.new(:white, 5, 4)
-        result = game.in_check?(game.active_player)
+        result = game.in_check(game.active_player)
         expect(result).to be(false)
       end
       
       it 'returns false' do
         game.send(:toggle_turn)
         game.board.grid[1][4] = Pawn.new(:white, 1, 4)
-        result = game.in_check?(game.active_player)
+        result = game.in_check(game.active_player)
         expect(result).to be(false)
       end
     end
     
     context 'when given player is in check' do
-      it 'returns true' do
+      it 'returns the checking piece' do
         game.board.grid[6][4] = nil
         game.board.grid[5][4] = Rook.new(:black, 5, 4)
-        result = game.in_check?(game.active_player)
-        expect(result[0]).to be_a(Rook)
-        expect(result[1]).to eq([5, 4])
+        result = game.in_check(game.active_player)
+        expect(result[0][0]).to be_a(Rook)
+        expect(result[0][1]).to eq([5, 4])
       end
       
-      it 'returns true' do
+      it 'returns the checking piece' do
         game.board.grid[6][4] = nil
         game.board.grid[6][5] = nil
         game.board.grid[4][7] = Bishop.new(:black, 4, 7)
-        result = game.in_check?(game.active_player)
-        expect(result[0]).to be_a(Bishop)
-        expect(result[1]).to eq([4, 7])
+        result = game.in_check(game.active_player)
+        expect(result[0][0]).to be_a(Bishop)
+        expect(result[0][1]).to eq([4, 7])
       end
       
-      it 'returns true' do
+      it 'returns the checking piece' do
         game.board.grid[7][4] = nil
         game.board.grid[5][4] = King.new(:white, 5, 4)
         game.board.grid[1][0] = Bishop.new(:black, 1, 0)
-        result = game.in_check?(game.active_player)
-        expect(result[0]).to be_a(Bishop)
-        expect(result[1]).to eq([1, 0])
+        result = game.in_check(game.active_player)
+        expect(result[0][0]).to be_a(Bishop)
+        expect(result[0][1]).to eq([1, 0])
       end
       
-      it 'returns true' do
+      it 'returns the checking piece' do
         game.board.grid[7][4] = nil
         game.board.grid[5][4] = King.new(:white, 5, 4)
         game.board.grid[4][3] = Pawn.new(:black, 4, 3)
-        result = game.in_check?(game.active_player)
-        expect(result[0]).to be_a(Pawn)
-        expect(result[1]).to eq([4, 3])
+        result = game.in_check(game.active_player)
+        expect(result[0][0]).to be_a(Pawn)
+        expect(result[0][1]).to eq([4, 3])
       end
       
-      it 'returns true' do
+      it 'returns the checking piece' do
         game.board.grid[1][3] = Pawn.new(:white, 1, 3)
         game.send(:toggle_turn)
-        result = game.in_check?(game.active_player)
-        expect(result[0]).to be_a(Pawn)
-        expect(result[1]).to eq([1, 3])
+        result = game.in_check(game.active_player)
+        expect(result[0][0]).to be_a(Pawn)
+        expect(result[0][1]).to eq([1, 3])
+      end
+    end
+
+    context 'when given player is in check from two pieces' do
+      it 'returns the two checking pieces' do
+        game.board.grid[6][4] = nil
+        game.board.grid[5][4] = Rook.new(:black, 5, 4)
+        game.board.grid[6][6] = Knight.new(:black, 6, 6)
+        result = game.in_check(game.active_player)
+        expect(result.length).to equal(2)
+        expect(result[0][0]).to be_a(Rook)
+        expect(result[0][1]).to eq([5, 4])
+        expect(result[1][0]).to be_a(Knight)
+        expect(result[1][1]).to eq([6, 6])
       end
     end
   end
 
-  describe '#place_move(move)' do
+  describe '#place_move(move)' do # this does not enforce piece or board move rules, it simply places move
     context 'with no piece taking' do
       it 'moves piece from src to dst square' do
+        move = '1020'
         expect(game.board.grid[2][0]).to be_nil
-        game.place_move('1020')
+        game.place_move(move)
         expect(game.board.grid[2][0]).to be_a(Pawn)
         expect(game.board.grid[1][0]).to be_nil
+        expect(game.taken_pieces.last[0]).to be_nil
+        expect(game.taken_pieces.last[1]).to eq(move)
       end
     end
     
-    context 'with piece taking' do
-      it 'moves piece from src to dst & taken piece into @taken_pieces with move record' do
+    context 'with piece taking' do # this does not enforce piece or board move rules, it simply places move
+      it 'moves piece from src to dst & taken piece into @taken_pieces with record of taking move' do
         move = '1020'
         game.board.grid[2][0] = Rook.new(:white, 2, 0)
         expect(game.board.grid[2][0]).to be_a(Rook)
@@ -582,6 +596,42 @@ describe Game do
     end
   end
 
+  describe '#removes_check?' do
+    context 'when in check' do
+      it 'returns true if move takes player out of check' do
+        game.board.grid[6][4] = nil
+        game.board.grid[7][3] = nil
+        game.board.grid[0][3] = nil
+        game.board.grid[5][4] = Rook.new(:black, 5, 4)
+        move = '7473'
+        result = game.removes_check?(move)
+        expect(result).to be(true)
+      end
+      
+      it 'returns false if move does not take player out of check' do
+        game.board.grid[6][4] = nil
+        game.board.grid[6][3] = nil
+        game.board.grid[7][3] = nil
+        # game.board.grid[0][3] = nil
+        game.board.grid[5][4] = Rook.new(:black, 5, 4)
+        move = '7464'
+        allow(game).to receive(:get_move).and_return('7473')
+        result = game.removes_check?(move)
+        expect(result).to be(false)
+      end
+    end
+    
+    context 'when not check' do
+      it "returns false as move doesn't move out of check as it wasn't in check in first place!" do
+        game.board.grid[7][3] = nil
+        # game.board.grid[0][3] = nil
+        move = '7473'
+        result = game.removes_check?(move)
+        expect(result).to be(false)
+      end
+    end
+  end
+  
   # describe '#king_move_to_uncheck_itself(player)' do
   #   context 'when possible' do
   #     it 'returns true' do

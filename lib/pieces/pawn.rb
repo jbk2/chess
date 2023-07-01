@@ -43,14 +43,14 @@ class Pawn < Piece
     all_pawn_moves(board).include?(destination_square)
   end
 
-# implements diagonal taking move logic & 1st move 2 square logic.
+# implements diagonal taking move logic, 1st move 2 square logic, clear path logic and not into own piece logic.
   def all_pawn_moves(board)
     moves = []
     if @colour == :white 
       # straight white moves
       if first_move?
         moves << [r-1, c] if Board.valid_coord?(r-1, c) && board.empty_square?(r-1, c)
-        moves << [r-2, c] if Board.valid_coord?(r-2, c) && board.empty_square?(r-2, c)
+        moves << [r-2, c] if Board.valid_coord?(r-2, c) && board.empty_square?(r-1, c) && board.empty_square?(r-2, c)
       else
         moves << [r-1, c] if Board.valid_coord?(r-1, c) && board.empty_square?(r-1, c)
       end
@@ -65,7 +65,7 @@ class Pawn < Piece
       # straight black moves
       if first_move?
         moves << [r+1, c] if Board.valid_coord?(r+1, c) && board.empty_square?(r+1, c)
-        moves << [r+2, c] if Board.valid_coord?(r+2, c) && board.empty_square?(r+2, c)
+        moves << [r+2, c] if Board.valid_coord?(r+2, c) && board.empty_square?(r+1, c) && board.empty_square?(r+2, c)
       else
         moves << [r+1, c] if Board.valid_coord?(r+1, c) && board.empty_square?(r+1, c)
       end

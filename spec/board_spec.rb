@@ -126,6 +126,10 @@ describe Board do
     end
   end
 
+  describe '#own_piece(r, c, colour)' do
+
+  end
+
   describe '#empty_square?(r, c)' do
     it 'returns true if square is empty' do
       expect(board.empty_square?(2,0)). to be(true)

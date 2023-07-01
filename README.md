@@ -56,5 +56,5 @@
 - Perhaps instead of individual piece classes inheriting from the Piece class I can turn that Piece class into a module and just extend it to all individual piece type classes?
 _ Two types of errors are currently used, custom written methods e.g. in get_move and a custom InputError class as used in add_move and board#piece. Unify this into one error handling strategy.
 - Use Struct objects to create x & y named variables for square values instead of keeping referring to array indexes.
-- Must move chess move notation from row column to column row as truly given in a chess game.
+- Must move chess move user input notation from row column to column row as truly given in a chess game.
 
