@@ -240,6 +240,8 @@ class Game
     dst_taken_piece = board.grid[dst_r][dst_c] # even when nil
     @taken_pieces << [dst_taken_piece, move] # when no piece in dst, still stores nil, for history logging value
     board.grid[dst_r][dst_c] = board.grid[src_r][src_c]
+    board.grid[dst_r][dst_c].r = dst_r
+    board.grid[dst_r][dst_c].c = dst_c
     board.grid[src_r][src_c] = nil
     puts "\nMove made, taken pieces from move are; #{@taken_pieces.inspect}"
     # toggle active user here?
@@ -248,9 +250,13 @@ class Game
   def rollback_move(move)
     src_r, src_c, dst_r, dst_c = move[0].to_i, move[1].to_i, move[2].to_i, move[3].to_i
     board.grid[src_r][src_c] = board.grid[dst_r][dst_c]
-    puts "from #rollback_move; dst square has been moved back to src, src square = #{board.grid[src_r][src_c]}"
-    if @taken_pieces.last && (@taken_pieces.last[1] == move) # WARNING - there is the minimal possibility of a previous taken piece's move being the same as this move
+    board.grid[src_r][src_c].r = src_r
+    board.grid[src_r][src_c].c = src_c
+    puts "from #rollback_move; dst square has been moved back to src, src square tennant = #{board.grid[src_r][src_c]}"
+    if !@taken_pieces.last[0].nil? && (@taken_pieces.last[1] == move) # WARNING - there is the minimal possibility of a previous taken piece's move being the same as this move
       board.grid[dst_r][dst_c] = @taken_pieces.last[0]
+      board.grid[dst_r][dst_c].r = dst_r
+      board.grid[dst_r][dst_c].c = dst_c
       @taken_pieces.pop 
     else
       board.grid[dst_r][dst_c] = nil

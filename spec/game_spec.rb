@@ -560,19 +560,35 @@ describe Game do
         expect(game.taken_pieces.last[0]).to be_nil
         expect(game.taken_pieces.last[1]).to eq(move)
       end
+      
+      it "when a move is made the piece's r & c values are updated" do
+        move = '1020'
+        expect(game.board.grid[2][0]).to be_nil
+        game.place_move(move)
+        expect(game.board.grid[2][0].r).to eq(2)
+        expect(game.board.grid[2][0].c).to eq(0)
+      end
     end
     
     context 'with piece taking' do # this does not enforce piece or board move rules, it simply places move
       it 'moves piece from src to dst & taken piece into @taken_pieces with record of taking move' do
-        move = '1020'
-        game.board.grid[2][0] = Rook.new(:white, 2, 0)
-        expect(game.board.grid[2][0]).to be_a(Rook)
+        move = '1021'
+        game.board.grid[2][1] = Rook.new(:white, 2, 1)
+        expect(game.board.grid[2][1]).to be_a(Rook)
         expect(game.board.grid[1][0]).to be_a(Pawn)
         game.place_move(move)
-        expect(game.board.grid[2][0]).to be_a(Pawn)
+        expect(game.board.grid[2][1]).to be_a(Pawn)
         expect(game.board.grid[1][0]).to be_nil
         expect(game.taken_pieces.last[0]).to be_a(Rook)
         expect(game.taken_pieces.last[1]).to eq(move)
+      end
+      
+      it "when a move is made the piece's r & c values are updated" do
+        move = '1021'
+        game.board.grid[2][1] = Rook.new(:white, 2, 1)
+        game.place_move(move)
+        expect(game.board.grid[2][1].r).to eq(2)
+        expect(game.board.grid[2][1].c).to eq(1)
       end
     end
   end
@@ -580,18 +596,71 @@ describe Game do
   describe '#rollback_move(move)' do
     context 'without a taken piece on last move' do
       it 'reverses back the last move' do
-        move = '1020'
-        game.board.grid[2][0] = Rook.new(:white, 2, 0)
+        move = '1021'
+        game.board.grid[2][1] = nil
         game.place_move(move)
-        expect(game.board.grid[2][0]).to be_a(Pawn)
+        expect(game.board.grid[2][1]).to be_a(Pawn)
+        expect(game.board.grid[1][0]).to be_nil
+        expect(game.taken_pieces.last[0]).to be_nil
+        expect(game.taken_pieces.last[1]).to eq(move)
+        game.rollback_move(move)
+        expect(game.board.grid[1][0]).to be_a(Pawn)
+        expect(game.board.grid[2][1]).to be_nil
+      end
+ 
+      it "updates piece with correct r & c values" do
+        move = '1020'
+        game.board.grid[2][0] = nil
+        game.place_move(move)
+        puts "here's 20 now; #{game.board.grid[2][0].inspect}"
+        game.rollback_move(move)
+        expect(game.board.grid[1][0].r).to eq(1)
+        expect(game.board.grid[1][0].c).to eq(0)
+        puts "here's 20 now; #{game.board.grid[2][0].inspect}"
+        expect(game.board.grid[2][0]).to be_nil
+      end
+      
+      it "adds array object to game's @taken_pieces with nil and the move values" do
+        move = '1021'
+        game.place_move(move)
+        game.rollback_move(move)
+        expect(game.taken_pieces.last[0]).to be_nil
+        expect(game.taken_pieces.last[1]).to eq(move)
+      end
+    end
+    
+    context 'with a taken piece on last move' do
+      it "correctly moves taken piece to original pre-move position" do
+        move = '1021'
+        game.board.grid[2][1] = Rook.new(:white, 2, 0)
+        game.place_move(move)
+        expect(game.board.grid[2][1]).to be_a(Pawn)
         expect(game.board.grid[1][0]).to be_nil
         expect(game.taken_pieces.last[0]).to be_a(Rook)
         expect(game.taken_pieces.last[1]).to eq(move)
         game.rollback_move(move)
         expect(game.board.grid[1][0]).to be_a(Pawn)
-        expect(game.board.grid[2][0]).to be_a(Rook)
-        expect(game.taken_pieces.last).to satisfy { |piece| piece.nil? || !piece.is_a?(Rook) }
-        expect(game.taken_pieces.last).to satisfy { |piece| piece.nil? || !piece.eq(move) }
+        expect(game.board.grid[2][1]).to be_a(Rook)
+        expect(game.taken_pieces.last).to satisfy { |piece| !piece.is_a?(Rook) }
+      end
+
+      it 'updates piece with correct r & c values' do
+        move = '1021'
+        game.board.grid[2][1] = Rook.new(:white, 2, 0)
+        game.place_move(move)
+        game.rollback_move(move)
+        expect(game.board.grid[1][0].r).to eq(1)
+        expect(game.board.grid[1][0].c).to eq(0)
+        expect(game.board.grid[2][1].r).to eq(2)
+        expect(game.board.grid[2][1].c).to eq(1)
+      end
+
+      it "removes previously taken piece from game's @taken_pieces array" do
+        move = '1021'
+        game.board.grid[2][1] = Rook.new(:white, 2, 0)
+        game.place_move(move)
+        game.rollback_move(move)
+        expect(game.taken_pieces).to be_empty
       end
     end
   end

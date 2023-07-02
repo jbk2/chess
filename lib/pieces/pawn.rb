@@ -15,8 +15,8 @@ require_relative 'piece'
 
 class Pawn < Piece
   attr_writer :first_move
-  attr_reader :black_char, :white_char
-  attr_accessor :colour, :r, :c
+  attr_reader :black_char, :white_char, :colour
+  attr_accessor :r, :c
 
  BLACK_CHAR = "\u265F"
  WHITE_CHAR = "\u2659"

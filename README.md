@@ -40,9 +40,9 @@
 # #################### NEXT TODO'S ###############
 
   # Must program each valid_piece_moves in each piece type to not just return all possible moves, 
-  # but only all possible moves that are valid for the current game status. Currently #in_check?
+  # but only all possible moves that are valid for the current game/baord status. Currently #in_check?
   # validates king's check status based upon all possible piece moves for all pieces, so it asserts
-  # #in_check? true for other pieces moves that meet piece rules, but not current game context rules.
+  # #in_check? true against all piece moves not piece and game valid moves only.
 
 
   # Must validate that a given move is on a piece of the same color as the active player

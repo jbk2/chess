@@ -8,8 +8,8 @@ require_relative 'piece'
 
 class King < Piece
   attr_writer :first_move
-  attr_accessor :colour, :r, :c
-  attr_reader :black_char, :white_char
+  attr_reader :black_char, :white_char, :colour
+  attr_accessor :r, :c
   
   BLACK_CHAR = "\u265A"
   WHITE_CHAR = "\u2654"

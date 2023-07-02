@@ -6,8 +6,9 @@ require_relative 'piece'
 
 class Bishop < Piece
   attr_writer :first_move
-  attr_accessor :colour, :r, :c
-  attr_reader :black_char, :white_char
+  # attr_accessor :colour, :r, :c
+  attr_reader :black_char, :white_char, :colour
+  attr_accessor :r, :c
 
   BLACK_CHAR = "\u265D"
   WHITE_CHAR = "\u2657"
