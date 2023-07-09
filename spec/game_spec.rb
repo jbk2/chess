@@ -532,20 +532,18 @@ describe Game do
 
   describe '#places_in_check?(move)' do
     it 'returns true when move does place player in check' do
-      game.board.grid[6][4] = nil
-      game.board.grid[5][4] = Rook.new(:black, 5, 4)
-      result = game.in_check(game.active_player)
-      expect(result[0][0]).to be_a(Rook)
-      expect(result[0][1]).to eq([5, 4])
+      game.board.grid[6][4], game.board.grid[7][4], game.board.grid[1][0] = nil, nil, nil
+      game.board.grid[3][1] = King.new(:white, 3, 1)
+      result = game.places_in_check?('3130')
+      expect(result).to be(true)
     end
-   
-    # it 'returns true when move does place player in check' do
-    #   game.board.grid[6][4] = nil
-    #   game.board.grid[5][4] = Rook.new(:black, 5, 4)
-    #   result = game.in_check(game.active_player)
-    #   expect(result[0][0]).to be_a(Rook)
-    #   expect(result[0][1]).to eq([5, 4])
-    # end
+    
+    it 'returns false when move does not place player in check' do
+      game.board.grid[6][4], game.board.grid[7][4], game.board.grid[1][0] = nil, nil, nil
+      game.board.grid[3][1] = King.new(:white, 3, 1)
+      result = game.places_in_check?('3141')
+      expect(result).to be(false)
+    end
   end
 
   describe '#removes_check?' do

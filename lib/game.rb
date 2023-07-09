@@ -293,9 +293,9 @@ class Game
 
   def places_in_check?(move)
     place_move(move)
-    puts_in_check = in_check(player)
+    puts_in_check = in_check(active_player)
     rollback_move(move)
-    return puts_in_check
+    puts_in_check ? true : false
   end
 
   # def check_or_stale_mate?
