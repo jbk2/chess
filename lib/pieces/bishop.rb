@@ -26,18 +26,29 @@ class Bishop < Piece
     @first_move = false
   end
 
-  def piece_valid_move?(move, board)
+  def piece_valid_move?(src, board)
     destination_square = [move[2].to_i,move[3].to_i]
-    all_bishop_moves(board).include?(destination_square)
+    valid_bishop_moves(src, board).include?(destination_square)
   end
 
-  def all_bishop_moves
+  # validates against move_path_clear & non-moving to same colour piece space.
+  def valid_bishop_moves(src, board)
+    game_valid_moves = []
+    every_bishop_move.each do |dst|
+      move = (src + dst).join
+      game_valid_moves << dst if move_path_clear?(move, board) && !src_dst_same_colour?(move, board)
+    end
+    game_valid_moves
+  end
+
+  def every_bishop_move
     down_right_diag = (r+1..7).zip(c+1..7).delete_if { |e| e.include?(nil) }
     down_left_diag = (r+1..7).zip((0..c-1).to_a.reverse).delete_if {|e| e.include?(nil) }
     up_right_diag = ((0..r-1).to_a.reverse).zip(c+1..7).delete_if { |e| e.include?(nil) }
     up_left_diag = ((0..r-1).to_a.reverse).zip((0..c-1).to_a.reverse).delete_if { |e| e.include?(nil) }
     moves = down_right_diag + down_left_diag + up_right_diag + up_left_diag
   end
+
 end
 
 # ## Move rules:

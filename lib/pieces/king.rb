@@ -30,10 +30,20 @@ class King < Piece
 
   def piece_valid_move?(move, board)
     destination_square = [move[2].to_i,move[3].to_i]
-    all_king_moves(board).include?(destination_square)
+    valid_king_moves(move, board).include?(destination_square)
   end
 
-  def all_king_moves
+# validates against move_path_clear & non-moving to same colour piece space.
+  def valid_king_moves(src, board)
+    game_valid_moves = []
+    every_king_move.each do |dst|
+      move = (src + dst).join
+      game_valid_moves << dst if move_path_clear?(move, board) && !src_dst_same_colour?(move, board)
+    end
+    game_valid_moves
+  end
+
+  def every_king_move
     moves = []
     moves.push([r+1, c+1], [r+1, c-1], [r-1, c+1], [r-1, c-1], [r-1, c], [r+1, c], [r, c-1], [r, c+1])
     moves.delete_if { |move| !Board.valid_coord?(move[0], move[1]) }

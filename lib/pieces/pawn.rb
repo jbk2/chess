@@ -40,11 +40,11 @@ class Pawn < Piece
 
   def piece_valid_move?(move, board)
     destination_square = [move[2].to_i,move[3].to_i]
-    all_pawn_moves(board).include?(destination_square)
+    valid_pawn_moves(move, board).include?(destination_square)
   end
 
 # implements diagonal taking move logic, 1st move 2 square logic, clear path logic and not into own piece logic.
-  def all_pawn_moves(board)
+  def valid_pawn_moves(src, board)
     moves = []
     if @colour == :white 
       # straight white moves

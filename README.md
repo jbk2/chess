@@ -13,6 +13,15 @@
   - in board 8x8 scope
 - In board 8x8 scope validation is also implemented in #valid_class_moves generator method.
 
+- Code DSL:
+  - r = row
+  - c = column
+  - always row first then column (not chess move syntax uses c then r! (need to adapt code to this))
+  - src_r, src_c = single integer values representing row or column, respectively, on chess board/grid.
+  - src = an array of r and c integer values, representing a coordinate/square on the chess board/grid - also representing the beginning position of a move, e.g. [0, 0].
+  - dst = an array of r and c integer values, representing a coordinate/square on the chess board/grid, also representing the end position of a move, e.g. [1, 0].
+  - move = a 4 char string of numeric values representing src + dst joined, e.g. '0010'. 
+
 
 
 ## Tasks
@@ -43,6 +52,7 @@
   # but only all possible moves that are valid for the current game/baord status. Currently #in_check?
   # validates king's check status based upon all possible piece moves for all pieces, so it asserts
   # #in_check? true against all piece moves not piece and game valid moves only.
+  # Currently only; Rook & Pawn implement game state move validity in '#valid_ ... _moves' method.
 
 
   # Must validate that a given move is on a piece of the same color as the active player

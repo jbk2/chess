@@ -25,13 +25,14 @@ describe Pawn do
     end
   end
 
-  describe '#all_pawn_move' do
+  describe '#valid_pawn_moves(src, board)' do
     let(:board) { Board.new }
     context 'with a white pawn' do
       context 'in square 6,0' do
         it 'returns correct moves' do
           white_pawn = Pawn.new(:white, 6,0)
-          result = white_pawn.all_pawn_moves(board)
+          src = [white_pawn.r, white_pawn.c]
+          result = white_pawn.valid_pawn_moves(src, board)
           expect(result).to eq([[5, 0], [4, 0]])
         end
       end
@@ -39,8 +40,9 @@ describe Pawn do
       context 'in square 4,0' do
         it 'returns correct moves' do
           white_pawn = Pawn.new(:white, 4,0)
+          src = [white_pawn.r, white_pawn.c]
           allow(white_pawn).to receive(:first_move?).and_return(false)
-          result = white_pawn.all_pawn_moves(board)
+          result = white_pawn.valid_pawn_moves(src, board)
           expect(result).to eq([[3, 0]])
         end
       end
@@ -48,8 +50,9 @@ describe Pawn do
       context 'in square 6,0' do
         it 'returns correct moves' do
           white_pawn = Pawn.new(:white, 3,7)
+          src = [white_pawn.r, white_pawn.c]
           allow(white_pawn).to receive(:first_move?).and_return(false)
-          result = white_pawn.all_pawn_moves(board)
+          result = white_pawn.valid_pawn_moves(src, board)
           expect(result).to eq([[2, 7]])
         end
       end
@@ -58,8 +61,9 @@ describe Pawn do
         context 'in square 2,1' do
           it 'returns correct moves' do
             white_pawn = Pawn.new(:white, 2,1)
+            src = [white_pawn.r, white_pawn.c]
             allow(white_pawn).to receive(:first_move?).and_return(false)
-            result = white_pawn.all_pawn_moves(board)
+            result = white_pawn.valid_pawn_moves(src, board)
             expect(result).to eq([[1, 0], [1, 2]])
           end
         end
@@ -68,11 +72,12 @@ describe Pawn do
           it 'returns correct moves' do
             baord = Board.new
             white_pawn = Pawn.new(:white, 4, 4)
+            src = [white_pawn.r, white_pawn.c]
             board.grid[4][4] = white_pawn
             board.grid[3][3] = Bishop.new(:black, 3, 3)
             board.grid[3][5] = Knight.new(:black, 3, 5)
             allow(white_pawn).to receive(:first_move?).and_return(false)
-            result = white_pawn.all_pawn_moves(board)
+            result = white_pawn.valid_pawn_moves(src, board)
             expect(result).to eq([[3, 4], [3, 3], [3, 5]])
           end
         end
@@ -83,8 +88,9 @@ describe Pawn do
       context 'in square 1,7' do
         it 'returns correct moves' do
           black_pawn = Pawn.new(:black, 1,7)
+          src = [black_pawn.r, black_pawn.c]
           allow(black_pawn).to receive(:first_move?).and_return(false)
-          result = black_pawn.all_pawn_moves(board)
+          result = black_pawn.valid_pawn_moves(src, board)
           expect(result).to eq([[2, 7]])
         end
       end
@@ -92,9 +98,9 @@ describe Pawn do
       context 'in square 3,3' do
         it 'returns correct moves' do
           black_pawn = Pawn.new(:black, 3,3)
-
+          src = [black_pawn.r, black_pawn.c]
           allow(black_pawn).to receive(:first_move?).and_return(false)
-          result = black_pawn.all_pawn_moves(board)
+          result = black_pawn.valid_pawn_moves(src, board)
           expect(result).to eq([[4, 3]])
         end
       end
@@ -102,8 +108,9 @@ describe Pawn do
       context 'in square 5,7' do
         it 'returns correct moves' do
           black_pawn = Pawn.new(:black, 5,7)
+          src = [black_pawn.r, black_pawn.c]
           allow(black_pawn).to receive(:first_move?).and_return(false)
-          result = black_pawn.all_pawn_moves(board)
+          result = black_pawn.valid_pawn_moves(src, board)
           expect(result).to eq([[6, 6]])
         end
       end
@@ -112,8 +119,9 @@ describe Pawn do
         context 'in square 5,2' do
           it 'returns correct moves' do
             black_pawn = Pawn.new(:black, 5,2)
+            src = [black_pawn.r, black_pawn.c]
             allow(black_pawn).to receive(:first_move?).and_return(false)
-            result = black_pawn.all_pawn_moves(board)
+            result = black_pawn.valid_pawn_moves(src, board)
             expect(result).to eq([[6, 1], [6, 3]])
           end
         end
@@ -121,10 +129,11 @@ describe Pawn do
         context 'in square 3,2 with an opponent piece in 4,1' do
           it 'returns correct moves' do
             black_pawn = Pawn.new(:black, 3,2)
+            src = [black_pawn.r, black_pawn.c]
             board = Board.new
             board.grid[4][1] = Queen.new(:white, 4, 1)
             allow(black_pawn).to receive(:first_move?).and_return(false)
-            result = black_pawn.all_pawn_moves(board)
+            result = black_pawn.valid_pawn_moves(src, board)
             expect(result).to eq([[4, 2], [4, 1]])
           end
         end
@@ -132,11 +141,12 @@ describe Pawn do
         context 'in square 3,2 with opponent pieces in 4,1 & 4,3' do
           it 'returns correct moves' do
             black_pawn = Pawn.new(:black, 3,2)
+            src = [black_pawn.r, black_pawn.c]
             board = Board.new
             board.grid[4][1] = Queen.new(:white, 4, 1)
             board.grid[4][3] = Bishop.new(:white, 4, 3)
             allow(black_pawn).to receive(:first_move?).and_return(false)
-            result = black_pawn.all_pawn_moves(board)
+            result = black_pawn.valid_pawn_moves(src, board)
             expect(result).to eq([[4, 2], [4, 1], [4, 3]])
           end
         end

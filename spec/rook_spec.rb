@@ -1,4 +1,5 @@
 require_relative '../lib/pieces/rook'
+require_relative '../lib/board'
 
 describe Rook do
   describe "a Rook's instantiation" do
@@ -24,11 +25,11 @@ describe Rook do
     end
   end
 
-  describe '#all_rook_moves' do
+  describe '#every_rook_move' do
     context 'with a rook in position 0,0' do
       it 'returns all correct possible piece moves on an 8x8 board' do
         white_rook = Rook.new(:white, 0,0)
-        result = white_rook.all_rook_moves
+        result = white_rook.every_rook_move
         expect(result).to eq([[0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [0, 6], [0, 7],
           [1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [6, 0], [7, 0]])
       end
@@ -37,7 +38,7 @@ describe Rook do
     context 'with a rook in position 0,7' do
       it 'returns all correct possible piece moves on an 8x8 board' do
         white_rook = Rook.new(:white, 0,7)
-        result = white_rook.all_rook_moves
+        result = white_rook.every_rook_move
         expect(result).to eq([[0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [0, 6],
           [1, 7], [2, 7], [3, 7], [4, 7], [5, 7], [6, 7], [7, 7]])
       end
@@ -46,7 +47,7 @@ describe Rook do
     context 'with a rook in position 7,0' do
       it 'returns all correct possible piece moves on an 8x8 board' do
         white_rook = Rook.new(:white, 7,0)
-        result = white_rook.all_rook_moves
+        result = white_rook.every_rook_move
         expect(result).to eq([[7, 1], [7, 2], [7, 3], [7, 4], [7, 5], [7, 6], [7, 7],
           [0, 0], [1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [6, 0]])
       end
@@ -55,7 +56,7 @@ describe Rook do
     context 'with a rook in position 7,7' do
       it 'returns all correct possible piece moves on an 8x8 board' do
         white_rook = Rook.new(:white, 7,7)
-        result = white_rook.all_rook_moves
+        result = white_rook.every_rook_move
         expect(result).to eq([[7, 0], [7, 1], [7, 2], [7, 3], [7, 4], [7, 5], [7, 6],
           [0, 7], [1, 7], [2, 7], [3, 7], [4, 7], [5, 7], [6, 7]])
       end
@@ -64,10 +65,93 @@ describe Rook do
     context 'with a rook in position 3,3' do
       it 'returns all correct possible piece moves on an 8x8 board' do
         white_rook = Rook.new(:white, 3,3)
-        result = white_rook.all_rook_moves
+        result = white_rook.every_rook_move
         expect(result).to eq([[3, 0], [3, 1], [3, 2], [3, 4], [3, 5], [3, 6], [3, 7], 
           [0, 3], [1, 3], [2, 3], [4, 3], [5, 3], [6, 3], [7, 3]])
       end
+    end
+  end
+
+  describe '#valid_rook_moves' do
+    let(:board) { Board.new }
+    context 'with a white rook in position 7,0 on starting board' do
+      it 'returns all valid moves' do
+        white_rook = Rook.new(:white, 7,0)
+        board.grid[7][0] = white_rook
+        src = [white_rook.r, white_rook.c]
+        result = white_rook.valid_rook_moves(src, board)
+        expect(result).to eq([])
+      end
+    end
+    
+    context 'with a white rook in position 5,0 on a starting board' do
+      it 'returns all valid moves' do
+        white_rook = Rook.new(:white, 5,0)
+        board.grid[5][0] = white_rook
+        src = [white_rook.r, white_rook.c]
+        result = white_rook.valid_rook_moves(src, board)
+        expect(result).to eq([[5, 1], [5, 2], [5, 3], [5, 4], [5, 5], [5, 6], [5, 7], [1, 0], [2, 0], [3, 0], [4, 0]])
+      end
+    end
+    
+    context 'with a white rook in position 1,0 on a starting board' do
+      it 'returns all valid moves' do
+        white_rook = Rook.new(:white, 1,0)
+        board.grid[1][0] = white_rook
+        src = [white_rook.r, white_rook.c]
+        result = white_rook.valid_rook_moves(src, board)
+        expect(result).to eq([[1, 1], [0, 0], [2, 0], [3, 0], [4, 0], [5, 0]])
+      end
+    end
+    
+    context 'with a black rook in position 4,3, and an own piece in 4,5, on a starting board' do
+      it 'returns all valid moves' do
+        black_rook = Rook.new(:black, 4, 3)
+        board.grid[4][3] = black_rook
+        black_pawn = Pawn.new(:black, 4, 5)
+        board.grid[4][5] = black_pawn
+        src = [black_rook.r, black_rook.c]
+        result = black_rook.valid_rook_moves(src, board)
+        expect(result).to eq([[4, 0],[4, 1],[4, 2],[4, 4], [2, 3], [3, 3], [5, 3], [6, 3]])
+      end
+    end
+    
+    context 'with a black rook in position 5,2, an opponent pawn in 3,2 & 5,5, on a starting board' do
+      it 'returns all valid moves' do
+        black_rook = Rook.new(:black, 5, 2)
+        board.grid[5][2] = black_rook
+        white_pawn = Pawn.new(:white, 3, 2)
+        board.grid[3][2] = white_pawn
+        white_pawn = Pawn.new(:white, 5, 5)
+        board.grid[5][5] = white_pawn
+        src = [black_rook.r, black_rook.c]
+        result = black_rook.valid_rook_moves(src, board)
+        expect(result).to eq([[5, 0], [5, 1], [5, 3], [5, 4], [5, 5], [3, 2], [4, 2], [6, 2]])
+      end
+    end
+  end
+
+  describe "#src_dst_same_colour?(move)" do
+    let(:board) { Board.new }
+    it 'returns true when dst same colour as src' do
+      black_rook = Rook.new(:black, 0,0)
+      move = '0010'
+      result = black_rook.src_dst_same_colour?(move, board)
+      expect(result).to be(true)
+    end
+    
+    it 'returns false when dst different colour to src' do
+      black_pawn = Pawn.new(:black, 1,0)
+      move = '1060'
+      result = black_pawn.src_dst_same_colour?(move, board)
+      expect(result).to be(false)
+    end
+    
+    it "returns false when dst doesn't contain a piece" do
+      black_pawn = Pawn.new(:black, 1,0)
+      move = '1020'
+      result = black_pawn.src_dst_same_colour?(move, board)
+      expect(result).to be(false)
     end
   end
 end

@@ -29,10 +29,21 @@ class Rook < Piece
 
   def piece_valid_move?(move, board)
     destination_square = [move[2].to_i,move[3].to_i]
-    all_rook_moves.include?(destination_square)
+    valid_rook_moves(move, board).include?(destination_square)
   end
 
-  def all_rook_moves
+# validates against move_path_clear & non-moving to same colour piece space.
+  def valid_rook_moves(src, board)
+    # check doesn't move king into check (or is check made at game level, I think so)
+    game_valid_moves = []
+    every_rook_move.each do |dst|
+      move = (src + dst).join
+      game_valid_moves << dst if move_path_clear?(move, board) && !src_dst_same_colour?(move, board)
+    end
+    game_valid_moves
+  end
+  
+  def every_rook_move
     moves = ([r]*8).zip(0..7) + (0..7).zip([c]*8) - [[r ,c]]
   end
 

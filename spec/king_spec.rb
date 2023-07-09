@@ -25,13 +25,13 @@ describe King do
     end
   end
 
-  describe '#all_king_move' do
+  describe '#every_king_move' do
     let(:board) { Board.new }
     context 'with a white king' do
       context 'in square 7,4' do
         it 'returns correct moves' do
           white_king = King.new(:white, 7,4)
-          result = white_king.all_king_moves
+          result = white_king.every_king_move
           expect(result).to eq([[6, 5], [6, 3], [6, 4], [7, 3], [7, 5]])
         end
       end
@@ -39,7 +39,7 @@ describe King do
       context 'in square 7,7' do
         it 'returns correct moves' do
           white_king = King.new(:white, 7,7)
-          result = white_king.all_king_moves
+          result = white_king.every_king_move
           expect(result).to eq([[6, 6], [6, 7], [7, 6]])
         end
       end
@@ -47,7 +47,7 @@ describe King do
       context 'in square 7,0' do
         it 'returns correct moves' do
           white_king = King.new(:white, 7,0)
-          result = white_king.all_king_moves
+          result = white_king.every_king_move
           expect(result).to eq([[6, 1], [6, 0], [7, 1]])
         end
       end
@@ -57,7 +57,7 @@ describe King do
       context 'in square 0,0' do
         it 'returns correct moves' do
           black_king = King.new(:black, 0,0)
-          result = black_king.all_king_moves
+          result = black_king.every_king_move
           expect(result).to eq([[1, 1], [1, 0], [0, 1]])
         end
       end
@@ -65,7 +65,7 @@ describe King do
       context 'in square 0,7' do
         it 'returns correct moves' do
           black_king = King.new(:black, 0,7)
-          result = black_king.all_king_moves
+          result = black_king.every_king_move
           expect(result).to eq([[1, 6], [1, 7], [0, 6]])
         end
       end
@@ -73,9 +73,62 @@ describe King do
       context 'in square 4,4' do
         it 'returns correct moves' do
           black_king = King.new(:black, 4,4)
-          result = black_king.all_king_moves
+          result = black_king.every_king_move
           expect(result).to eq([[5, 5], [5, 3], [3, 5], [3, 3], [3, 4], [5, 4], [4, 3], [4, 5]])
         end
+      end
+    end
+  end
+
+  describe '#valid_king_moves(src, board)' do
+    let(:board) { Board.new }
+    context 'with white king in 6,4 on a starting board' do
+      it 'returns all valid piece moves' do
+        white_king = King.new(:white, 6, 4)
+        board.grid[6][4] = white_king
+        src = [white_king.r, white_king.c]
+        result = white_king.valid_king_moves(src, board)
+        expect(result).to eq([[5, 5], [5, 3], [5, 4]])
+      end
+    end
+    
+    context 'with white king in 4,4 on a starting board' do
+      it 'returns all valid piece moves' do
+        white_king = King.new(:white, 4, 4)
+        board.grid[4][4] = white_king
+        src = [white_king.r, white_king.c]
+        result = white_king.valid_king_moves(src, board)
+        expect(result).to eq([[5, 5], [5, 3], [3, 5], [3, 3], [3, 4], [5, 4], [4, 3], [4, 5]])
+      end
+    end
+    
+    context 'with white king in 4,4 & black Pawn in 4, 5, on a starting board' do
+      it 'returns all valid piece moves' do
+        white_king, black_pawn = King.new(:white, 4, 4), Pawn.new(:black, 4, 5)
+        board.grid[4][4], board.grid[4][5] = white_king, black_pawn
+        src = [white_king.r, white_king.c]
+        result = white_king.valid_king_moves(src, board)
+        expect(result).to eq([[5, 5], [5, 3], [3, 5], [3, 3], [3, 4], [5, 4], [4, 3], [4, 5]])
+      end
+    end
+    
+    context 'with white king in 4,4 & white Pawn in 4, 5, on a starting board' do
+      it 'returns all valid piece moves' do
+        white_king, white_pawn = King.new(:white, 4, 4), Pawn.new(:white, 4, 5)
+        board.grid[4][4], board.grid[4][5] = white_king, white_pawn
+        src = [white_king.r, white_king.c]
+        result = white_king.valid_king_moves(src, board)
+        expect(result).to eq([[5, 5], [5, 3], [3, 5], [3, 3], [3, 4], [5, 4], [4, 3]])
+      end
+    end
+    
+    context 'with white king in 4, 0 on a starting board' do
+      it 'returns all valid piece moves' do
+        white_king = King.new(:white, 4, 0)
+        board.grid[4][0] = white_king
+        src = [white_king.r, white_king.c]
+        result = white_king.valid_king_moves(src, board)
+        expect(result).to eq([[5, 1], [3, 1], [3, 0], [5, 0], [4, 1]])
       end
     end
   end

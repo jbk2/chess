@@ -270,23 +270,32 @@ class Game
     player.colour == :white ? opponent_colour = :black : opponent_colour = :white
     opponent_pieces = board.all_pieces(opponent_colour)
     checking_pieces = []
+
     opponent_pieces.each do |coord|
-      piece = board.piece(coord[0], coord[1])
-      all_moves_method_name = "all_#{piece.class.to_s.downcase}_moves"
-      if piece.class.to_s == 'Pawn' # Pawn separated in this conditional because Pawn needs to receive Board object to work out whether it can diagonal move or not, other piece classes do not need the board object
-        if piece.send(all_moves_method_name, board).include?(kings_location)
-          puts "from #in_check? kings location IS in check by: \n Piece; #{piece.inspect} Location; #{coord}"
-          checking_pieces << [piece, coord]
-        end
-      else
-        if piece.send(all_moves_method_name).include?(kings_location)
-          puts "from #in_check? kings location IS in opponents next move options (except Pawn): \n Piece; #{piece} Location; #{coord}"
-          checking_pieces << [piece, coord]
-        end
+      puts "FROM IN_CHECK OPPONENT PIECES EACH coord is; #{coord}"
+      src_r, src_c = coord[0], coord[1]
+      puts "KINGS LOCATION IS IS; #{kings_location}"
+      # move = src_r.to_s + src_c.to_s + kings_location[0].to_s + kings_location[1].to_s
+      # puts "TOTAL MOVE IS; #{move}"
+      piece = board.piece(src_r, src_c)
+      valid_moves_method_name = "valid_#{piece.class.to_s.downcase}_moves"
+
+    # if piece.class.to_s == 'Pawn' # Pawn separated in this conditional because Pawn needs to receive Board object to work out whether it can diagonal move or not, other piece classes do not need the board object
+      if piece.send(valid_moves_method_name, coord, board).include?(kings_location)
+        puts "from #in_check? kings location IS in check by: \nPiece; #{piece.inspect} \nLocation; #{coord}"
+        checking_pieces << [piece, coord]
       end
     end
+
     checking_pieces.empty? ? (return false) : (return checking_pieces)
-    false
+    # false
+  end
+
+  def places_in_check?(move)
+    place_move(move)
+    puts_in_check = in_check(player)
+    rollback_move(move)
+    return puts_in_check
   end
 
   # def check_or_stale_mate?
@@ -310,32 +319,32 @@ class Game
     get_move
   end
 
-  def move_path_clear?(move)
-    src_x, src_y, dst_x, dst_y = move[0].to_i, move[1].to_i, move[2].to_i, move[3].to_i 
+  # def move_path_clear?(move)
+  #   src_x, src_y, dst_x, dst_y = move[0].to_i, move[1].to_i, move[2].to_i, move[3].to_i 
     
-    neighbouring_squares = [[src_x+1, src_y+1], [src_x+1, src_y-1], [src_x-1, src_y-1], [src_x-1, src_y+1],
-    [src_x-1, src_y],[src_x+1, src_y],[src_x, src_y-1],[src_x, src_y+1]].delete_if {|sq| sq.any? {|e| e < 0 || e > 7}} 
-    return true if neighbouring_squares.include?([dst_x, dst_y])
+  #   neighbouring_squares = [[src_x+1, src_y+1], [src_x+1, src_y-1], [src_x-1, src_y-1], [src_x-1, src_y+1],
+  #   [src_x-1, src_y],[src_x+1, src_y],[src_x, src_y-1],[src_x, src_y+1]].delete_if {|sq| sq.any? {|e| e < 0 || e > 7}} 
+  #   return true if neighbouring_squares.include?([dst_x, dst_y])
     
-    if src_x < dst_x && src_y == dst_y # down
-      (src_x+1...dst_x).each { |e| return false unless board.piece(e, src_y).nil? }
-    elsif src_x > dst_x && src_y == dst_y # up
-      (dst_x+1...src_x).each { |e| return false unless board.piece(e, src_y).nil? }
-    elsif src_x == dst_x && src_y > dst_y # left
-      (dst_y+1...src_y).each { |e| return false unless board.piece(src_x, e).nil? }
-    elsif src_x == dst_x && src_y < dst_y # right
-      (src_y+1...dst_y).each { |e| return false unless board.piece(src_x, e).nil? }
-    elsif src_x < dst_x && src_y < dst_y # down right
-      (src_x+1...dst_x).zip(src_y+1...dst_y).each { |e| return false unless board.piece(e[0], e[1]).nil? }
-    elsif src_x < dst_x && src_y > dst_y # down left
-      (src_x+1...dst_x).zip((dst_y+1...src_y).to_a.reverse).each { |e| return false unless board.piece(e[0], e[1]).nil? }
-    elsif src_x > dst_x && src_y < dst_y # up right
-      (dst_x+1...src_x).to_a.reverse.zip(src_y+1...dst_y).each { |e| return false unless board.piece(e[0], e[1]).nil? }
-    elsif src_x > dst_x && src_y > dst_y # up left
-      (dst_x+1...src_x).zip(dst_y+1...src_y).each { |e| return false unless board.piece(e[0], e[1]).nil?  }
-    end
-    return true
-  end
+  #   if src_x < dst_x && src_y == dst_y # down
+  #     (src_x+1...dst_x).each { |e| return false unless board.piece(e, src_y).nil? }
+  #   elsif src_x > dst_x && src_y == dst_y # up
+  #     (dst_x+1...src_x).each { |e| return false unless board.piece(e, src_y).nil? }
+  #   elsif src_x == dst_x && src_y > dst_y # left
+  #     (dst_y+1...src_y).each { |e| return false unless board.piece(src_x, e).nil? }
+  #   elsif src_x == dst_x && src_y < dst_y # right
+  #     (src_y+1...dst_y).each { |e| return false unless board.piece(src_x, e).nil? }
+  #   elsif src_x < dst_x && src_y < dst_y # down right
+  #     (src_x+1...dst_x).zip(src_y+1...dst_y).each { |e| return false unless board.piece(e[0], e[1]).nil? }
+  #   elsif src_x < dst_x && src_y > dst_y # down left
+  #     (src_x+1...dst_x).zip((dst_y+1...src_y).to_a.reverse).each { |e| return false unless board.piece(e[0], e[1]).nil? }
+  #   elsif src_x > dst_x && src_y < dst_y # up right
+  #     (dst_x+1...src_x).to_a.reverse.zip(src_y+1...dst_y).each { |e| return false unless board.piece(e[0], e[1]).nil? }
+  #   elsif src_x > dst_x && src_y > dst_y # up left
+  #     (dst_x+1...src_x).zip(dst_y+1...src_y).each { |e| return false unless board.piece(e[0], e[1]).nil?  }
+  #   end
+  #   return true
+  # end
 
   def create_player1
     player1_name = get_input
