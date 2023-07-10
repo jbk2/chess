@@ -27,9 +27,10 @@ class Rook < Piece
     @first_move = false
   end
 
-  def piece_valid_move?(move, board)
-    destination_square = [move[2].to_i,move[3].to_i]
-    valid_rook_moves(move, board).include?(destination_square)
+  def valid_move?(move, board)
+    src = [move[0].to_i,move[1].to_i]
+    dst = [move[2].to_i,move[3].to_i]
+    valid_rook_moves(src, board).include?(dst)
   end
 
 # validates against move_path_clear & non-moving to same colour piece space.

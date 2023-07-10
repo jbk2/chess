@@ -1,7 +1,9 @@
 require_relative '../lib/pieces/queen'
 require_relative '../lib/board'
+require_relative '../lib/game'
 
 describe Queen do
+
   describe "a queen's instantiation" do
     it 'sets and makes readable colour, r, c and first_movevariables' do
       white_queen = Queen.new(:white, 0, 3)
@@ -159,4 +161,56 @@ describe Queen do
     end
   end
 
+  describe "#valid_move?(move, board)" do
+    before do
+      allow($stdin).to receive(:gets).and_return("John", "James")
+      allow($stdout).to receive(:write) # comment if debugging as this will stop pry output also 
+      allow_any_instance_of(Game).to receive(:sleep) # stubs any #sleep's for test running speed
+    end
+    let(:game) { Game.new }
+
+    context "when move is valid against piece, game and board rules" do
+      it "returns true" do
+        game.board.grid[6][3] = nil
+        white_queen = game.board.piece(7, 3)
+        move = '7343'
+        result = white_queen.valid_move?(move, game.board)
+        expect(result).to be(true)
+      end
+      
+      it "returns true" do
+        game.board.grid[7][3], game.board.grid[6][3], game.board.grid[5][3] = nil, nil, Queen.new(:white, 5, 3)
+        white_queen = game.board.piece(5, 3)
+        move = '5323'
+        result = white_queen.valid_move?(move, game.board)
+        expect(result).to be(true)
+      end
+      
+      it "returns true" do
+        game.board.grid[7][3], game.board.grid[6][3], game.board.grid[5][3] = nil, nil, Queen.new(:white, 5, 3)
+        white_queen = game.board.piece(5, 3)
+        move = '5326'
+        result = white_queen.valid_move?(move, game.board)
+        expect(result).to be(true)
+      end
+    end
+  
+    context "when move is not valid against piece, game and board rules" do
+      it "returns false" do
+        game.board.grid[6][3] = nil
+        white_queen = game.board.piece(7, 3)
+        move = '7337'
+        result = white_queen.valid_move?(move, game.board)
+        expect(result).to be(false)
+      end
+      
+      it "returns false" do
+        game.board.grid[6][3], game.board.grid[5][3] = nil, Pawn.new(:black, 5, 3)
+        white_queen = game.board.piece(7, 3)
+        move = '7333'
+        result = white_queen.valid_move?(move, game.board)
+        expect(result).to be(false)
+      end
+    end
+  end
 end

@@ -1,7 +1,14 @@
 require_relative '../lib/pieces/rook'
 require_relative '../lib/board'
+require_relative '../lib/game'
 
 describe Rook do
+  before do
+    allow($stdin).to receive(:gets).and_return("John", "James")
+    allow($stdout).to receive(:write) # comment if debugging as this will stop pry output also 
+    allow_any_instance_of(Game).to receive(:sleep) # stubs any #sleep's for test running speed
+  end
+
   describe "a Rook's instantiation" do
     it 'sets and makes readable colour, r, c and first_movevariables' do
       white_rook = Rook.new(:white, 0,0)
@@ -131,27 +138,42 @@ describe Rook do
     end
   end
 
-  describe "#src_dst_same_colour?(move)" do
-    let(:board) { Board.new }
-    it 'returns true when dst same colour as src' do
-      black_rook = Rook.new(:black, 0,0)
-      move = '0010'
-      result = black_rook.src_dst_same_colour?(move, board)
-      expect(result).to be(true)
+  describe "#valid_move?(move, board)" do
+    let(:game) { Game.new }
+    context "when move is valid against piece, game and board rules" do
+      it "returns true" do
+        game.board.grid[6][0] = nil
+        white_rook = game.board.piece(7, 0)
+        move = '7020'
+        result = white_rook.valid_move?(move, game.board)
+        expect(result).to be(true)
+      end
+      
+      it "returns true" do
+        game.board.grid[5][4] = Rook.new(:white, 5, 4)
+        white_rook = game.board.piece(5, 4)
+        move = '5424'
+        result = white_rook.valid_move?(move, game.board)
+        expect(result).to be(true)
+      end
     end
     
-    it 'returns false when dst different colour to src' do
-      black_pawn = Pawn.new(:black, 1,0)
-      move = '1060'
-      result = black_pawn.src_dst_same_colour?(move, board)
-      expect(result).to be(false)
-    end
-    
-    it "returns false when dst doesn't contain a piece" do
-      black_pawn = Pawn.new(:black, 1,0)
-      move = '1020'
-      result = black_pawn.src_dst_same_colour?(move, board)
-      expect(result).to be(false)
+    context "when move is not valid against piece, game and board rules" do
+      it "returns false" do
+        white_rook = game.board.piece(7, 0)
+        move = '7060'
+        result = white_rook.valid_move?(move, game.board)
+        expect(result).to be(false)
+      end
+
+      it "returns false" do
+        game.board.grid[5][4] = Rook.new(:white, 5, 4)
+        white_rook = game.board.piece(5, 4)
+        move = '5432'
+        result = white_rook.valid_move?(move, game.board)
+        expect(result).to be(false)
+      end
     end
   end
+ 
 end

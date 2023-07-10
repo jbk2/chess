@@ -1,5 +1,6 @@
 require_relative '../lib/pieces/pawn'
 require_relative '../lib/board'
+require_relative '../lib/game'
 
 describe Pawn do
   describe "a pawn's instantiation" do
@@ -153,4 +154,55 @@ describe Pawn do
       end
     end
   end
+
+  describe "#valid_move?(move, board)" do
+    before do
+      allow($stdin).to receive(:gets).and_return("John", "James")
+      allow($stdout).to receive(:write) # comment if debugging as this will stop pry output also 
+      allow_any_instance_of(Game).to receive(:sleep) # stubs any #sleep's for test running speed
+    end
+    let(:game) { Game.new }
+
+    context "when move is valid against piece, game and board rules" do
+      it "returns true" do
+        white_pawn = game.board.piece(6, 0)
+        move = '6050'
+        result = white_pawn.valid_move?(move, game.board)
+        expect(result).to be(true)
+      end
+      
+      it "returns true" do
+        game.board.grid[5][1] = Queen.new(:black, 5, 1)
+        white_pawn = game.board.piece(6, 0)
+        move = '6051'
+        result = white_pawn.valid_move?(move, game.board)
+        expect(result).to be(true)
+      end
+      
+      it "returns true" do
+        black_pawn = game.board.piece(1, 7)
+        move = '1727'
+        result = black_pawn.valid_move?(move, game.board)
+        expect(result).to be(true)
+      end
+    end
+  
+    context "when move is not valid against piece, game and board rules" do
+      it "returns false" do
+        white_pawn = game.board.piece(6, 0)
+        move = '6051'
+        result = white_pawn.valid_move?(move, game.board)
+        expect(result).to be(false)
+      end
+      
+      it "returns false" do
+        game.board.grid[5][1] = Queen.new(:white, 5, 1)
+        white_pawn = game.board.piece(6, 0)
+        move = '6051'
+        result = white_pawn.valid_move?(move, game.board)
+        expect(result).to be(false)
+      end
+    end
+  end
+
 end

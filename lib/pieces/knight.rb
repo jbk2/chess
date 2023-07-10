@@ -25,7 +25,7 @@ class Knight < Piece
     @first_move = false
   end
   
-  def piece_valid_move?(move, board)
+  def valid_move?(move, board)
     dst = [move[2].to_i,move[3].to_i]
     src = [move[0].to_i,move[1].to_i]
     valid_knight_moves(src, board).include?(dst)

@@ -72,30 +72,30 @@ describe Knight do
     end
   end
 
-  describe '#piece_valid_move?(move, board)' do
+  describe '#valid_move?(move, board)' do
     let(:black_knight) {Knight.new(:black, 0,1)}
     let(:board) { Board.new }
     context "when move meets knight's rules" do
       context "is in board bounds" do
         it 'returns true' do
-          expect(black_knight.piece_valid_move?('0122', board)).to be(true)
+          expect(black_knight.valid_move?('0122', board)).to be(true)
         end
         it 'returns true' do
-          expect(black_knight.piece_valid_move?('0120', board)).to be(true)
+          expect(black_knight.valid_move?('0120', board)).to be(true)
         end
         context "has own piece in dst" do
           it 'returns false' do
-            expect(black_knight.piece_valid_move?('0113', board)).to be(false)
+            expect(black_knight.valid_move?('0113', board)).to be(false)
           end
         end
       end
       context "is out of board bounds" do
         it 'returns false' do
-          expect(black_knight.piece_valid_move?('01-1-1', board)).to be(false)
+          expect(black_knight.valid_move?('01-1-1', board)).to be(false)
         end
         
         it 'returns false' do
-          expect(black_knight.piece_valid_move?('01-2-2', board)).to be(false)
+          expect(black_knight.valid_move?('01-2-2', board)).to be(false)
         end
       end
     end
@@ -103,11 +103,11 @@ describe Knight do
     context "when move doesn't meet knight's rules" do
       context "but is in board bounds" do
         it 'returns false' do
-          expect(black_knight.piece_valid_move?('0132', board)).to be(false)
+          expect(black_knight.valid_move?('0132', board)).to be(false)
         end
 
         it 'returns false' do
-          expect(black_knight.piece_valid_move?('0114', board)).to be(false)
+          expect(black_knight.valid_move?('0114', board)).to be(false)
         end
       end
     end

@@ -106,4 +106,28 @@ describe Piece do
       end
     end
   end
+
+  describe "#src_dst_same_colour?(move)" do
+    let(:board) { Board.new }
+    it 'returns true when dst same colour as src' do
+      black_rook = Rook.new(:black, 0,0)
+      move = '0010'
+      result = black_rook.src_dst_same_colour?(move, board)
+      expect(result).to be(true)
+    end
+    
+    it 'returns false when dst different colour to src' do
+      black_pawn = Pawn.new(:black, 1,0)
+      move = '1060'
+      result = black_pawn.src_dst_same_colour?(move, board)
+      expect(result).to be(false)
+    end
+    
+    it "returns false when dst doesn't contain a piece" do
+      black_pawn = Pawn.new(:black, 1,0)
+      move = '1020'
+      result = black_pawn.src_dst_same_colour?(move, board)
+      expect(result).to be(false)
+    end
+  end
 end

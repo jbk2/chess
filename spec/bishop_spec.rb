@@ -1,5 +1,6 @@
 require_relative '../lib/pieces/bishop'
 require_relative '../lib/board'
+require_relative '../lib/game'
 
 describe Bishop do
   describe "a bishop's instantiation" do
@@ -129,6 +130,59 @@ describe Bishop do
         src = [black_bishop.r, black_bishop.c]
         result = black_bishop.valid_bishop_moves(src, board)
         expect(result).to eq([[6, 3], [6, 1]])
+      end
+    end
+  end
+
+  describe "#valid_move?(move, board)" do
+    before do
+      allow($stdin).to receive(:gets).and_return("John", "James")
+      allow($stdout).to receive(:write) # comment if debugging as this will stop pry output also 
+      allow_any_instance_of(Game).to receive(:sleep) # stubs any #sleep's for test running speed
+    end
+    let(:game) { Game.new }
+
+    context "when move is valid against piece, game and board rules" do
+      it "returns true" do
+        game.board.grid[6][1] = nil
+        white_bishop = game.board.piece(7, 2)
+        move = '7261'
+        result = white_bishop.valid_move?(move, game.board)
+        expect(result).to be(true)
+      end
+      
+      it "returns true" do
+        game.board.grid[6][3] = nil
+        white_bishop = game.board.piece(7, 2)
+        move = '7227'
+        result = white_bishop.valid_move?(move, game.board)
+        expect(result).to be(true)
+      end
+
+      it "returns true" do
+        game.board.grid[6][3], game.board.grid[3][6]  = nil, Pawn.new(:black, 3, 6)
+        white_bishop = game.board.piece(7, 2)
+        move = '7236'
+        result = white_bishop.valid_move?(move, game.board)
+        expect(result).to be(true)
+      end
+       
+    end
+  
+    context "when move is not valid against piece, game and board rules" do
+      it "returns false" do
+        white_bishop = game.board.piece(7, 2)
+        move = '7261'
+        result = white_bishop.valid_move?(move, game.board)
+        expect(result).to be(false)
+      end
+      
+      it "returns false" do
+        game.board.grid[6][3], game.board.grid[3][6]  = nil, Pawn.new(:white, 3, 6)
+        white_bishop = game.board.piece(7, 2)
+        move = '7236'
+        result = white_bishop.valid_move?(move, game.board)
+        expect(result).to be(false)
       end
     end
   end

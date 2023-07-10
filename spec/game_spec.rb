@@ -1,10 +1,11 @@
 require_relative '../lib/game'
+require_relative '../lib/ui_module'
 
 describe Game do
   let(:game) {Game.new}
   before do
     allow($stdin).to receive(:gets).and_return("John", "James")
-    allow($stdout).to receive(:write) # comment if debugging as this will stop pry output also 
+    # allow($stdout).to receive(:write) # comment if debugging as this will stop pry output also 
     allow_any_instance_of(Game).to receive(:sleep) # stubs any #sleep's for test running speed
   end
   
@@ -67,11 +68,11 @@ describe Game do
     end
     
     context 'with incorrect index format' do
-        it 'raises and InputError' do
-          expect { game.add_move('1b,1c') }.to raise_error(InputError, "Indexed_move; 1b,1c should be formatted like 'iiii'")
-          expect(game.moves).to eq([])
-        end
+      it 'raises and InputError' do
+        expect { game.add_move('1b,1c') }.to raise_error(InputError, "Indexed_move; 1b,1c should be formatted like 'iiii'")
+        expect(game.moves).to eq([])
       end
+    end
   end
 
   describe '#get_move' do
@@ -114,7 +115,7 @@ describe Game do
       end
     end
 
-    context "On player's first move" do
+    context "on a player's first move" do
       context "it won't save" do
         it "a Rook move" do
           allow(game).to receive(:get_input).and_return('8a,6a', '8b,6c') #Rook & Knight 
@@ -192,10 +193,6 @@ describe Game do
         expect(result).to be(true)
       end
     end
-  end
-  
-  describe 'first move allows only Pawn or Knight moves, implemented by Game#get_move' do
-    let(:active_player) { double(Player) }
   end
 
   describe '#has_piece?(square)' do
@@ -414,44 +411,44 @@ describe Game do
     end
   end
 
-  describe '#moves_into_check?(move)' do
+  describe '#moves_into_check?(move, player)' do
     it "returns true when King moves into a Rook's path" do
       game.board.grid[6][4], game.board.grid[7][4], game.board.grid[1][0] = nil, nil, nil
       game.board.grid[3][1] = King.new(:white, 3, 1)
-      result = game.moves_into_check?('3130')
+      result = game.moves_into_check?('3130', game.active_player)
       expect(result).to be(true)
     end
     
     it "returns true when King moves into a Pawn's path" do
       game.board.grid[7][4] = nil
       game.board.grid[3][4] = King.new(:white, 3, 4)
-      result = game.moves_into_check?('3424')
+      result = game.moves_into_check?('3424', game.active_player)
       expect(result).to be(true)
     end
    
     it "returns true when King moves into a Knight's path" do
       game.board.grid[7][4] = nil
       game.board.grid[3][5] = King.new(:white, 3, 5)
-      result = game.moves_into_check?('3525')
+      result = game.moves_into_check?('3525', game.active_player)
       expect(result).to be(true)
     end
     
     it 'returns false when a move does not place player in check' do
       game.board.grid[6][4], game.board.grid[7][4], game.board.grid[1][0] = nil, nil, nil
       game.board.grid[3][1] = King.new(:white, 3, 1)
-      result = game.moves_into_check?('3141')
+      result = game.moves_into_check?('3141', game.active_player)
       expect(result).to be(false)
     end
     
     it 'returns false when a move does not place player in check' do
       game.board.grid[7][4] = nil
       game.board.grid[4][5] = King.new(:white, 4, 5)
-      result = game.moves_into_check?('4535')
+      result = game.moves_into_check?('4535', game.active_player)
       expect(result).to be(false)
     end
   end
 
-  describe '#removes_check?' do
+  describe '#removes_check?(move)' do
     context 'when in check' do
       it 'returns true if move takes player out of check' do
         game.board.grid[6][4] = nil
@@ -459,7 +456,7 @@ describe Game do
         game.board.grid[0][3] = nil
         game.board.grid[5][4] = Rook.new(:black, 5, 4)
         move = '7473'
-        result = game.removes_check?(move)
+        result = game.removes_check?(move, game.send(:white_player))
         expect(result).to be(true)
       end
       
@@ -471,7 +468,7 @@ describe Game do
         game.board.grid[5][4] = Rook.new(:black, 5, 4)
         move = '7464'
         allow(game).to receive(:get_move).and_return('7473')
-        result = game.removes_check?(move)
+        result = game.removes_check?(move, game.send(:white_player))
         expect(result).to be(false)
       end
     end
@@ -481,7 +478,7 @@ describe Game do
         game.board.grid[7][3] = nil
         # game.board.grid[0][3] = nil
         move = '7473'
-        result = game.removes_check?(move)
+        result = game.removes_check?(move, game.send(:white_player))
         expect(result).to be(false)
       end
     end
@@ -646,5 +643,113 @@ describe Game do
       end
     end
   end
-  
+
+def empty_board(game)
+  game.board.grid.map! { Array.new(8) }
+end
+
+  describe "#checkmate?(player)" do
+    context 'when player is in check and check mate' do
+      it 'will return true' do
+        empty_board(game)
+        game.board.grid[0][4], game.board.grid[0][7], game.board.grid[2][7] = Rook.new(:white, 0, 4), King.new(:black, 0, 7), King.new(:white, 2, 7)
+        result = game.checkmate?(game.send(:black_player))
+        expect(result).to be(true)
+      end
+      
+      it "will return true with 'epaulette' mate pattern" do
+        empty_board(game)
+        game.board.grid[0][3], game.board.grid[0][4], game.board.grid[0][5] = Rook.new(:black, 0, 3), King.new(:black, 0, 4), Rook.new(:black, 0, 5)
+        game.board.grid[2][4] = Queen.new(:white, 2, 4)
+        result = game.checkmate?(game.send(:black_player))
+        expect(result).to be(true)
+      end
+     
+      it "will return true with 'Cozio' mate pattern" do
+        empty_board(game)
+        game.board.grid[3][6], game.board.grid[4][5], game.board.grid[4][6] = Pawn.new(:black, 3, 6), Queen.new(:black, 4, 5), King.new(:black, 4, 6)
+        game.board.grid[5][7], game.board.grid[6][6] = Queen.new(:white, 5, 7), King.new(:white, 6, 6)
+        result = game.checkmate?(game.send(:black_player))
+        expect(result).to be(true)
+      end
+     
+      it "will return true with 'kill box' type mate pattern" do
+        empty_board(game)
+        game.board.grid[0][6] = King.new(:black, 0, 6)
+        game.board.grid[0][7], game.board.grid[2][5] = Rook.new(:white, 0, 7), Queen.new(:white, 2, 5)
+        result = game.checkmate?(game.send(:black_player))
+        expect(result).to be(true)
+      end
+      
+      it "will return true with 'triangle' type mate pattern" do
+        empty_board(game)
+        game.board.grid[0][6] = King.new(:black, 0, 6)
+        game.board.grid[1][5], game.board.grid[1][7] = Queen.new(:white, 1, 5), Rook.new(:white, 1, 7)
+        result = game.checkmate?(game.send(:black_player))
+        expect(result).to be(true)
+      end
+    end
+    
+    context 'when player is in check but not check mate' do
+      it 'will return false' do
+        empty_board(game)
+        game.board.grid[0][4], game.board.grid[1][7], game.board.grid[2][5] = Rook.new(:white, 0, 4), King.new(:black, 1, 7), King.new(:white, 2, 5)
+        result = game.checkmate?(game.send(:black_player))
+        expect(result).to be(false)
+      end
+
+      it "will return false" do
+        empty_board(game)
+        game.board.grid[0][3], game.board.grid[0][4], game.board.grid[0][5] = Rook.new(:black, 0, 3), King.new(:black, 0, 4), Rook.new(:black, 0, 5)
+        game.board.grid[2][3] = Knight.new(:white, 2, 3)
+        result = game.checkmate?(game.send(:black_player))
+        expect(result).to be(false)
+      end
+
+      it "will return false with not quite a 'Cozio' check type pattern" do
+        empty_board(game)
+        game.board.grid[3][6], game.board.grid[4][5], game.board.grid[4][6] = Pawn.new(:black, 3, 6), Queen.new(:black, 4, 5), King.new(:black, 4, 6)
+        game.board.grid[5][6] = Queen.new(:white, 5, 6)
+        result = game.checkmate?(game.send(:black_player))
+        expect(result).to be(false)
+      end
+
+      it "will return false with close to but not a 'kill box' type check pattern" do
+        empty_board(game)
+        game.board.grid[0][6] = King.new(:black, 0, 6)
+        game.board.grid[0][7], game.board.grid[2][4] = Rook.new(:white, 0, 7), Queen.new(:white, 2, 4)
+        result = game.checkmate?(game.send(:black_player))
+        expect(result).to be(false)
+      end
+    end
+  end
+
+  describe "#stale_mate?(player)" do
+    context "when player is in stalemate" do
+      it "returns true" do
+        empty_board(game)
+        game.board.grid[7][0], game.board.grid[6][1], game.board.grid[5][2] = King.new(:black, 7, 0), Rook.new(:white, 6, 1), King.new(:white, 5, 2)
+        result = game.stalemate?(game.send(:black_player))
+        expect(result).to be(true)
+      end
+ 
+      it "returns true" do
+        empty_board(game)
+        game.board.grid[0][7], game.board.grid[2][6], game.board.grid[2][7] = King.new(:black, 0, 7), Rook.new(:white, 2, 6), King.new(:white, 2, 7)
+        result = game.stalemate?(game.send(:black_player))
+        expect(result).to be(true)
+      end
+    end
+
+    context "when player is not in stalemate" do
+      it "returns false" do
+        empty_board(game)
+        game.board.grid[6][0], game.board.grid[6][1], game.board.grid[5][2] = King.new(:black, 6, 0), Rook.new(:white, 6, 1), King.new(:white, 5, 2)
+        result = game.stalemate?(game.send(:black_player))
+        expect(result).to be(false)
+      end
+      
+    end
+  end
+
 end

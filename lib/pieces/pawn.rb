@@ -38,9 +38,10 @@ class Pawn < Piece
   #   super
   # end
 
-  def piece_valid_move?(move, board)
-    destination_square = [move[2].to_i,move[3].to_i]
-    valid_pawn_moves(move, board).include?(destination_square)
+  def valid_move?(move, board)
+    src = [move[0].to_i,move[1].to_i]
+    dst = [move[2].to_i,move[3].to_i]
+    valid_pawn_moves(src, board).include?(dst)
   end
 
 # implements diagonal taking move logic, 1st move 2 square logic, clear path logic and not into own piece logic.
