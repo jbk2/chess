@@ -48,14 +48,14 @@
 
 # #################### NEXT TODO'S ###############
 
-  # Must program each valid_piece_moves in each piece type to not just return all possible moves, 
-  # but only all possible moves that are valid for the current game/baord status. Currently #in_check?
-  # validates king's check status based upon all possible piece moves for all pieces, so it asserts
-  # #in_check? true against all piece moves not piece and game valid moves only.
-  # Currently only; Rook & Pawn implement game state move validity in '#valid_ ... _moves' method.
-
-
-  # Must validate that a given move is on a piece of the same color as the active player
+  # Tidy up Game#make_move
+  # Get game flow working
+  # Get the board displaying in UI at correct times
+  # Add row and column numbers in display board UI
+  # Integration tests for game flor (#play)
+  # Clean up code in Game class
+  # Refactor code in Game class
+  # Re-write user input to receive in chess notation (column, row) and interpolate into code notation (row, column)
 
 
 ## Potential Refactorings
