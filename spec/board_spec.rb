@@ -152,13 +152,13 @@ describe Board do
     
   describe '#find_pieces(type, colour)' do
     context 'with white pieces' do
-      it 'returns the position of the king' do
+      it 'returns the position of the King' do
         game = Game.new
         result = board.find_pieces('king', game.active_player.colour)
         expect(result).to eq([[7, 4]])
       end
       
-      it 'returns the position of the rooks' do
+      it 'returns the position of the Rooks' do
         game = Game.new
         result = board.find_pieces('rook', game.active_player.colour)
         expect(result).to eq([[7, 0], [7, 7]])
@@ -166,14 +166,14 @@ describe Board do
     end
     
     context 'with black pieces' do
-      it 'returns the position of the king' do
+      it 'returns the position of the King' do
         game = Game.new
         game.send(:toggle_turn)
         result = board.find_pieces('king', game.active_player.colour)
         expect(result).to eq([[0, 4]])
       end
       
-      it 'returns the position of the king for the given colour' do
+      it 'returns the position of the Rooks' do
         game = Game.new
         game.send(:toggle_turn)
         result = board.find_pieces('pawn', game.active_player.colour)

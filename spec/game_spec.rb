@@ -414,6 +414,79 @@ describe Game do
     end
   end
 
+  describe '#moves_into_check?(move)' do
+    it "returns true when King moves into a Rook's path" do
+      game.board.grid[6][4], game.board.grid[7][4], game.board.grid[1][0] = nil, nil, nil
+      game.board.grid[3][1] = King.new(:white, 3, 1)
+      result = game.moves_into_check?('3130')
+      expect(result).to be(true)
+    end
+    
+    it "returns true when King moves into a Pawn's path" do
+      game.board.grid[7][4] = nil
+      game.board.grid[3][4] = King.new(:white, 3, 4)
+      result = game.moves_into_check?('3424')
+      expect(result).to be(true)
+    end
+   
+    it "returns true when King moves into a Knight's path" do
+      game.board.grid[7][4] = nil
+      game.board.grid[3][5] = King.new(:white, 3, 5)
+      result = game.moves_into_check?('3525')
+      expect(result).to be(true)
+    end
+    
+    it 'returns false when a move does not place player in check' do
+      game.board.grid[6][4], game.board.grid[7][4], game.board.grid[1][0] = nil, nil, nil
+      game.board.grid[3][1] = King.new(:white, 3, 1)
+      result = game.moves_into_check?('3141')
+      expect(result).to be(false)
+    end
+    
+    it 'returns false when a move does not place player in check' do
+      game.board.grid[7][4] = nil
+      game.board.grid[4][5] = King.new(:white, 4, 5)
+      result = game.moves_into_check?('4535')
+      expect(result).to be(false)
+    end
+  end
+
+  describe '#removes_check?' do
+    context 'when in check' do
+      it 'returns true if move takes player out of check' do
+        game.board.grid[6][4] = nil
+        game.board.grid[7][3] = nil
+        game.board.grid[0][3] = nil
+        game.board.grid[5][4] = Rook.new(:black, 5, 4)
+        move = '7473'
+        result = game.removes_check?(move)
+        expect(result).to be(true)
+      end
+      
+      it 'returns false if move does not take player out of check' do
+        game.board.grid[6][4] = nil
+        game.board.grid[6][3] = nil
+        game.board.grid[7][3] = nil
+        # game.board.grid[0][3] = nil
+        game.board.grid[5][4] = Rook.new(:black, 5, 4)
+        move = '7464'
+        allow(game).to receive(:get_move).and_return('7473')
+        result = game.removes_check?(move)
+        expect(result).to be(false)
+      end
+    end
+    
+    context 'when not check' do
+      it "returns false as move doesn't move out of check as it wasn't in check in first place!" do
+        game.board.grid[7][3] = nil
+        # game.board.grid[0][3] = nil
+        move = '7473'
+        result = game.removes_check?(move)
+        expect(result).to be(false)
+      end
+    end
+  end
+
   describe '#place_move(move)' do # this does not enforce piece or board move rules, it simply places move
     context 'with no piece taking' do
       it 'moves piece from src to dst square' do
@@ -458,7 +531,7 @@ describe Game do
     end
   end
 
-  describe '#rollback_move(move)' do
+  describe '#reverse_move(move)' do
     context 'without a taken piece on last move' do
       it 'reverses back the last move' do
         move = '1021'
@@ -468,7 +541,7 @@ describe Game do
         expect(game.board.grid[1][0]).to be_nil
         expect(game.taken_pieces.last[0]).to be_nil
         expect(game.taken_pieces.last[1]).to eq(move)
-        game.rollback_move(move)
+        game.reverse_move(move)
         expect(game.board.grid[1][0]).to be_a(Pawn)
         expect(game.board.grid[2][1]).to be_nil
       end
@@ -478,7 +551,7 @@ describe Game do
         game.board.grid[2][0] = nil
         game.place_move(move)
         puts "here's 20 now; #{game.board.grid[2][0].inspect}"
-        game.rollback_move(move)
+        game.reverse_move(move)
         expect(game.board.grid[1][0].r).to eq(1)
         expect(game.board.grid[1][0].c).to eq(0)
         puts "here's 20 now; #{game.board.grid[2][0].inspect}"
@@ -488,7 +561,7 @@ describe Game do
       it "adds array object to game's @taken_pieces with nil and the move values" do
         move = '1021'
         game.place_move(move)
-        game.rollback_move(move)
+        game.reverse_move(move)
         expect(game.taken_pieces.last[0]).to be_nil
         expect(game.taken_pieces.last[1]).to eq(move)
       end
@@ -503,7 +576,7 @@ describe Game do
         expect(game.board.grid[1][0]).to be_nil
         expect(game.taken_pieces.last[0]).to be_a(Rook)
         expect(game.taken_pieces.last[1]).to eq(move)
-        game.rollback_move(move)
+        game.reverse_move(move)
         expect(game.board.grid[1][0]).to be_a(Pawn)
         expect(game.board.grid[2][1]).to be_a(Rook)
         expect(game.taken_pieces.last).to satisfy { |piece| !piece.is_a?(Rook) }
@@ -513,7 +586,7 @@ describe Game do
         move = '1021'
         game.board.grid[2][1] = Rook.new(:white, 2, 0)
         game.place_move(move)
-        game.rollback_move(move)
+        game.reverse_move(move)
         expect(game.board.grid[1][0].r).to eq(1)
         expect(game.board.grid[1][0].c).to eq(0)
         expect(game.board.grid[2][1].r).to eq(2)
@@ -524,74 +597,54 @@ describe Game do
         move = '1021'
         game.board.grid[2][1] = Rook.new(:white, 2, 0)
         game.place_move(move)
-        game.rollback_move(move)
+        game.reverse_move(move)
         expect(game.taken_pieces).to be_empty
       end
     end
   end
-
-  describe '#places_in_check?(move)' do
-    it 'returns true when move does place player in check' do
-      game.board.grid[6][4], game.board.grid[7][4], game.board.grid[1][0] = nil, nil, nil
-      game.board.grid[3][1] = King.new(:white, 3, 1)
-      result = game.places_in_check?('3130')
-      expect(result).to be(true)
-    end
-    
-    it 'returns false when move does not place player in check' do
-      game.board.grid[6][4], game.board.grid[7][4], game.board.grid[1][0] = nil, nil, nil
-      game.board.grid[3][1] = King.new(:white, 3, 1)
-      result = game.places_in_check?('3141')
-      expect(result).to be(false)
-    end
-  end
-
-  describe '#removes_check?' do
-    context 'when in check' do
-      it 'returns true if move takes player out of check' do
+  
+  describe '#king_uncheck_move_possible?(player)' do
+    context 'when possible' do
+      it 'returns true' do
         game.board.grid[6][4] = nil
         game.board.grid[7][3] = nil
-        game.board.grid[0][3] = nil
         game.board.grid[5][4] = Rook.new(:black, 5, 4)
-        move = '7473'
-        result = game.removes_check?(move)
+        result = game.king_uncheck_move_possible?(game.active_player, game.board)
         expect(result).to be(true)
       end
-      
-      it 'returns false if move does not take player out of check' do
+    
+      it 'returns true' do
         game.board.grid[6][4] = nil
-        game.board.grid[6][3] = nil
-        game.board.grid[7][3] = nil
-        # game.board.grid[0][3] = nil
+        game.board.grid[7][5] = nil
         game.board.grid[5][4] = Rook.new(:black, 5, 4)
-        move = '7464'
-        allow(game).to receive(:get_move).and_return('7473')
-        result = game.removes_check?(move)
-        expect(result).to be(false)
+        result = game.king_uncheck_move_possible?(game.active_player, game.board)
+        expect(result).to be(true)
+      end
+  
+      it 'returns true' do
+        game.board.grid[6][4] = nil
+        game.board.grid[7][5] = Pawn.new(:black, 7, 5)
+        game.board.grid[5][4] = Rook.new(:black, 5, 4)
+        result = game.king_uncheck_move_possible?(game.active_player, game.board)
+        expect(result).to be(true)
       end
     end
-    
-    context 'when not check' do
-      it "returns false as move doesn't move out of check as it wasn't in check in first place!" do
-        game.board.grid[7][3] = nil
-        # game.board.grid[0][3] = nil
-        move = '7473'
-        result = game.removes_check?(move)
+
+    context 'when not possible' do
+      it 'returns false' do
+        game.board.grid[6][4] = nil
+        game.board.grid[5][4] = Rook.new(:black, 5, 4)
+        result = game.king_uncheck_move_possible?(game.active_player, game.board)
+        expect(result).to be(false)
+      end
+      
+      it 'returns false' do
+        game.board.grid[6][4], game.board.grid[6][5] = nil, nil
+        game.board.grid[4][7], game.board.grid[3][4] = Bishop.new(:black, 4, 7), Rook.new(:black, 3, 4)
+        result = game.king_uncheck_move_possible?(game.active_player, game.board)
         expect(result).to be(false)
       end
     end
   end
-  
-  # describe '#king_move_to_uncheck_itself(player)' do
-  #   context 'when possible' do
-  #     it 'returns true' do
-  #       game.board.grid[6][4] = nil
-  #       game.board.grid[7][3] = nil
-  #       game.board.grid[5][4] = Rook.new(:black, 5, 4)
-  #       result = game.king_move_to_uncheck_itself?(game.active_player)
-  #       expect(result).to be(true)
-  #     end
-  #   end
-  # end
   
 end

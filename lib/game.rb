@@ -179,54 +179,45 @@ class Game
     # end
   end
 
-  def king_move_to_uncheck_itself?(player)
+  def king_uncheck_move_possible?(player, board)
     if in_check(player)
-      players_king_location = board.find_pieces('king', player.colour)[0]
-      puts "\n__ players king location from within #king_uncheck_itself...: #{players_king_location} *****_____"
-      all_kings_moves = board.piece(players_king_location[0], players_king_location[1]).all_king_moves
-      puts "\n********** all kings options:#{all_kings_moves.inspect} ************"
-      valid_squares = []
-      
-      all_kings_moves.each do |move|
-        square = board.grid[move[0]][move[1]]
-        valid_squares << move if square.nil? || (square.colour != player.colour)
-      end
-      puts "\n___VALID options____ #{valid_squares.inspect} ________"
+      king_src = board.find_pieces('king', player.colour).flatten
+      kings_moves = board.piece(king_src[0], king_src[1]).valid_king_moves(king_src, board)
 
-      valid_squares.each do |square|
-        move = players_king_location[0].to_s + players_king_location[1].to_s + square[0].to_s + square[1].to_s
-        puts "\nValid move from valid squares' #each; #{move} ************"
+      kings_moves.each do |dst|
+        move = king_src[0].to_s + king_src[1].to_s + dst[0].to_s + dst[1].to_s
         place_move(move)
         if !in_check(player)
-          puts "  YAY KING NO LONGER IN CHECK"
+          puts "********** MOVE REMOVED KING FROM CHECK"
           uncheck_possible = true
           puts "uncheck_possible is set to #{uncheck_possible.inspect}"
-          rollback_move(move)
-          return true if uncheck_possible == true
+          reverse_move(move)
+          return true if uncheck_possible
         end
-        rollback_move(move)
+        puts " ********* MOVE DOES NOT MOVE KING OUT OF CHECK ******"
+        reverse_move(move)
       end
       return false
     else
-      puts '#{player.name} is not in check'
-    end    
+      puts '#{player.name} is not in check in the first place'
+    end
   end
 
   def removes_check?(move)
     if in_check(active_player)
-      puts "from #removes_check; player is in check"
-      puts "active player b4 place move is; #{active_player.inspect}"
+      # puts "from #removes_check; player is in check"
+      # puts "active player b4 place move is; #{active_player.inspect}"
       place_move(move)
-      puts "active player after place move is; #{active_player.inspect}"
+      # puts "active player after place move is; #{active_player.inspect}"
       # puts "here's in check: #{in_check(active_player)}"
       if in_check(active_player)
         puts "player still in check after move placed"
-        rollback_move(move)
+        reverse_move(move)
         abort_move(move, "Your king's in check, your move #{chess_format(move)} did not move it out of check. You need to; take checking piece, move king, or block path. Try again.")
         return false
       elsif in_check(active_player) == false
         puts "player no longer in check after move placed"
-        rollback_move(move)
+        reverse_move(move)
         return true
       end
     elsif in_check(active_player) == false
@@ -243,16 +234,16 @@ class Game
     board.grid[dst_r][dst_c].r = dst_r
     board.grid[dst_r][dst_c].c = dst_c
     board.grid[src_r][src_c] = nil
-    puts "\nMove made, taken pieces from move are; #{@taken_pieces.inspect}"
+    puts "\n**** MOVE PLACED; taken pieces from move are; #{@taken_pieces.inspect}"
     # toggle active user here?
   end
 
-  def rollback_move(move)
+  def reverse_move(move)
     src_r, src_c, dst_r, dst_c = move[0].to_i, move[1].to_i, move[2].to_i, move[3].to_i
     board.grid[src_r][src_c] = board.grid[dst_r][dst_c]
     board.grid[src_r][src_c].r = src_r
     board.grid[src_r][src_c].c = src_c
-    puts "from #rollback_move; dst square has been moved back to src, src square tennant = #{board.grid[src_r][src_c]}"
+    puts "**** MOVE REVERSED; dst square has been moved back to src, src square tennant = #{board.grid[src_r][src_c]}"
     if !@taken_pieces.last[0].nil? && (@taken_pieces.last[1] == move) # WARNING - there is the minimal possibility of a previous taken piece's move being the same as this move
       board.grid[dst_r][dst_c] = @taken_pieces.last[0]
       board.grid[dst_r][dst_c].r = dst_r
@@ -264,37 +255,34 @@ class Game
     # reverse active player here?
   end
 
+  # puts "#{player.name}'s (#{player.colour} player) king's location, from within #in_check? is; #{kings_location}"
+  # puts "FROM IN_CHECK OPPONENT PIECES EACH coord is; #{coord}"
+  # puts "KINGS LOCATION IS IS; #{kings_location}"
+  # move = src_r.to_s + src_c.to_s + kings_location[0].to_s + kings_location[1].to_s
+  # puts "TOTAL MOVE IS; #{move}"
+  # puts "from #in_check? kings location IS in check by: \nPiece; #{piece.inspect} \nLocation; #{src}"
   def in_check(player)
     kings_location = board.find_pieces('king', player.colour).flatten
-    puts "#{player.name}'s (#{player.colour} player) king's location, from within #in_check? is; #{kings_location}"
     player.colour == :white ? opponent_colour = :black : opponent_colour = :white
     opponent_pieces = board.all_pieces(opponent_colour)
     checking_pieces = []
 
-    opponent_pieces.each do |coord|
-      puts "FROM IN_CHECK OPPONENT PIECES EACH coord is; #{coord}"
-      src_r, src_c = coord[0], coord[1]
-      puts "KINGS LOCATION IS IS; #{kings_location}"
-      # move = src_r.to_s + src_c.to_s + kings_location[0].to_s + kings_location[1].to_s
-      # puts "TOTAL MOVE IS; #{move}"
+    opponent_pieces.each do |src|
+      src_r, src_c = src[0], src[1]
       piece = board.piece(src_r, src_c)
       valid_moves_method_name = "valid_#{piece.class.to_s.downcase}_moves"
-
-    # if piece.class.to_s == 'Pawn' # Pawn separated in this conditional because Pawn needs to receive Board object to work out whether it can diagonal move or not, other piece classes do not need the board object
-      if piece.send(valid_moves_method_name, coord, board).include?(kings_location)
-        puts "from #in_check? kings location IS in check by: \nPiece; #{piece.inspect} \nLocation; #{coord}"
-        checking_pieces << [piece, coord]
+      if piece.send(valid_moves_method_name, src, board).include?(kings_location)
+        checking_pieces << [piece, src]
       end
     end
 
     checking_pieces.empty? ? (return false) : (return checking_pieces)
-    # false
   end
 
-  def places_in_check?(move)
+  def moves_into_check?(move)
     place_move(move)
     puts_in_check = in_check(active_player)
-    rollback_move(move)
+    reverse_move(move)
     puts_in_check ? true : false
   end
 
