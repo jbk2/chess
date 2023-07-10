@@ -1,5 +1,6 @@
 class Player
   attr_accessor :name, :colour
+  attr_writer :first_move
   
   def initialize(name)
     @name = name

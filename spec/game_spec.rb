@@ -5,7 +5,7 @@ describe Game do
   let(:game) {Game.new}
   before do
     allow($stdin).to receive(:gets).and_return("John", "James")
-    # allow($stdout).to receive(:write) # comment if debugging as this will stop pry output also 
+    allow($stdout).to receive(:write) # comment if debugging as this will stop pry output also 
     allow_any_instance_of(Game).to receive(:sleep) # stubs any #sleep's for test running speed
   end
   
@@ -43,18 +43,29 @@ describe Game do
     end
   end
   
-  describe "active_player" do
-    it 'is also the white player' do
+  describe "@active_player" do
+    it 'starts as the white player' do
       orig_active_player = game.active_player
       expect(game.active_player).to eq(game.send(:white_player))
     end
 
-    describe "#change_turn" do
+    describe "#toggle_turn" do
       it "should change the game.active_player" do
         orig_active_player = game.active_player
         expect(game.active_player).to eq(orig_active_player)
         game.send(:toggle_turn)
         expect(game.active_player).not_to eq(orig_active_player)
+      end
+    end
+    
+    describe "#opponent_player" do
+      it 'always returns the opponent of the active player' do
+        expect(game.send(:opponent_player)).to be(game.send(:black_player))
+      end
+    
+      it 'always returns the opponent of the active player, even after #toggle_turn' do
+        game.send(:toggle_turn)
+        expect(game.send(:opponent_player)).to be(game.send(:white_player))
       end
     end
   end
@@ -558,9 +569,10 @@ describe Game do
       it "adds array object to game's @taken_pieces with nil and the move values" do
         move = '1021'
         game.place_move(move)
-        game.reverse_move(move)
         expect(game.taken_pieces.last[0]).to be_nil
         expect(game.taken_pieces.last[1]).to eq(move)
+        game.reverse_move(move)
+        expect(game.taken_pieces).to be_empty
       end
     end
     

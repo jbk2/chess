@@ -12,6 +12,7 @@ class Game
   include UiModule
   attr_accessor :player1, :player2, :active_player, :active_user_move, :moves
   attr_reader :board, :taken_pieces
+  attr_writer :game_finished
 
   def initialize
     build_board
@@ -20,6 +21,7 @@ class Game
     @active_player = white_player
     @moves = []
     @taken_pieces = []
+    @game_finished = false
   end
 
 #  ****************** GAME SETUP LOGIC ***********************
@@ -50,7 +52,7 @@ class Game
   def game_setup
     display_string("Here's your board:", @@type_speed); sleep 0.7;
     display_string(ERB.new(yaml_data['game']['black_piece_instructions']).result(binding), @@type_speed); sleep 0.1;
-    board.display_board_utf; sleep 1;
+    board.display_board_utf; sleep 1; 
     display_string(ERB.new(yaml_data['game']['white_piece_instructions']).result(binding), @@type_speed)
     puts "\n"; sleep 1;
     display_string(yaml_data['game']['board_illustration'], 0.005)
@@ -59,10 +61,10 @@ class Game
   
   def play_game
     start_game
-    # until game_finished? 
-    get_move
-    make_move
-    # end
+    until game_finished?
+      get_move
+      make_move
+    end
   end
 
   def add_move(indexed_move)
@@ -86,99 +88,56 @@ class Game
   end
 
   def make_move
-    puts "here's my active player #{active_player}"
-    move = moves.last
-    puts "here's my move #{move}"
-    moving_piece = board.grid[move[0].to_i][move[1].to_i]
-    src_square = move[2] + move[3] # a string cintaining 2 digit chars
-    dst_square = board.grid[move[2].to_i][move[3].to_i] # either a Piece or nil
+    puts "here's my active player #{active_player.name}"
+    move = moves.last; puts "here's my move #{move}";
+    src, dst = move[0] + move[1], move[2] + move[3]
+    src_r, src_c, dst_r, dst_c = move[0], move[1], move[2], move[3]
+    src_piece = board.piece(src_r.to_i, src_c.to_i)
     
-    return rescue_against_this_piece_move_rules(moving_piece, move) unless moving_piece.valid_move?(move, board)
-    # return rescue_against_other_piece_move_rules unless moving_piece.game_valid_move?(game, move)
+    if src_piece.valid_move?(move, board)
+      puts "******* yes pieces rules allow that move"
+    else
+      return rescue_against_this_piece_move_rules(src_piece, move)
+    end
 
-    # if game_valid_move?(move)
-    puts "************************************"
-    puts "yes the pieces rules allow that move"
-    puts "************************************"
-    #   place_move(move)
-    # Don't forget to set pieces' @first_move variable `piece.first_move_made` on piece to false.
-    # Don't forget to set players' @first_move variable `player.first_move_made` on piece to false.
-    #   toggle_turn
-      # get_move
-      # make_move
-      
-        # else
-      #   puts 'you cannot make that move because xyz'
-      # end
-    # else
-      
-      # rescue_first_move_piece_error
-    # end
-    # check whether valid piece move
-    # if so:
-      # make move check for win, change active user hand turn over.
-    # If not explain why not and prompt player turn again
+    if moves_into_check?(move, active_player)
+      return rescue_against_move_yourself_into_check(move) 
+    else
+      puts "******* This move doesn't move you into check"
+    end
+    
+    place_move(move)
+    puts "******* TAKEN PIECES; #{taken_pieces}"
+    active_player.first_move = false if active_player.first_move?
+    src_piece.first_move = false if src_piece.first_move?
+    puts "#{opponent_player} is now in check" if in_check(opponent_player)
+    
+    if checkmate?(opponent_player)
+      puts "Checkmate, #{active_player} wins, #{opponent_player} is has been mated. Game over." 
+      game_finished = true
+      return
+    elsif stalemate?(opponent_player)
+      puts "Stalemate, it's a draw. Game over." 
+      game_finished = true
+      return
+    end
+    toggle_turn
   end
 
-  def rescue_against_this_piece_move_rules(moving_piece, move)
-    puts "A #{CYAN}#{moving_piece.class}#{ANSI_END} is not allowed to make the move; '#{CYAN}#{chess_format(move)}#{ANSI_END}', try again..."
+  def rescue_against_this_piece_move_rules(src_piece, move)
+    puts "A #{CYAN}#{src_piece.class}#{ANSI_END} is not allowed to make the move; '#{CYAN}#{chess_format(move)}#{ANSI_END}', try again..."
     board.display_board_utf
     moves.pop
-    get_move
-    make_move
+    # get_move
+    # make_move
   end
   
-  def rescue_against_other_piece_move_rules
-    puts "your move #{move} is breaching the game rules because of other pieces and their relative positions, try again..."
+  def rescue_against_move_yourself_into_check(move)
+    puts "your move #{CYAN}#{chess_format(move)}#{ANSI_END} moves you into check, try again..."
     board.display_board_utf
     moves.pop
-    get_move
-    make_move
-  end
-
-  def game_valid_move(move)
-    # MOVE PATH CLEAR
-    unless board.piece(move[0], move[1]).is_a(Knight)
-      abort_move(move, "Your move's; #{chess_format(move)} path is not clear, try again.") unless move_path_clear?(move)
-    end
-    # IF IN CHECK, MOVE MUST REMOVE FROM CHECK
-    if in_check(active_player)
-      place_move
-      if in_check(active_player)
-        rollback_move
-        abort_move(move, "Your king's in check, your move #{chess_format(move)} did not move it out of check. Take checking piece, move king, or block path. Try again.")
-      end
-      rollback_move
-    end
-
-
-    # if move_creates_own_check?(move)
-    #   #abort_move with GameRuleError, "Move not allowed. This move would result in you being in check"
-    # else
-    #   next
-    # end
-
-    # if piece has left or right pawn neighbour && that pawn neighbour took last move as a double move,
-    # then en-passant is possible
-
-    # if #destination_square_occupied?
-      # if with_own_colour?
-        # #abort_move with GameRuleError, 'Destination contains your own piece'
-      # else with_opponents_colour
-        # if opponent in checkmate? (does each player have a @checkmate = false, until #checkmate? is true then sets @checkmate?)
-          # #place_move (delete_piece && move moving piece in)
-          # call #finish_game
-        # elsif check?
-          #  ?
-        # else
-          # #delete_piece(dest square) #move_piece(dest square)
-          # toggle active player & call #get_move
-        # end
-      # end
-    # else
-      # #movepiece(dest square) = (move moving piece in)
-      # toggle active player & call #get_move
-    # end
+    # get_move
+    # make_move
   end
 
 #  ****************** MOVE LOGIC ***********************
@@ -191,7 +150,7 @@ class Game
     board.grid[dst_r][dst_c].r = dst_r
     board.grid[dst_r][dst_c].c = dst_c
     board.grid[src_r][src_c] = nil
-    # puts "\n**** MOVE PLACED; taken pieces from move are; #{@taken_pieces.inspect}"
+    puts "\n**** MOVE PLACED; taken pieces from move are; #{@taken_pieces.inspect}"
     # toggle active user here?
   end
   
@@ -200,12 +159,17 @@ class Game
     board.grid[src_r][src_c] = board.grid[dst_r][dst_c]
     board.grid[src_r][src_c].r = src_r
     board.grid[src_r][src_c].c = src_c
-    # puts "**** MOVE REVERSED; dst square has been moved back to src, src square tennant = #{board.grid[src_r][src_c]}"
-    if !@taken_pieces.last[0].nil? && (@taken_pieces.last[1] == move) # WARNING - there is the minimal possibility of a previous taken piece's move being the same as this move
-      board.grid[dst_r][dst_c] = @taken_pieces.last[0]
-      board.grid[dst_r][dst_c].r = dst_r
-      board.grid[dst_r][dst_c].c = dst_c
-      @taken_pieces.pop 
+    puts "**** MOVE REVERSED; dst square has been moved back to src, src square tennant = #{board.grid[src_r][src_c]}"
+    if @taken_pieces.last[1] == move # !@taken_pieces.last[0].nil? && ( # WARNING - there is the minimal possibility of a previous taken piece's move being the same as this move
+      if !@taken_pieces.last[0].nil?
+        board.grid[dst_r][dst_c] = @taken_pieces.last[0]
+        board.grid[dst_r][dst_c].r = dst_r
+        board.grid[dst_r][dst_c].c = dst_c
+      elsif @taken_pieces.last[0].nil?
+        board.grid[dst_r][dst_c] = nil
+      end
+      @taken_pieces.pop
+      puts " *** @TAKEN PIECES FROM REVERSE MOVE #{taken_pieces}"
     else
       board.grid[dst_r][dst_c] = nil
     end
@@ -294,7 +258,7 @@ class Game
     player_pieces = board.all_pieces(player.colour)
     
     player_pieces.each do |src|
-      # puts " ***** this is my piece #{src}"
+      puts " ***** this is my piece #{src}"
       src_r, src_c = src[0], src[1]
       piece = board.piece(src_r, src_c)
       valid_moves_method_name = "valid_#{piece.class.to_s.downcase}_moves"
@@ -324,10 +288,9 @@ class Game
         move = src_r.to_s + src_c.to_s + dst[0].to_s + dst[1].to_s
         legal_moves << move if !moves_into_check?(move, player)
       end
-      puts "**** HERES LEGAL MOVES: #{legal_moves}"
-  
-      legal_moves.empty? ? (return true) : (return false)
     end
+    puts "**** HERES LEGAL MOVES: #{legal_moves}"
+    legal_moves.empty? ? (return true) : (return false)
   end
 
   private
@@ -372,6 +335,7 @@ class Game
   
   # all user input move validation done here, then move stored in Game @moves
   def get_move
+    # board.display_board_utf;
     display_string(ERB.new(yaml_data['game']['move_prompt']).result(binding), @@type_speed)
     move = get_input
     return rescue_invalid_format_error(move) unless chess_format?(move)
@@ -427,6 +391,10 @@ class Game
     piece.is_a?(Pawn) || piece.is_a?(Knight)
   end
   
+  def game_finished?
+    @game_finished
+  end
+
   def toggle_turn
     active_player == player1 ? (self.active_player = player2) : (self.active_player = player1)
   end
@@ -457,6 +425,10 @@ class Game
   
   def active_player_name
     active_player == player1 ? player1_name : player2_name
+  end
+
+  def opponent_player
+    active_player == player1 ? player2 : player1
   end
   
   def yaml_data
@@ -497,6 +469,50 @@ end
   # end
   # ________________________________
 
+ # def game_valid_move(move)
+  #   # MOVE PATH CLEAR
+  #   unless board.piece(move[0], move[1]).is_a(Knight)
+  #     abort_move(move, "Your move's; #{chess_format(move)} path is not clear, try again.") unless move_path_clear?(move)
+  #   end
+  #   # IF IN CHECK, MOVE MUST REMOVE FROM CHECK
+  #   if in_check(active_player)
+  #     place_move
+  #     if in_check(active_player)
+  #       rollback_move
+  #       abort_move(move, "Your king's in check, your move #{chess_format(move)} did not move it out of check. Take checking piece, move king, or block path. Try again.")
+  #     end
+  #     rollback_move
+  #   end
+
+
+    # if move_creates_own_check?(move)
+    #   #abort_move with GameRuleError, "Move not allowed. This move would result in you being in check"
+    # else
+    #   next
+    # end
+
+    # if piece has left or right pawn neighbour && that pawn neighbour took last move as a double move,
+    # then en-passant is possible
+
+    # if #destination_square_occupied?
+      # if with_own_colour?
+        # #abort_move with GameRuleError, 'Destination contains your own piece'
+      # else with_opponents_colour
+        # if opponent in checkmate? (does each player have a @checkmate = false, until #checkmate? is true then sets @checkmate?)
+          # #place_move (delete_piece && move moving piece in)
+          # call #finish_game
+        # elsif check?
+          #  ?
+        # else
+          # #delete_piece(dest square) #move_piece(dest square)
+          # toggle active player & call #get_move
+        # end
+      # end
+    # else
+      # #movepiece(dest square) = (move moving piece in)
+      # toggle active player & call #get_move
+    # end
+  # end
 
 # ________ Rules ______________________________________________________________
 # on start only a knight or a pawn can move
