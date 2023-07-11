@@ -228,35 +228,32 @@ class Game
   end
 
   private
-  # def first_move?
-  #   @first_move
-  # end
+  def first_move?
+    @first_move
+  end
 
   def create_player1
     player1_name = get_input
-    if player1_name == ''
+    until !player1_name.empty?
       puts "please enter at least one character"
-      get_player1_name
+      player1_name = get_input
     end
     @player1 = Player.new(player1_name)
   end
-  
+
   def create_player2
     player2_name = get_input
-    if player2_name == ''
-      puts "please enter at least one character"
-      get_player2_name
-    elsif player2_name == player1.name  
-      puts "please use a different name to Player 1"
-      get_player2_name
+    until player2_name != player1.name && !player2_name.empty?
+      puts "please enter at least one char, and a different name to player 1"
+      player2_name = get_input
     end
     @player2 = Player.new(player2_name)
   end
-  
+
   def random_colour
     [:white, :black].sample
   end
-  
+
   def true_move?(move)
     move[0..1] != move[2..3]
   end

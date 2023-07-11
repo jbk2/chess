@@ -15,6 +15,4 @@ class Player
     @first_move = false
   end
 
-  private
- 
 end
