@@ -31,12 +31,10 @@ class Game
   end
 
   def create_players
-    display_string(yaml_data['game']['welcome'], 0.01)
-    display_string(yaml_data['game']['player1_name_prompt'], 0.01)
+    display_string(yaml_data['game']['welcome'], 0.0001); display_string(yaml_data['game']['player1_name_prompt'], 0.0001);
     create_player1
-    display_string(ERB.new(yaml_data['game']['player1_greeting']).result(binding), @@type_speed)
-    sleep 0.3
-    display_string(yaml_data['game']['player2_name_prompt'], 0.01)
+    display_string(ERB.new(yaml_data['game']['player1_greeting']).result(binding), @@type_speed); sleep 0.3;
+    display_string(yaml_data['game']['player2_name_prompt'], 0.0001)
     create_player2
     display_string(ERB.new(yaml_data['game']['player2_greeting']).result(binding), @@type_speed)
   end
@@ -50,15 +48,13 @@ class Game
   end
 
   def game_setup
-    display_string("Here's your board:", @@type_speed); sleep 0.7;
     display_string(ERB.new(yaml_data['game']['black_piece_instructions']).result(binding), @@type_speed); sleep 0.1;
-    board.display_board_utf; sleep 1; 
-    display_string(ERB.new(yaml_data['game']['white_piece_instructions']).result(binding), @@type_speed)
-    puts "\n"; sleep 1;
-    display_string(yaml_data['game']['board_illustration'], 0.005)
-    puts "\n"; sleep 1;
+    display_string(ERB.new(yaml_data['game']['white_piece_instructions']).result(binding), @@type_speed); puts "\n"; sleep 1;
+    display_string(yaml_data['game']['board_illustration'], 0.005); puts "\n"; sleep 1;
   end
-  
+
+#  ****************** GAME PLAY LOGIC ***********************
+
   def play_game
     start_game
     until game_finished?
@@ -67,82 +63,52 @@ class Game
     end
   end
 
-  def add_move(indexed_move)
-    if index_format?(indexed_move)
-      true_move?(indexed_move) ? @moves << indexed_move : (raise InputError.new("Input; #{indexed_move} does not represent an actual move"))
-    else
-      raise InputError.new("Indexed_move; #{indexed_move} should be formatted like 'iiii'")
-    end
-  end
-  
-  def last_move
-    moves.last
-  end
-
-  def first_move?
-    @first_move
-  end
-
-  def first_move_made
-    @first_move = false
-  end
-
   def make_move
-    puts "here's my active player #{active_player.name}"
-    move = moves.last; puts "here's my move #{move}";
+    move = moves.last;
     src, dst = move[0] + move[1], move[2] + move[3]
-    src_r, src_c, dst_r, dst_c = move[0], move[1], move[2], move[3]
+    src_r, src_c, dst_r, dst_c = src[0], src[1], dst[0], dst[1]
     src_piece = board.piece(src_r.to_i, src_c.to_i)
-    
-    if src_piece.valid_move?(move, board)
-      puts "******* yes pieces rules allow that move"
-    else
-      return rescue_against_this_piece_move_rules(src_piece, move)
-    end
 
-    if moves_into_check?(move, active_player)
-      return rescue_against_move_yourself_into_check(move) 
-    else
-      puts "******* This move doesn't move you into check"
-    end
-    
+    src_piece.valid_move?(move, board) ? (puts "** Piece rules do allow move\n") : (return rescue_against_piece_move_rules(src_piece, move))
+    moves_into_check?(move, active_player) ? (return rescue_against_move_self_into_check(move)) : (puts "** Move doesn't move u into check\n")
+
     place_move(move)
-    puts "******* TAKEN PIECES; #{taken_pieces}"
+
+    puts "******* #{CYAN}TAKEN PIECE was;#{ANSI_END} #{taken_pieces.last[0]} == #{board.piece(move[2].to_i, move[3].to_i)}"
     active_player.first_move = false if active_player.first_move?
     src_piece.first_move = false if src_piece.first_move?
-    puts "#{opponent_player} is now in check" if in_check(opponent_player)
-    
+    puts "\n#{CYAN}#####{opponent_player}#{ANSI_END} IS NOW IN CHECK\n" if in_check(opponent_player)
+
     if checkmate?(opponent_player)
-      puts "Checkmate, #{active_player} wins, #{opponent_player} is has been mated. Game over." 
+      puts "Checkmate, #{active_player} wins, #{opponent_player} has been mated. Game over."
       game_finished = true
       return
     elsif stalemate?(opponent_player)
-      puts "Stalemate, it's a draw. Game over." 
+      puts "Stalemate, it's a draw. Game over."
+      game_finished = true
+      return
+    elsif king_taken?
+      puts "YAY GAME OVER #{opponent_player.inspect} WAS THE WINNER"
       game_finished = true
       return
     end
     toggle_turn
   end
 
-  def rescue_against_this_piece_move_rules(src_piece, move)
+  def rescue_against_piece_move_rules(src_piece, move)
     puts "A #{CYAN}#{src_piece.class}#{ANSI_END} is not allowed to make the move; '#{CYAN}#{chess_format(move)}#{ANSI_END}', try again..."
-    board.display_board_utf
     moves.pop
-    # get_move
-    # make_move
   end
   
-  def rescue_against_move_yourself_into_check(move)
-    puts "your move #{CYAN}#{chess_format(move)}#{ANSI_END} moves you into check, try again..."
-    board.display_board_utf
+  def rescue_against_move_self_into_check(move)
+    puts "your move #{CYAN}#{chess_format(move)}#{ANSI_END} moves or leaves you in check, try again..."
     moves.pop
-    # get_move
-    # make_move
   end
 
 #  ****************** MOVE LOGIC ***********************
-  
-  def place_move(move) # this does not enforce piece or board move rules, it simply places the move
+
+# does not enforce piece or board rules, simply places the move.
+  def place_move(move)
     src_r, src_c, dst_r, dst_c = move[0].to_i, move[1].to_i, move[2].to_i, move[3].to_i
     dst_taken_piece = board.grid[dst_r][dst_c] # even when nil
     @taken_pieces << [dst_taken_piece, move] # when no piece in dst, still stores nil, for history logging value
@@ -150,30 +116,25 @@ class Game
     board.grid[dst_r][dst_c].r = dst_r
     board.grid[dst_r][dst_c].c = dst_c
     board.grid[src_r][src_c] = nil
-    puts "\n**** MOVE PLACED; taken pieces from move are; #{@taken_pieces.inspect}"
-    # toggle active user here?
   end
   
   def reverse_move(move)
     src_r, src_c, dst_r, dst_c = move[0].to_i, move[1].to_i, move[2].to_i, move[3].to_i
     board.grid[src_r][src_c] = board.grid[dst_r][dst_c]
-    board.grid[src_r][src_c].r = src_r
-    board.grid[src_r][src_c].c = src_c
-    puts "**** MOVE REVERSED; dst square has been moved back to src, src square tennant = #{board.grid[src_r][src_c]}"
-    if @taken_pieces.last[1] == move # !@taken_pieces.last[0].nil? && ( # WARNING - there is the minimal possibility of a previous taken piece's move being the same as this move
-      if !@taken_pieces.last[0].nil?
+    board.grid[src_r][src_c].r, board.grid[src_r][src_c].c = src_r, src_c
+
+    if @taken_pieces.last[1] == move
+      if @taken_pieces.last[0].nil?
+        board.grid[dst_r][dst_c] = nil
+      elsif !@taken_pieces.last[0].nil?
         board.grid[dst_r][dst_c] = @taken_pieces.last[0]
         board.grid[dst_r][dst_c].r = dst_r
         board.grid[dst_r][dst_c].c = dst_c
-      elsif @taken_pieces.last[0].nil?
-        board.grid[dst_r][dst_c] = nil
       end
       @taken_pieces.pop
-      puts " *** @TAKEN PIECES FROM REVERSE MOVE #{taken_pieces}"
     else
       board.grid[dst_r][dst_c] = nil
     end
-    # reverse active player here?
   end
 
 #  ****************** CHECKING LOGIC ***********************
@@ -189,54 +150,22 @@ class Game
       piece = board.piece(src_r, src_c)
       valid_moves_method_name = "valid_#{piece.class.to_s.downcase}_moves"
       valid_moves = piece.send(valid_moves_method_name, src, board)
-      # puts "**** HERES VALID MOVES FROM #{piece} - #{valid_moves}"
       if valid_moves.include?(kings_location)
         checking_pieces << [piece, src]
       end
     end
-    
     checking_pieces.empty? ? (return false) : (return checking_pieces)
-  end
-  
-  def king_uncheck_move_possible?(player, board)
-    if in_check(player)
-      king_src = board.find_pieces('king', player.colour).flatten
-      kings_moves = board.piece(king_src[0], king_src[1]).valid_king_moves(king_src, board)
-
-      kings_moves.each do |dst|
-        move = king_src[0].to_s + king_src[1].to_s + dst[0].to_s + dst[1].to_s
-        place_move(move)
-        if !in_check(player)
-          puts "********** MOVE REMOVED KING FROM CHECK"
-          uncheck_possible = true
-          puts "uncheck_possible is set to #{uncheck_possible.inspect}"
-          reverse_move(move)
-          return true if uncheck_possible
-        end
-        puts " ********* MOVE DOES NOT MOVE KING OUT OF CHECK ******"
-        reverse_move(move)
-      end
-      return false
-    else
-      puts "#{player.name} is not in check in the first place"
-    end
   end
 
   def removes_check?(move, player)
     if in_check(player)
-      # puts "from #removes_check; player is in check"
-      # puts "active player b4 place move is; #{active_player.inspect}"
-      # puts "***** my move#{move}"
       place_move(move)
-      # puts "active player after place move is; #{active_player.inspect}"
-      # puts "here's in check: #{in_check(active_player)}"
       if in_check(player)
-        puts "player still in check after move placed"
+        puts "**** player still in check after move placed"
         reverse_move(move)
-        # abort_move(move, "Your king's in check, your move #{chess_format(move)} did not move it out of check. You need to; take checking piece, move king, or block path. Try again.")
         return false
       elsif !in_check(player)
-        puts "**** MOVE WILL REMOVE CHECK..."
+        puts "**** #{move} MOVE WILL REMOVE CHECK..."
         reverse_move(move)
         return true
       end
@@ -258,12 +187,10 @@ class Game
     player_pieces = board.all_pieces(player.colour)
     
     player_pieces.each do |src|
-      puts " ***** this is my piece #{src}"
       src_r, src_c = src[0], src[1]
       piece = board.piece(src_r, src_c)
       valid_moves_method_name = "valid_#{piece.class.to_s.downcase}_moves"
       piece_valid_moves = piece.send(valid_moves_method_name, src, board)
-      # puts "****src's #{src} valid moves; #{piece_valid_moves}"
       
       piece_valid_moves.each do |dst|
         move = src_r.to_s + src_c.to_s + dst[0].to_s + dst[1].to_s
@@ -274,7 +201,7 @@ class Game
   end
 
   def stalemate?(player)
-    puts "player is already in check, so if no moves this would be checkmate not stalemate" if in_check(player)
+    puts "player already in check, so if no moves this would be checkmate not stalemate" if in_check(player)
     player_pieces = board.all_pieces(player.colour)
     legal_moves = []
     
@@ -293,12 +220,17 @@ class Game
     legal_moves.empty? ? (return true) : (return false)
   end
 
-  private
-  def abort_move(move, message)
-    puts "#{message}"
-    moves.pop
-    get_move
+  def king_taken?
+    unless taken_pieces.empty?
+      return true if taken_pieces.last[0].is_a?(King)
+    end
+    false
   end
+
+  private
+  # def first_move?
+  #   @first_move
+  # end
 
   def create_player1
     player1_name = get_input
@@ -328,14 +260,10 @@ class Game
   def true_move?(move)
     move[0..1] != move[2..3]
   end
-  
-  def last_move
-    moves.last
-  end
-  
+
   # all user input move validation done here, then move stored in Game @moves
   def get_move
-    # board.display_board_utf;
+    board.display_board_utf;
     display_string(ERB.new(yaml_data['game']['move_prompt']).result(binding), @@type_speed)
     move = get_input
     return rescue_invalid_format_error(move) unless chess_format?(move)
@@ -346,22 +274,30 @@ class Game
     (return rescue_first_move_piece_error(move) unless pawn_or_knight_move?(indexed_move)) if active_player.first_move?
     add_move(indexed_move)
   end
-  
+
+  def add_move(indexed_move)
+    if index_format?(indexed_move)
+      true_move?(indexed_move) ? @moves << indexed_move : (raise InputError.new("Input; #{indexed_move} does not represent an actual move"))
+    else
+      raise InputError.new("Indexed_move; #{indexed_move} should be formatted like 'iiii'")
+    end
+  end
+
   def rescue_invalid_format_error(move)
-    puts "your move; '#{CYAN}#{move}#{ANSI_END}' was not formated correctly, it shoud be formatted like; 'a1,a2', try again..."
+    puts "your move; '#{CYAN}#{move}#{ANSI_END}' was not formated correctly, it shoud be formatted like; '1a,2a', try again..."
     get_move
   end
-  
+
   def rescue_unowned_piece_error(move)
     puts "your move; '#{CYAN}#{move}#{ANSI_END}' was not on your piece, try again..."
     get_move
   end
-  
+
   def rescue_untrue_move_error(move)
     puts "your move; '#{CYAN}#{move}#{ANSI_END}' didn't ask your given piece to move anywhere, please enter an actual move..."
     get_move
   end
-  
+
   def rescue_empty_square_error(move)
     puts "Square '#{CYAN}#{move}#{ANSI_END}' doesn't contain a piece. Please enter a piece's position and your move..."
     get_move
@@ -381,11 +317,7 @@ class Game
   def has_piece?(r, c)
     board.grid[r][c] ? true : false
   end
-  
-  def player_start_move?
-    active_player.first_move?
-  end
-  
+
   def pawn_or_knight_move?(indexed_move)
     piece = board.piece(indexed_move[0].to_i, indexed_move[1].to_i)
     piece.is_a?(Pawn) || piece.is_a?(Knight)
@@ -437,7 +369,7 @@ class Game
   end
 end
 
-# ________ Old unused, but potentially helpful, methods _______________________
+# ________ Redundant code  _______________________
 
 # From #move_path_clear?:
 #  _______ CASE VERSION __________
@@ -513,6 +445,39 @@ end
       # toggle active player & call #get_move
     # end
   # end
+
+    # def last_move
+  #   moves.last
+  # end
+
+  # def player_start_move?
+  #   active_player.first_move?
+  # end
+
+  # def king_uncheck_move_possible?(player, board)
+  #   if in_check(player)
+  #     king_src = board.find_pieces('king', player.colour).flatten
+  #     kings_moves = board.piece(king_src[0], king_src[1]).valid_king_moves(king_src, board)
+
+  #     kings_moves.each do |dst|
+  #       move = king_src[0].to_s + king_src[1].to_s + dst[0].to_s + dst[1].to_s
+  #       place_move(move)
+  #       if !in_check(player)
+  #         puts "********** MOVE REMOVED KING FROM CHECK"
+  #         uncheck_possible = true
+  #         puts "uncheck_possible is set to #{uncheck_possible.inspect}"
+  #         reverse_move(move)
+  #         return true if uncheck_possible
+  #       end
+  #       puts " ********* MOVE DOES NOT MOVE KING OUT OF CHECK ******"
+  #       reverse_move(move)
+  #     end
+  #     return false
+  #   else
+  #     puts "#{player.name} is not in check in the first place"
+  #   end
+  # end
+
 
 # ________ Rules ______________________________________________________________
 # on start only a knight or a pawn can move

@@ -50,12 +50,16 @@
 
   # Tidy up Game#make_move
   # Get game flow working
+  # Check for taken king & therefore winner.
   # Get the board displaying in UI at correct times
   # Add row and column numbers in display board UI
   # Integration tests for game flor (#play)
   # Clean up code in Game class
   # Refactor code in Game class
   # Re-write user input to receive in chess notation (column, row) and interpolate into code notation (row, column)
+  # Write save game function
+  # Write pawn to end convert function
+  # Write castling function.
 
 
 ## Potential Refactorings

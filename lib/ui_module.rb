@@ -4,7 +4,7 @@ module UiModule
   BOLD_WHITE = "\e[1;37m"
   CYAN = "\e[0;36m"
   ANSI_END = "\e[0m"
-  @@type_speed = 0.005
+  @@type_speed = 0.0001
 
   def start_game
     display_string(ERB.new(yaml_data['game']['turn_instructions']).result(binding), @@type_speed)

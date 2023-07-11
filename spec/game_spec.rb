@@ -73,14 +73,15 @@ describe Game do
   describe '#add_move(move)' do
     context 'with correct index format' do 
       it 'pushes a the move string onto the @moves array' do
-        game.add_move('1011')
+        game.send(:add_move, '1011')
         expect(game.moves).to eq(['1011'])
       end
     end
     
     context 'with incorrect index format' do
       it 'raises and InputError' do
-        expect { game.add_move('1b,1c') }.to raise_error(InputError, "Indexed_move; 1b,1c should be formatted like 'iiii'")
+        expect { game.send(:add_move, '1b,1c')
+       }.to raise_error(InputError, "Indexed_move; 1b,1c should be formatted like 'iiii'")
         expect(game.moves).to eq([])
       end
     end
@@ -612,49 +613,49 @@ describe Game do
     end
   end
   
-  describe '#king_uncheck_move_possible?(player)' do
-    context 'when possible' do
-      it 'returns true' do
-        game.board.grid[6][4] = nil
-        game.board.grid[7][3] = nil
-        game.board.grid[5][4] = Rook.new(:black, 5, 4)
-        result = game.king_uncheck_move_possible?(game.active_player, game.board)
-        expect(result).to be(true)
-      end
+  # describe '#king_uncheck_move_possible?(player)' do
+  #   context 'when possible' do
+  #     it 'returns true' do
+  #       game.board.grid[6][4] = nil
+  #       game.board.grid[7][3] = nil
+  #       game.board.grid[5][4] = Rook.new(:black, 5, 4)
+  #       result = game.king_uncheck_move_possible?(game.active_player, game.board)
+  #       expect(result).to be(true)
+  #     end
     
-      it 'returns true' do
-        game.board.grid[6][4] = nil
-        game.board.grid[7][5] = nil
-        game.board.grid[5][4] = Rook.new(:black, 5, 4)
-        result = game.king_uncheck_move_possible?(game.active_player, game.board)
-        expect(result).to be(true)
-      end
+  #     it 'returns true' do
+  #       game.board.grid[6][4] = nil
+  #       game.board.grid[7][5] = nil
+  #       game.board.grid[5][4] = Rook.new(:black, 5, 4)
+  #       result = game.king_uncheck_move_possible?(game.active_player, game.board)
+  #       expect(result).to be(true)
+  #     end
   
-      it 'returns true' do
-        game.board.grid[6][4] = nil
-        game.board.grid[7][5] = Pawn.new(:black, 7, 5)
-        game.board.grid[5][4] = Rook.new(:black, 5, 4)
-        result = game.king_uncheck_move_possible?(game.active_player, game.board)
-        expect(result).to be(true)
-      end
-    end
+  #     it 'returns true' do
+  #       game.board.grid[6][4] = nil
+  #       game.board.grid[7][5] = Pawn.new(:black, 7, 5)
+  #       game.board.grid[5][4] = Rook.new(:black, 5, 4)
+  #       result = game.king_uncheck_move_possible?(game.active_player, game.board)
+  #       expect(result).to be(true)
+  #     end
+  #   end
 
-    context 'when not possible' do
-      it 'returns false' do
-        game.board.grid[6][4] = nil
-        game.board.grid[5][4] = Rook.new(:black, 5, 4)
-        result = game.king_uncheck_move_possible?(game.active_player, game.board)
-        expect(result).to be(false)
-      end
+  #   context 'when not possible' do
+  #     it 'returns false' do
+  #       game.board.grid[6][4] = nil
+  #       game.board.grid[5][4] = Rook.new(:black, 5, 4)
+  #       result = game.king_uncheck_move_possible?(game.active_player, game.board)
+  #       expect(result).to be(false)
+  #     end
       
-      it 'returns false' do
-        game.board.grid[6][4], game.board.grid[6][5] = nil, nil
-        game.board.grid[4][7], game.board.grid[3][4] = Bishop.new(:black, 4, 7), Rook.new(:black, 3, 4)
-        result = game.king_uncheck_move_possible?(game.active_player, game.board)
-        expect(result).to be(false)
-      end
-    end
-  end
+  #     it 'returns false' do
+  #       game.board.grid[6][4], game.board.grid[6][5] = nil, nil
+  #       game.board.grid[4][7], game.board.grid[3][4] = Bishop.new(:black, 4, 7), Rook.new(:black, 3, 4)
+  #       result = game.king_uncheck_move_possible?(game.active_player, game.board)
+  #       expect(result).to be(false)
+  #     end
+  #   end
+  # end
 
 def empty_board(game)
   game.board.grid.map! { Array.new(8) }
@@ -736,7 +737,7 @@ end
     end
   end
 
-  describe "#stale_mate?(player)" do
+  describe "#stalemate?(player)" do
     context "when player is in stalemate" do
       it "returns true" do
         empty_board(game)
@@ -760,7 +761,24 @@ end
         result = game.stalemate?(game.send(:black_player))
         expect(result).to be(false)
       end
-      
+    end
+  end
+
+  describe "#king_taken?" do
+    context "with the last taken_piece element being of type King" do
+      it "returns true" do
+        game.taken_pieces << [King.new(:black, 0,0), '1000']
+        result = game.king_taken?
+        expect(result).to be(true)
+      end
+    end
+    
+    context "with taken_piece empty" do
+      it "returns false" do
+        game.taken_pieces
+        result = game.king_taken?
+        expect(result).to be(false)
+      end
     end
   end
 

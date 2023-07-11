@@ -19,4 +19,4 @@ game:
   start_prompt: "Drum roll please \U0001F941\U0001F941\U0001F941.
     <%= active_player_name %> as the white player will begin the game.
     Let the game commence \U0001F3AC. And may the best player win \U0001F3C6.\n"
-  move_prompt:  "Please enter your move <%= active_player_name %>..."
+  move_prompt:  "Please enter your move <%= active_player_name %> (you're <%= active_player.colour %>)..."
