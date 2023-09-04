@@ -22,6 +22,7 @@ class Board
     populate_bishops
     populate_queens
     populate_kings
+    # grid[0][4], grid[0][7], grid[2][5], grid[2][7] = Rook.new(:white, 0, 4), King.new(:black, 0, 7), Pawn.new(:white, 2, 5), King.new(:white, 2, 7)
   end
 
   def piece(r, c)
@@ -121,9 +122,11 @@ class Board
   end
 
   def populate_pawns
+    # grid[1][0] = Pawn.new(:black, 1, 0)
     grid[1].map!.with_index do |v, i|
       v = Pawn.new(:black, 1, i)
     end
+    # grid[6][0] = Pawn.new(:white, 6, 0)
     grid[6].map!.with_index do |v, i|
       v = Pawn.new(:white, 6, i)
     end

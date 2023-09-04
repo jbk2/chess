@@ -56,7 +56,4 @@ class Piece
     false
   end
 
-  # def moves_into_check?(move)
-  # end
-
 end

@@ -12,7 +12,7 @@ class Game
   include UiModule
   attr_accessor :player1, :player2, :active_player, :active_user_move, :moves
   attr_reader :board, :taken_pieces
-  attr_writer :game_finished
+  # attr_writer :game_finished
 
   def initialize
     build_board
@@ -57,7 +57,7 @@ class Game
 
   def play_game
     start_game
-    until game_finished?
+    until @game_finished == true
       get_move
       make_move
     end
@@ -74,22 +74,22 @@ class Game
 
     place_move(move)
 
-    puts "******* #{CYAN}TAKEN PIECE was;#{ANSI_END} #{taken_pieces.last[0]} == #{board.piece(move[2].to_i, move[3].to_i)}"
+    puts "******* #{CYAN}TAKEN PIECE was;#{ANSI_END} \"#{taken_pieces.last[0].inspect}\" in DST is now;#{board.piece(move[2].to_i, move[3].to_i)}"
     active_player.first_move = false if active_player.first_move?
     src_piece.first_move = false if src_piece.first_move?
-    puts "\n#{CYAN}#####{opponent_player}#{ANSI_END} IS NOW IN CHECK\n" if in_check(opponent_player)
+    puts "\n#{CYAN}#### #{opponent_player.inspect}#{ANSI_END} IS NOW IN CHECK\n" if in_check(opponent_player)
 
     if checkmate?(opponent_player)
-      puts "Checkmate, #{active_player} wins, #{opponent_player} has been mated. Game over."
-      game_finished = true
+      puts "Checkmate, #{active_player.inspect} wins, #{opponent_player.inspect} has been mated. Game over."
+      @game_finished = true
       return
     elsif stalemate?(opponent_player)
       puts "Stalemate, it's a draw. Game over."
-      game_finished = true
+      @game_finished = true
       return
     elsif king_taken?
       puts "YAY GAME OVER #{opponent_player.inspect} WAS THE WINNER"
-      game_finished = true
+      @game_finished = true
       return
     end
     toggle_turn
@@ -111,7 +111,7 @@ class Game
   def place_move(move)
     src_r, src_c, dst_r, dst_c = move[0].to_i, move[1].to_i, move[2].to_i, move[3].to_i
     dst_taken_piece = board.grid[dst_r][dst_c] # even when nil
-    @taken_pieces << [dst_taken_piece, move] # when no piece in dst, still stores nil, for history logging value
+    @taken_pieces << [dst_taken_piece, move] # when no piece in dst, still stores nil, for history logging value purposes.
     board.grid[dst_r][dst_c] = board.grid[src_r][src_c]
     board.grid[dst_r][dst_c].r = dst_r
     board.grid[dst_r][dst_c].c = dst_c

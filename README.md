@@ -25,21 +25,6 @@
 
 
 ## Tasks
-- Introduce concept of player moves;
-  - script for user command
-  - check for valid moves
-  - accept or decline move
-  - make move
-    - move piece, delete any taken piece, check game_status, toggle active player
-- build valid moves into each piece class;
-  - piece_valid_moves
-  - valid within board bounds
-  - valid within squre colour rules
-  - validity within context of other board piece types and positions
-- Introduce concept of game status;
-  - Check
-  - Checkmate
-  - Stalemate
 - Introduce game saving feature;
   - serialise game, board & plater instances
   - save to file
@@ -48,9 +33,6 @@
 
 # #################### NEXT TODO'S ###############
 
-  # Tidy up Game#make_move
-  # Get game flow working
-  # Check for taken king & therefore winner.
   # Get the board displaying in UI at correct times
   # Add row and column numbers in display board UI
   # Integration tests for game flor (#play)
