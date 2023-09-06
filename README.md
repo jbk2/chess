@@ -25,11 +25,14 @@
 
 
 ## Tasks
-- Introduce game saving feature;
-  - serialise game, board & plater instances
-  - save to file
-  - reload from file
+  - Save & load functionality:
+    - intro IO to save or not
+    - build save game state & serialize module
+    - build load game module
+    - build load game IO upon new game commencement.
   - introduce Error classes for why a move cannot be made, e.g. off board, against piece's rules, other piece blocks you, wrong colour square?
+  
+
 
 # #################### NEXT TODO'S ###############
 

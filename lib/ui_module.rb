@@ -46,6 +46,19 @@ module UiModule
     chess_move
   end
 
+  def chess_notation?(move)
+    move.match?(/[a-h][1-8],[a-h][1-8]/) && move.length == 5
+  end
+
+  def chess_notation_to_index_format(chess_move)
+    indexed_move = String.new
+    indexed_move[0] = ((chess_move[1].to_i - 8).abs).to_s
+    indexed_move[1] = (chess_move[0].upcase.ord - 'A'.ord).to_s
+    indexed_move[2] = ((chess_move[4].to_i - 8).abs).to_s
+    indexed_move[3] = (chess_move[3].upcase.ord - 'A'.ord).to_s
+    indexed_move
+  end
+
   def display_string(string, delay)
     string.each_char do |char|
       print char
