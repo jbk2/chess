@@ -11,20 +11,27 @@ describe UiModule do
   end
 
   
-  describe "#chess_format(index_move)" do
-  it 'takes indexed move and returns it in chess move format' do
-    result = game.chess_format('1011')
-    expect(result).to eq('2a,2b')
+  describe "#index_format_to_chess_notation(index_move)" do
+    it 'takes indexed move and returns it in chess move format' do
+      result = game.index_format_to_chess_notation('1011')
+      expect(result).to eq('a7,b7')
+    end
   end
-end
+  
+  describe "#index_format_to_chess_notation(index_move)" do
+    it 'takes index formatted move and returns it in chess notation format' do
+      result = game.index_format_to_chess_notation('1011')
+      expect(result).to eq('a7,b7')
+    end
+  end
 
-  describe "#chess_notation?(move)" do
+  describe "#chess_notation_format?(move)" do
     it 'returns true if formatted in chess notation correctly' do
-      result = game.chess_notation?('a1,a2')
+      result = game.chess_notation_format?('a1,a2')
       expect(result).to be(true)
     end
     it 'returns false if formatted in chess notation correctly' do
-      result = game.chess_notation?('1a,2a')
+      result = game.chess_notation_format?('1a,2a')
       expect(result).to be(false)
     end
   end

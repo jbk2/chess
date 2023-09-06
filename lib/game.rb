@@ -96,12 +96,12 @@ class Game
   end
 
   def rescue_against_piece_move_rules(src_piece, move)
-    puts "A #{CYAN}#{src_piece.class}#{ANSI_END} is not allowed to make the move; '#{CYAN}#{chess_format(move)}#{ANSI_END}', try again..."
+    puts "A #{CYAN}#{src_piece.class}#{ANSI_END} is not allowed to make the move; '#{CYAN}#{index_format_to_chess_notation(move)}#{ANSI_END}', try again..."
     moves.pop
   end
   
   def rescue_against_move_self_into_check(move)
-    puts "your move #{CYAN}#{chess_format(move)}#{ANSI_END} moves or leaves you in check, try again..."
+    puts "your move #{CYAN}#{index_format_to_chess_notation(move)}#{ANSI_END} moves or leaves you in check, try again..."
     moves.pop
   end
 
@@ -263,9 +263,9 @@ class Game
     board.display_board_utf;
     display_string(ERB.new(yaml_data['game']['move_prompt']).result(binding), @@type_speed)
     move = get_input
-    return rescue_invalid_format_error(move) unless chess_format?(move)
+    return rescue_invalid_format_error(move) unless chess_notation_format?(move)
     return rescue_untrue_move_error(move) unless true_move?(move)
-    indexed_move = index_format(move)
+    indexed_move = chess_notation_to_index_format(move)
     return rescue_empty_square_error(move) unless has_piece?(indexed_move[0].to_i, indexed_move[1].to_i)
     return rescue_unowned_piece_error(move) unless own_piece?(indexed_move)
     (return rescue_first_move_piece_error(move) unless pawn_or_knight_move?(indexed_move)) if active_player.first_move?

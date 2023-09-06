@@ -80,8 +80,8 @@ describe Game do
     
     context 'with incorrect index format' do
       it 'raises and InputError' do
-        expect { game.send(:add_move, '1b,1c')
-       }.to raise_error(InputError, "Indexed_move; 1b,1c should be formatted like 'iiii'")
+        expect { game.send(:add_move, 'b7,c7')
+       }.to raise_error(InputError, "Indexed_move; b7,c7 should be formatted like 'iiii'")
         expect(game.moves).to eq([])
       end
     end
@@ -92,7 +92,7 @@ describe Game do
     
     context 'when move is valid' do
       it "saves the move in the Game @moves array" do
-        allow(game).to receive(:get_input).and_return('7a,6a') # Pawn
+        allow(game).to receive(:get_input).and_return('a2,a3') # Pawn
         allow(game).to receive(:moves).and_return(['6050'])
         expect(game).to receive(:add_move).with('6050').once #Pawn
         expect(game.moves.last).to eq('6050')
@@ -102,7 +102,7 @@ describe Game do
 
     context 'when the move is invalid' do
       it "will not save move when formatted incorrectly" do
-        allow(game).to receive(:get_input).and_return('aaa1,asdff2', '7a,6a') # Nil, Pawn
+        allow(game).to receive(:get_input).and_return('aaa1,asdff2', 'a2,a3') # Nil, Pawn
         allow(game).to receive(:pawn_or_knight_move?).and_return(false, true)
 
         expect(game).not_to receive(:add_move).with('0001111001001')
@@ -110,7 +110,7 @@ describe Game do
       end
      
       it "will not save move when moving piece was not owned by active player" do
-        allow(game).to receive(:get_input).and_return('2a,3a', '7a,6a') # Pawn, Pawn
+        allow(game).to receive(:get_input).and_return('a7,a6', 'a2,a3') # Pawn, Pawn
         allow(game).to receive(:pawn_or_knight_move?).and_return(true, true)
 
         expect(game).not_to receive(:add_move).with('1020')
@@ -118,7 +118,7 @@ describe Game do
       end
       
       it "will not save move when it's not a genuine move from one square to another" do
-        allow(game).to receive(:get_input).and_return('7a,7a', '7a,6a') # Pawn & Pawn
+        allow(game).to receive(:get_input).and_return('a2,a2', 'a2,a3') # Pawn & Pawn
         allow(game).to receive(:true_move?).and_return(false, true)
 
         expect(game).not_to receive(:add_move).with('6060')
@@ -130,7 +130,7 @@ describe Game do
     context "on a player's first move" do
       context "it won't save" do
         it "a Rook move" do
-          allow(game).to receive(:get_input).and_return('8a,6a', '8b,6c') #Rook & Knight 
+          allow(game).to receive(:get_input).and_return('a1,a3', 'b1,c3') #Rook & Knight 
           expect(game).not_to receive(:add_move).with('7050')
           expect(game).to receive(:add_move).with('7152')
           game.send(:get_move)
@@ -138,21 +138,21 @@ describe Game do
 
         it "a Bishop move" do
           game.send(:toggle_turn)
-          allow(game).to receive(:get_input).and_return('1c,3e', '1b,3c') #Bishop & Knight
+          allow(game).to receive(:get_input).and_return('c8,e6','b8,c6') #Bishop & Knight
           expect(game).not_to receive(:add_move).with('0224')
           expect(game).to receive(:add_move).with('0122')
           game.send(:get_move)
         end
         it "a Queen move" do
           game.send(:toggle_turn)
-          allow(game).to receive(:get_input).and_return('1d,3f', '2a,3a') #Queen & Pawn
+          allow(game).to receive(:get_input).and_return('d8,f6', 'a7,a6') #Queen & Pawn
           expect(game).not_to receive(:add_move).with('0325') 
           expect(game).to receive(:add_move).with('1020')
           game.send(:get_move)
         end
         it "a King move" do
           game.send(:toggle_turn)
-          allow(game).to receive(:get_input).and_return('1e,2e', '2b,3b') #King & Pawn 
+          allow(game).to receive(:get_input).and_return('e8,e7','b7,b6') #King & Pawn 
           expect(game).not_to receive(:add_move).with('0414') 
           expect(game).to receive(:add_move).with('1121')
           game.send(:get_move)
@@ -162,13 +162,13 @@ describe Game do
       context "it will save" do
         it "will save a Pawn move" do
           game.send(:toggle_turn)
-          allow(game).to receive(:get_input).and_return('2b,3b') #Pawn
+          allow(game).to receive(:get_input).and_return('b7,b6') #Pawn
           expect(game).to receive(:add_move).with('1121')
           game.send(:get_move)
         end
         it "will save a Knight move" do
           game.send(:toggle_turn)
-          allow(game).to receive(:get_input).and_return('1b,3c') #Knight 
+          allow(game).to receive(:get_input).and_return('b8,c6') #Knight 
           expect(game).to receive(:add_move).with('0122')
           game.send(:get_move)
         end
