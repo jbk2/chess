@@ -25,6 +25,7 @@
 
 
 ## Tasks
+  - Get printing board columns in alpha and row in numeric
   - Save & load functionality:
     - intro IO to save or not
     - build save game state & serialize module

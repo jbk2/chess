@@ -51,10 +51,14 @@ class Board
     end
     puts "\n\n"
   end
-  
+
   def display_board_utf
+    puts "\n"
+    print "  "
+    ('a'..'h').each { |l| print "   #{l}   "}
     grid.each_with_index do |row, row_index|
       puts "\n\n"
+      print ((row_index - 8).abs).to_s + ' '
       row.each_with_index do |piece, column_index|
         if piece.nil?
           if colour_grid[row_index][column_index] == :black
@@ -70,6 +74,7 @@ class Board
           end
         end
       end
+      print ' ' + ((row_index - 8).abs).to_s
     end
     puts "\n\n"
   end
