@@ -53,11 +53,11 @@ class Board
   end
 
   def display_board_utf
-    puts "\n"
+    print "\n"
     print "  "
     ('a'..'h').each { |l| print "   #{l}   "}
     grid.each_with_index do |row, row_index|
-      puts "\n\n"
+      print "\n"
       print ((row_index - 8).abs).to_s + ' '
       row.each_with_index do |piece, column_index|
         if piece.nil?
@@ -68,14 +68,33 @@ class Board
           end
         else
           if colour_grid[row_index][column_index] == :black
-            print("\033[40m|#{piece.uni_char + piece.class.to_s.chr.downcase + piece.colour.to_s.chr + colour_emoji(piece.colour)}|\033[m")
+            print("\033[40m|#{piece.colour.to_s[0..1] + ' ' + piece.class.to_s[0..1]}|\033[m") #.to_s.chr
           else
-            print("\033[47m|#{piece.uni_char + piece.class.to_s.chr.downcase + piece.colour.to_s.chr + colour_emoji(piece.colour)}|\033[m")
+            print("\033[47m|#{piece.colour.to_s[0..1] + ' ' + piece.class.to_s[0..1]}|\033[m")
           end
         end
       end
-      print ' ' + ((row_index - 8).abs).to_s
+      print ' ' + ((row_index - 8).abs).to_s + "\n"
+      print '  '
+      row.each_with_index do |piece, column_index|
+        if piece.nil?
+          if colour_grid[row_index][column_index] == :black
+            print("\033[40m|     |\033[m")
+          else
+            print("\033[47m|     |\033[m")
+          end
+        else
+          if colour_grid[row_index][column_index] == :black
+            print("\033[40m| #{colour_emoji(piece.colour) + piece.uni_char} |\033[m")
+          else
+            print("\033[47m| #{colour_emoji(piece.colour) + piece.uni_char} |\033[m")
+          end
+        end
+      end
+      print "\n"
     end
+    print "  "
+    ('a'..'h').each { |l| print "   #{l}   "}
     puts "\n\n"
   end
 
