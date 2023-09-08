@@ -25,9 +25,10 @@
 
 
 ## Tasks
-  - Get printing board columns in alpha and row in numeric
   - Save & load functionality:
     - intro IO to save or not
+    - which player is which colour from saved game (load previous player names?)
+    - which players turn is next (active player?)
     - build save game state & serialize module
     - build load game module
     - build load game IO upon new game commencement.

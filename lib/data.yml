@@ -11,12 +11,18 @@ game:
     <%=player2.colour.to_s%> <%= colour_emoji(player2.colour)%>.\n"
   black_piece_instructions: "<%=black_player_name%> will play the black \U000026AB pieces from the top of the board."
   white_piece_instructions: "And <%=white_player_name%> will play with white \U000026AA pieces from the bottom of the board."
-  board_illustration: Pieces are illustrated with the piece's character then two following characters. The first alpha character, for clarity,
-    represents the piece type's first letter, e.g. P = Pawn, Q = Queen. The second character represents the colour's first letter,
-    e.g. b = black, w = white.
+  board_illustration: Pieces are represented by the first two letters of the piece's character and class and then an 
+   illustration of the colour and the piece.
   turn_instructions: "When prompted to take a turn please type your move by piece's current position, comma,
     position to move piece to, e.g. <%=CYAN%>1b,1d<%=ANSI_END%>, then key return.\n"
   start_prompt: "Drum roll please \U0001F941\U0001F941\U0001F941.
     <%= active_player_name %> as the white player will begin the game.
     Let the game commence \U0001F3AC. And may the best player win \U0001F3C6.\n"
-  move_prompt:  "Please enter your move <%= active_player_name %> (you're <%= active_player.colour %>)..."
+  move_prompt: "Please enter your move <%= active_player_name %> (you're <%= active_player.colour %>)...(or type 'save' to pause & save game)"
+  invalid_format: "your move;  '<%= CYAN %><%= move %><%= ANSI_END %>'' was not formated correctly, it shoud be formatted like; 'a2,a4', try again..."
+  unowned_piece: "your move; '<%= CYAN %><%= move %><%= ANSI_END %>'' was not on your piece, try again..."
+  untrue_move: your move; '<%= CYAN %><%= move %><%= ANSI_END %>' didn't ask your given piece to move anywhere, please enter an actual move..."
+  empty_square: "Square '<%= CYAN %><%= move %><%= ANSI_END %>' doesn't contain a piece. Please enter a piece's position and your move..."
+  first_move_error: "Your first move can only be a Pawn or a Knight, this move; '<%= CYAN %><%= move %><%= ANSI_END %>' was a <%= board.piece(indexed_move[1].to_i, indexed_move[0].to_i).class %>, try again..."
+  save_prompt: "enter 'save' in order to end and save your game."
+  load_prompt: "Would you like to load a saved game? Y/N"

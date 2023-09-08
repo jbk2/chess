@@ -59,7 +59,7 @@ class Game
     start_game
     until @game_finished == true
       get_move
-      make_move
+      make_move unless @game_finished == true
     end
   end
 
@@ -255,7 +255,7 @@ class Game
   end
 
   def true_move?(move)
-    move[0..1] != move[2..3]
+    move[0..1] != move[3..4]
   end
 
   # all user input move validation done here, then move stored in Game @moves
@@ -263,6 +263,7 @@ class Game
     board.display_board_utf;
     display_string(ERB.new(yaml_data['game']['move_prompt']).result(binding), @@type_speed)
     move = get_input
+    return save_game if move == 'save'
     return rescue_invalid_format_error(move) unless chess_notation_format?(move)
     return rescue_untrue_move_error(move) unless true_move?(move)
     indexed_move = chess_notation_to_index_format(move)
@@ -280,28 +281,42 @@ class Game
     end
   end
 
+  def save_game
+    puts self.inspect
+    puts player1.inspect
+    puts player2.inspect
+    @game_finished = true
+    puts @game_finished
+    # serialize and save to file; Game, Board, Player
+    # set @game_finished to true
+    # output message confirming successful save, file name, and end of game
+    # check that game actually ends
+  end
+
   def rescue_invalid_format_error(move)
-    puts "your move; '#{CYAN}#{move}#{ANSI_END}' was not formated correctly, it shoud be formatted like; '1a,2a', try again..."
+    display_string(ERB.new(yaml_data['game']['invalid_format']).result(binding), @@type_speed)
     get_move
   end
 
   def rescue_unowned_piece_error(move)
-    puts "your move; '#{CYAN}#{move}#{ANSI_END}' was not on your piece, try again..."
+    display_string(ERB.new(yaml_data['game']['unowned_piece']).result(binding), @@type_speed)
     get_move
   end
 
   def rescue_untrue_move_error(move)
-    puts "your move; '#{CYAN}#{move}#{ANSI_END}' didn't ask your given piece to move anywhere, please enter an actual move..."
+    display_string(ERB.new(yaml_data['game']['untrue_move']).result(binding), @@type_speed)
     get_move
   end
-
+  
   def rescue_empty_square_error(move)
-    puts "Square '#{CYAN}#{move}#{ANSI_END}' doesn't contain a piece. Please enter a piece's position and your move..."
+    display_string(ERB.new(yaml_data['game']['empty_square']).result(binding), @@type_speed)
     get_move
   end
   
   def rescue_first_move_piece_error(move)
-    puts "Your first move can only be a Pawn or a Knight, this '#{CYAN}#{move}#{ANSI_END}' was neither, try again..."
+    indexed_move = chess_notation_to_index_format(move)
+    puts indexed_move
+    display_string(ERB.new(yaml_data['game']['first_move_error']).result(binding), @@type_speed)
     get_move
   end
 
