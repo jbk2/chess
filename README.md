@@ -21,28 +21,21 @@
   - src = an array of r and c integer values, representing a coordinate/square on the chess board/grid - also representing the beginning position of a move, e.g. [0, 0].
   - dst = an array of r and c integer values, representing a coordinate/square on the chess board/grid, also representing the end position of a move, e.g. [1, 0].
   - move = a 4 char string of numeric values representing src + dst joined, e.g. '0010'. 
-
-
-
-## Tasks
-  - handle incorrect user input for which file to load
-  - introduce Error classes for why a move cannot be made, e.g. off board, against piece's rules, other piece blocks you, wrong colour square?
-  - introduce more begind/rescue blocks (e.g.; file save, ... , ... , ...)
-  - stub sleeps from Game#get_move
   
 __________________________________________
 
 ## NEXT TODO'S 
-
-  - Get the board displaying in UI at correct times
-  - Integration tests for game flor (#play)
+  - handle incorrect user input for which file to load
+  - introduce Error classes for why a move cannot be made, e.g. off board, against piece's rules, other piece blocks you, wrong colour square?
+  - introduce more begin/rescue blocks (e.g.; file save, ... , ... , ...)
+  - stub sleeps from Game#get_move
+  - Integration tests for game flow (#play)(?)
   - Clean up code in Game class
   - Refactor code in Game class
   - Write castling function.
 
 
 ## Potential Refactorings
-
 - #active_player code perhaps move from Game to Player class?
 - for black and white positions just a class variable or two arrays on Board?
 - there's the concept of a move ('a1,b1', formatted into index '0111'), which is saved on the players @ moves. The Piece also has its own x and y variables, and the board.grid also hosts the pice objects in it;s x and y location. Can we eliminate the piece's x and y, and just use the board.grids locations, does a piece need to know its own location?
