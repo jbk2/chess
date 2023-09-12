@@ -53,6 +53,7 @@ class Board
   end
 
   def display_board_utf
+    print "\n "
     print "  "
     ('a'..'h').each { |l| print "   #{l}   "}
     grid.each_with_index do |row, row_index|
@@ -61,15 +62,15 @@ class Board
       row.each_with_index do |piece, column_index|
         if piece.nil?
           if colour_grid[row_index][column_index] == :black
-            print("\033[40m| nil |\033[m")
+            print("\033[40m| nil |\033[m"); sleep 0.003;
           else
-            print("\033[47m| nil |\033[m")
+            print("\033[47m| nil |\033[m"); sleep 0.003;
           end
         else
           if colour_grid[row_index][column_index] == :black
-            print("\033[40m|#{piece.colour.to_s[0..1] + ' ' + piece.class.to_s[0..1]}|\033[m") #.to_s.chr
+            print("\033[40m|#{piece.colour.to_s[0..1] + ' ' + piece.class.to_s[0..1]}|\033[m"); sleep 0.003;
           else
-            print("\033[47m|#{piece.colour.to_s[0..1] + ' ' + piece.class.to_s[0..1]}|\033[m")
+            print("\033[47m|#{piece.colour.to_s[0..1] + ' ' + piece.class.to_s[0..1]}|\033[m"); sleep 0.003;
           end
         end
       end
@@ -78,15 +79,15 @@ class Board
       row.each_with_index do |piece, column_index|
         if piece.nil?
           if colour_grid[row_index][column_index] == :black
-            print("\033[40m|     |\033[m")
+            print("\033[40m|     |\033[m"); sleep 0.003;
           else
-            print("\033[47m|     |\033[m")
+            print("\033[47m|     |\033[m"); sleep 0.003;
           end
         else
           if colour_grid[row_index][column_index] == :black
-            print("\033[40m| #{colour_emoji(piece.colour) + piece.uni_char} |\033[m")
+            print("\033[40m| #{colour_emoji(piece.colour) + piece.uni_char} |\033[m"); sleep 0.003;
           else
-            print("\033[47m| #{colour_emoji(piece.colour) + piece.uni_char} |\033[m")
+            print("\033[47m| #{colour_emoji(piece.colour) + piece.uni_char} |\033[m"); sleep 0.003;
           end
         end
       end

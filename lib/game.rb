@@ -39,7 +39,8 @@ class Game
   end
 
   def create_players
-    display_string(yaml_data['game']['welcome'], 0.0001); display_string(yaml_data['game']['player1_name_prompt'], 0.0001);
+    display_string(yaml_data['game']['welcome'], @@type_speed)
+    display_string(yaml_data['game']['player1_name_prompt'], @@type_speed)
     create_player1
     display_string(ERB.new(yaml_data['game']['player1_greeting']).result(binding), @@type_speed); sleep 0.3;
     display_string(yaml_data['game']['player2_name_prompt'], 0.0001)
@@ -51,14 +52,16 @@ class Game
     display_string(yaml_data['game']['assigning_colour1'], @@type_speed)
     player1.colour = random_colour; sleep 0.3;
     display_string(ERB.new(yaml_data['game']['player1_colour_stmnt']).result(binding), @@type_speed)
-    player1.colour == :white ? player2.colour = :black : player2.colour = :white; sleep 0.5;
-    display_string(ERB.new(yaml_data['game']['player2_colour_stmnt']).result(binding), @@type_speed); sleep 0.7
+    player1.colour == :white ? player2.colour = :black : player2.colour = :white; sleep 0.4;
+    display_string(ERB.new(yaml_data['game']['player2_colour_stmnt']).result(binding), @@type_speed); sleep 0.4
   end
 
   def game_setup
     display_string(ERB.new(yaml_data['game']['black_piece_instructions']).result(binding), @@type_speed); sleep 0.1;
     display_string(ERB.new(yaml_data['game']['white_piece_instructions']).result(binding), @@type_speed); puts "\n";
-    display_string(yaml_data['game']['board_illustration'], 0.005); puts "\n";
+    display_string(yaml_data['game']['board_illustration'], @@type_speed);
+    sleep 1.4;
+    puts "\n";
   end
 
 #  ****************** GAME PLAY LOGIC ***********************
@@ -82,7 +85,7 @@ class Game
 
     place_move(move)
 
-    puts "******* #{CYAN}TAKEN PIECE was;#{ANSI_END} \"#{taken_pieces.last[0].inspect}\" in DST is now;#{board.piece(move[2].to_i, move[3].to_i)}"
+    # puts "******* #{CYAN}TAKEN PIECE was;#{ANSI_END} \"#{taken_pieces.last[0].inspect}\" in DST is now;#{board.piece(move[2].to_i, move[3].to_i)}"
     active_player.first_move = false if active_player.first_move?
     src_piece.first_move = false if src_piece.first_move?
     puts "\n#{CYAN}#### #{opponent_player.inspect}#{ANSI_END} IS NOW IN CHECK\n" if in_check(opponent_player)
@@ -101,6 +104,7 @@ class Game
       return
     end
     toggle_active_player
+    sleep 0.5
   end
 
   def rescue_against_piece_move_rules(src_piece, move)
@@ -224,7 +228,7 @@ class Game
         legal_moves << move if !moves_into_check?(move, player)
       end
     end
-    puts "**** HERES LEGAL MOVES: #{legal_moves}"
+    # puts "**** HERES LEGAL MOVES: #{legal_moves}\n"
     legal_moves.empty? ? (return true) : (return false)
   end
 
@@ -269,22 +273,6 @@ class Game
   # all user input move validation done here, then move stored in Game @moves
   def get_move
     board.display_board_utf;
-
-    # puts "WHITE ::::::: #{white_player_name}"
-    # puts "BLACK ::::::: #{black_player_name}"
-    # puts "WHITE ::::::: #{white_player.name}"
-    # puts "BLACK ::::::: #{black_player.name}"
-    # puts "PLAYER 1 NAME::: #{player1_name}"
-    # puts "PLAYER 2 NAME::: #{player2_name}"
-    # puts "PLAYER 1.colour ::: #{player1.colour}"
-    # puts "PLAYER 2.colour ::: #{player2.colour}"
-    # puts "PLAYER1_colour ::: #{player1_colour}"
-    # puts "PLAYER2_colour ::: #{player2_colour}"
-    # puts "PLAYER 1::: #{player1.inspect}"
-    # puts "PLAYER 2::: #{player2.inspect}"
-    # puts "ACTIVE_PLAYER_NAME IS ::: #{self.active_player_name}"
-    # puts "ACTIVE PLAYER.NAME IS ::: #{self.active_player.name}"
-
     display_string(ERB.new(yaml_data['game']['move_prompt']).result(binding), @@type_speed)
     move = get_input
     return self.save_game if move == 'save'

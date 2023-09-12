@@ -25,7 +25,7 @@
 
 
 ## Tasks
-  - fix incorrect active player setting on game load.
+  - handle incorrect user input for which file to load
   - introduce Error classes for why a move cannot be made, e.g. off board, against piece's rules, other piece blocks you, wrong colour square?
   - introduce more begind/rescue blocks (e.g.; file save, ... , ... , ...)
   
@@ -34,13 +34,9 @@ __________________________________________
 ## NEXT TODO'S 
 
   - Get the board displaying in UI at correct times
-  - Add row and column numbers in display board UI
   - Integration tests for game flor (#play)
   - Clean up code in Game class
   - Refactor code in Game class
-  - Re-write user input to receive in chess notation (column, row) and interpolate into code notation (row, column)
-  - Write save game function
-  - Write pawn to end convert function
   - Write castling function.
 
 

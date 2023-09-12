@@ -6,14 +6,10 @@ module SaveAndLoadModule
 include UiModule
 
   def save_game
-    # toggle_active_player
     serialized_game = JSON.dump(self.to_json_data)
-    puts "this is JSON; #{serialized_game}"
     file_name = "#{player1.name[0] + player2.name[0]}s_game_no_#{file_count + 1}.json"
-    puts file_name
     save_file(file_name, serialized_game)
     @game_finished = true
-    display_string(ERB.new(yaml_data['game']['game_saved']).result(binding), @@type_speed)
     puts "is @game_finished?; #{@game_finished}"
   end
   
@@ -27,7 +23,7 @@ include UiModule
     File.open(path_name, 'w') do |file|
       file.puts(content)
     end
-    puts 'file saved'
+    display_string(ERB.new(yaml_data['game']['game_saved']).result(binding), @@type_speed)
   end
   
   def old_or_new_game
@@ -65,8 +61,6 @@ include UiModule
   end
   
   def to_json_data
-    puts "***** ACTIVE PLAYER: #{@active_player.name}"
-    puts "***** new game: #{@new_game}"
     {
       'board' => @board.to_json_data,
       'player1' => @player1.to_json_data,
@@ -81,34 +75,15 @@ include UiModule
   end
 
   def from_json_data(data)
-    puts data.inspect
     self.board = Board.new
     self.board.grid = board.deserialize_grid(data)
     self.player1 = Player.from_json_data(data['player1'])
     self.player2 = Player.from_json_data(data['player2'])
-    player1.name == data['active_player']['name'] ? self.active_player = player1 : self.active_player = player2
-    # self.active_player = player1.name == data['active_player']['name'] ? player1 : player2
-    puts "WHITE ::::::: #{self.white_player_name}"
-    puts "BLACK ::::::: #{self.black_player_name}"
-    puts "WHITE ::::::: #{self.white_player.name}"
-    puts "BLACK ::::::: #{self.black_player.name}"
-    puts "PLAYER 1 NAME::: #{self.player1_name}"
-    puts "PLAYER 2 NAME::: #{self.player2_name}"
-    puts "PLAYER 1.colour ::: #{self.player1.colour}"
-    puts "PLAYER 2.colour ::: #{self.player2.colour}"
-    puts "PLAYER 1::: #{self.player1.inspect}"
-    puts "PLAYER 2::: #{self.player2.inspect}"
-    puts "ACTIVE PLAYER NAME IS ::: #{self.active_player.name}"
-    # self.new_game = data['new_game']
+    self.active_player = player1.name == data['active_player']['name'] ? player1 : player2
     self.new_game = false
     self.moves = data['moves']
     self.taken_pieces = data['taken_pieces']
     self.game_finished = data['game_finished']
-    # puts "WHITE ::::::: #{self.white_player}"
-    # puts "BLACK ::::::: #{self.black_player}"
-    puts "NEW GAME?::: #{self.new_game}"
-    puts self.inspect
-    binding.pry
   end
 
 end

@@ -17,12 +17,12 @@ game:
     <%=player2.colour.to_s%> <%= colour_emoji(player2.colour)%>.\n"
   black_piece_instructions: "<%=black_player_name%> will play the black \U000026AB pieces from the top of the board."
   white_piece_instructions: "And <%=white_player_name%> will play with white \U000026AA pieces from the bottom of the board."
-  board_illustration: "Pieces are represented by the first two letters of the piece's character and class and then an 
+  board_illustration: "Pieces are represented by the first two letters of the piece's colour and class and then an 
    illustration of the colour and the piece."
   start_prompt: |
-    Drum roll please \U0001F941\U0001F941\U0001F941.
+    Drum roll please 🥁🥁🥁\U0001F941.
     <%= active_player_name %> will <%= @new_game ? "begin" : "continue" %> play.
-    Let the game commence \U0001F3AC. And may the best player win \U0001F3C6.
+    Let the game commence 🎬\U0001F3AC. And may the best player win 🏆\U0001F3C6.
   move_prompt: "Please enter your move <%= active_player_name %> (you're <%= active_player.colour %>)...(or type 'save' to pause & save game)"
   invalid_format: "your move;  '<%= CYAN %><%= move %><%= ANSI_END %>'' was not formated correctly, it shoud be formatted like; 'a2,a4', try again..."
   unowned_piece: "your move; '<%= CYAN %><%= move %><%= ANSI_END %>'' was not on your piece, try again..."
