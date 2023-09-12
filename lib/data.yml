@@ -1,12 +1,14 @@
 game:
   old_or_new_game: "Type 'load' to load an old game or hit return to start a new game"
   load_which_game: "Above is a numbered list of the saved games, enter the number for the game which you wish to load"
+  game_loaded: "Game file; <%=BLUE%><%= game_path %><%=ANSI_END%> has been successfully loaded.\n"
+  game_saved: "Game has been successfully saved, under the name; <%=BLUE%><%= file_name %><%=ANSI_END%>. Bye for now.\n"
   turn_instructions: "When prompted to take a turn please type your move by piece's current position, comma,
-    position to move piece to, e.g. <%=CYAN%>1b,1d<%=ANSI_END%>, then key return.\n"
+    position to move piece to, e.g. <%=CYAN%>b1,d1<%=ANSI_END%>, then key return.\n"
   welcome: "Welcome to your new chess game players.\n"
-  player1_name_prompt: Please tell me the 1st player's name?
+  player1_name_prompt: "Please tell me the 1st player's name?"
   player1_greeting: "hi <%=BLUE%><%=player1_name%><%=ANSI_END%> \U0001F44B\n"
-  player2_name_prompt: Please tell me the 2nd player's name?
+  player2_name_prompt: "Please tell me the 2nd player's name?"
   player2_greeting: "hey there <%=GREEN%><%=player2_name%><%=ANSI_END%> \U0001F91D\n"
   assigning_colour1: "Ok, randomly assigning a colour to you both now...\n"
   player1_colour_stmnt: "ok <%=player1_name%>'s randomly assigned colour is
@@ -15,15 +17,16 @@ game:
     <%=player2.colour.to_s%> <%= colour_emoji(player2.colour)%>.\n"
   black_piece_instructions: "<%=black_player_name%> will play the black \U000026AB pieces from the top of the board."
   white_piece_instructions: "And <%=white_player_name%> will play with white \U000026AA pieces from the bottom of the board."
-  board_illustration: Pieces are represented by the first two letters of the piece's character and class and then an 
-   illustration of the colour and the piece.
-  start_prompt: "Drum roll please \U0001F941\U0001F941\U0001F941.
-    <%= active_player_name %> will begin the game.
-    Let the game commence \U0001F3AC. And may the best player win \U0001F3C6.\n"
+  board_illustration: "Pieces are represented by the first two letters of the piece's character and class and then an 
+   illustration of the colour and the piece."
+  start_prompt: |
+    Drum roll please \U0001F941\U0001F941\U0001F941.
+    <%= active_player_name %> will <%= @new_game ? "begin" : "continue" %> play.
+    Let the game commence \U0001F3AC. And may the best player win \U0001F3C6.
   move_prompt: "Please enter your move <%= active_player_name %> (you're <%= active_player.colour %>)...(or type 'save' to pause & save game)"
   invalid_format: "your move;  '<%= CYAN %><%= move %><%= ANSI_END %>'' was not formated correctly, it shoud be formatted like; 'a2,a4', try again..."
   unowned_piece: "your move; '<%= CYAN %><%= move %><%= ANSI_END %>'' was not on your piece, try again..."
-  untrue_move: your move; '<%= CYAN %><%= move %><%= ANSI_END %>' didn't ask your given piece to move anywhere, please enter an actual move..."
+  untrue_move: "your move; '<%= CYAN %><%= move %><%= ANSI_END %>' didn't ask your given piece to move anywhere, please enter an actual move..."
   empty_square: "Square '<%= CYAN %><%= move %><%= ANSI_END %>' doesn't contain a piece. Please enter a piece's position and your move..."
   first_move_error: "Your first move can only be a Pawn or a Knight, this move; '<%= CYAN %><%= move %><%= ANSI_END %>' was a <%= board.piece(indexed_move[1].to_i, indexed_move[0].to_i).class %>, try again..."
   save_prompt: "enter 'save' in order to end and save your game."

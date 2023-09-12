@@ -25,7 +25,7 @@ class Player
 
   def self.from_json_data(data)
     player = Player.new(data['name'])
-    player.colour = data['colour']
+    player.colour = data['colour'].to_sym
     player.first_move = data['first_move']
     player
   end

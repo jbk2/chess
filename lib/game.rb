@@ -14,11 +14,12 @@ class Game
   include UiModule
   include SaveAndLoadModule
 
-  attr_accessor :player1, :player2, :active_player, :active_user_move, :moves, :board, :taken_pieces, :game_finished
+  attr_accessor :player1, :player2, :active_player, :active_user_move, :moves, :board, :taken_pieces, :game_finished, :new_game
 
   def initialize
     @new_game = true
     @loaded_game_name = nil
+    @active_player = nil
     @moves = []
     @taken_pieces = []
     @game_finished = false
@@ -268,6 +269,22 @@ class Game
   # all user input move validation done here, then move stored in Game @moves
   def get_move
     board.display_board_utf;
+
+    # puts "WHITE ::::::: #{white_player_name}"
+    # puts "BLACK ::::::: #{black_player_name}"
+    # puts "WHITE ::::::: #{white_player.name}"
+    # puts "BLACK ::::::: #{black_player.name}"
+    # puts "PLAYER 1 NAME::: #{player1_name}"
+    # puts "PLAYER 2 NAME::: #{player2_name}"
+    # puts "PLAYER 1.colour ::: #{player1.colour}"
+    # puts "PLAYER 2.colour ::: #{player2.colour}"
+    # puts "PLAYER1_colour ::: #{player1_colour}"
+    # puts "PLAYER2_colour ::: #{player2_colour}"
+    # puts "PLAYER 1::: #{player1.inspect}"
+    # puts "PLAYER 2::: #{player2.inspect}"
+    # puts "ACTIVE_PLAYER_NAME IS ::: #{self.active_player_name}"
+    # puts "ACTIVE PLAYER.NAME IS ::: #{self.active_player.name}"
+
     display_string(ERB.new(yaml_data['game']['move_prompt']).result(binding), @@type_speed)
     move = get_input
     return self.save_game if move == 'save'
