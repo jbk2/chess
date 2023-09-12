@@ -56,4 +56,16 @@ class Piece
     false
   end
 
+  def to_json_data
+    {
+      # 'black_char' => @black_char,
+      # 'white_char' => @white_char,
+      'class' => self.class.to_s,
+      'first_move' => @first_move,
+      'colour' => @colour,
+      'r' => @r,
+      'c' => @c
+    }
+  end
+
 end

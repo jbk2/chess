@@ -5,7 +5,7 @@ describe Board do
   let(:board) {Board.new}
   # let(:game) {Game.new}
   before do
-    allow($stdin).to receive(:gets).and_return("John", "James")
+    allow($stdin).to receive(:gets).and_return("new game pls", "John", "James")
     allow($stdout).to receive(:write) # comment if debugging as this will stop pry output also 
     allow_any_instance_of(Game).to receive(:sleep) # stubs any #sleep's for test running speed
   end
@@ -168,14 +168,14 @@ describe Board do
     context 'with black pieces' do
       it 'returns the position of the King' do
         game = Game.new
-        game.send(:toggle_turn)
+        game.send(:toggle_active_player)
         result = board.find_pieces('king', game.active_player.colour)
         expect(result).to eq([[0, 4]])
       end
       
       it 'returns the position of the Rooks' do
         game = Game.new
-        game.send(:toggle_turn)
+        game.send(:toggle_active_player)
         result = board.find_pieces('pawn', game.active_player.colour)
         expect(result).to eq([[1, 0], [1, 1], [1, 2], [1, 3], [1, 4], [1, 5], [1, 6], [1, 7]])
       end

@@ -34,9 +34,9 @@
     - build load game IO upon new game commencement.
   - introduce Error classes for why a move cannot be made, e.g. off board, against piece's rules, other piece blocks you, wrong colour square?
   
+__________________________________________
 
-
-# #################### NEXT TODO'S ###############
+## NEXT TODO'S 
 
   # Get the board displaying in UI at correct times
   # Add row and column numbers in display board UI

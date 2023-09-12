@@ -15,4 +15,19 @@ class Player
     @first_move = false
   end
 
+  def to_json_data
+    {
+      'name' => @name,
+      'first_move' => @first_move,
+      'colour' => @colour
+    }
+  end
+
+  def self.from_json_data(data)
+    player = Player.new(data['name'])
+    player.colour = data['colour']
+    player.first_move = data['first_move']
+    player
+  end
+
 end

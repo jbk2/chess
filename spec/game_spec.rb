@@ -4,7 +4,7 @@ require_relative '../lib/ui_module'
 describe Game do
   let(:game) {Game.new}
   before do
-    allow($stdin).to receive(:gets).and_return("John", "James")
+    allow($stdin).to receive(:gets).and_return("new game pls", "John", "James")
     allow($stdout).to receive(:write) # comment if debugging as this will stop pry output also 
     allow_any_instance_of(Game).to receive(:sleep) # stubs any #sleep's for test running speed
   end
@@ -49,11 +49,11 @@ describe Game do
       expect(game.active_player).to eq(game.send(:white_player))
     end
 
-    describe "#toggle_turn" do
+    describe "#toggle_active_player" do
       it "should change the game.active_player" do
         orig_active_player = game.active_player
         expect(game.active_player).to eq(orig_active_player)
-        game.send(:toggle_turn)
+        game.send(:toggle_active_player)
         expect(game.active_player).not_to eq(orig_active_player)
       end
     end
@@ -63,8 +63,8 @@ describe Game do
         expect(game.send(:opponent_player)).to be(game.send(:black_player))
       end
     
-      it 'always returns the opponent of the active player, even after #toggle_turn' do
-        game.send(:toggle_turn)
+      it 'always returns the opponent of the active player, even after #toggle_active_player' do
+        game.send(:toggle_active_player)
         expect(game.send(:opponent_player)).to be(game.send(:white_player))
       end
     end
@@ -137,21 +137,21 @@ describe Game do
         end
 
         it "a Bishop move" do
-          game.send(:toggle_turn)
+          game.send(:toggle_active_player)
           allow(game).to receive(:get_input).and_return('c8,e6','b8,c6') #Bishop & Knight
           expect(game).not_to receive(:add_move).with('0224')
           expect(game).to receive(:add_move).with('0122')
           game.send(:get_move)
         end
         it "a Queen move" do
-          game.send(:toggle_turn)
+          game.send(:toggle_active_player)
           allow(game).to receive(:get_input).and_return('d8,f6', 'a7,a6') #Queen & Pawn
           expect(game).not_to receive(:add_move).with('0325') 
           expect(game).to receive(:add_move).with('1020')
           game.send(:get_move)
         end
         it "a King move" do
-          game.send(:toggle_turn)
+          game.send(:toggle_active_player)
           allow(game).to receive(:get_input).and_return('e8,e7','b7,b6') #King & Pawn 
           expect(game).not_to receive(:add_move).with('0414') 
           expect(game).to receive(:add_move).with('1121')
@@ -161,13 +161,13 @@ describe Game do
       
       context "it will save" do
         it "will save a Pawn move" do
-          game.send(:toggle_turn)
+          game.send(:toggle_active_player)
           allow(game).to receive(:get_input).and_return('b7,b6') #Pawn
           expect(game).to receive(:add_move).with('1121')
           game.send(:get_move)
         end
         it "will save a Knight move" do
-          game.send(:toggle_turn)
+          game.send(:toggle_active_player)
           allow(game).to receive(:get_input).and_return('b8,c6') #Knight 
           expect(game).to receive(:add_move).with('0122')
           game.send(:get_move)
@@ -356,7 +356,7 @@ describe Game do
       end
       
       it 'returns false' do
-        game.send(:toggle_turn)
+        game.send(:toggle_active_player)
         game.board.grid[1][4] = Pawn.new(:white, 1, 4)
         result = game.in_check(game.active_player)
         expect(result).to be(false)
@@ -401,7 +401,7 @@ describe Game do
       
       it 'returns the checking piece' do
         game.board.grid[1][3] = Pawn.new(:white, 1, 3)
-        game.send(:toggle_turn)
+        game.send(:toggle_active_player)
         result = game.in_check(game.active_player)
         expect(result[0][0]).to be_a(Pawn)
         expect(result[0][1]).to eq([1, 3])

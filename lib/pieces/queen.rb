@@ -53,4 +53,5 @@ class Queen < Piece
   
     moves = down_right + down_left + up_right + up_left + up + down + left + right
   end
+  
 end

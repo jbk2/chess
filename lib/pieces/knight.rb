@@ -47,5 +47,5 @@ class Knight < Piece
     moves.delete_if { |move| (!(0..7).include?(move[0])) || (!(0..7).include?(move[1])) } # alternatively; moves.delete_if { |move| (move[0] < 0 || move[0] > 7) || (move[1] < 0 || move[1] > 7) }
     return moves
   end
-  
+
 end

@@ -53,7 +53,6 @@ class Board
   end
 
   def display_board_utf
-    print "\n"
     print "  "
     ('a'..'h').each { |l| print "   #{l}   "}
     grid.each_with_index do |row, row_index|
@@ -129,6 +128,37 @@ class Board
       find_pieces(type, colour).each { |coord| locations << coord }
     end
     locations
+  end
+
+  def to_json_data
+    {
+      'grid' => serialize_grid,
+      'colour_grid' => @colour_grid
+    }
+  end
+
+  def from_json_data(data)
+    @grid = deserialize_grid
+  end
+
+  def serialize_grid
+    serialized_grid = Array.new(8) { Array.new(8) }
+    @grid.each_with_index do |row, r|
+      row.each_with_index do |piece, c|
+        serialized_grid[r][c] = piece ? piece.to_json_data : nil
+      end
+    end
+    serialized_grid
+  end
+
+  def deserialize_grid(data)
+    deserialized_grid = Array.new(8) { Array.new(8) }
+    data['board']['grid'].each_with_index do |row, r|
+      row.each_with_index do |piece_data, c|
+        deserialized_grid[r][c] = piece_data ? Object.const_get(piece_data['class']).new(piece_data['colour'].to_sym, r, c) : nil
+      end
+    end
+    deserialized_grid
   end
 
   private

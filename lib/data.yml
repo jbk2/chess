@@ -1,4 +1,8 @@
 game:
+  old_or_new_game: "Type 'load' to load an old game or hit return to start a new game"
+  load_which_game: "Above is a numbered list of the saved games, enter the number for the game which you wish to load"
+  turn_instructions: "When prompted to take a turn please type your move by piece's current position, comma,
+    position to move piece to, e.g. <%=CYAN%>1b,1d<%=ANSI_END%>, then key return.\n"
   welcome: "Welcome to your new chess game players.\n"
   player1_name_prompt: Please tell me the 1st player's name?
   player1_greeting: "hi <%=BLUE%><%=player1_name%><%=ANSI_END%> \U0001F44B\n"
@@ -13,10 +17,8 @@ game:
   white_piece_instructions: "And <%=white_player_name%> will play with white \U000026AA pieces from the bottom of the board."
   board_illustration: Pieces are represented by the first two letters of the piece's character and class and then an 
    illustration of the colour and the piece.
-  turn_instructions: "When prompted to take a turn please type your move by piece's current position, comma,
-    position to move piece to, e.g. <%=CYAN%>1b,1d<%=ANSI_END%>, then key return.\n"
   start_prompt: "Drum roll please \U0001F941\U0001F941\U0001F941.
-    <%= active_player_name %> as the white player will begin the game.
+    <%= active_player_name %> will begin the game.
     Let the game commence \U0001F3AC. And may the best player win \U0001F3C6.\n"
   move_prompt: "Please enter your move <%= active_player_name %> (you're <%= active_player.colour %>)...(or type 'save' to pause & save game)"
   invalid_format: "your move;  '<%= CYAN %><%= move %><%= ANSI_END %>'' was not formated correctly, it shoud be formatted like; 'a2,a4', try again..."

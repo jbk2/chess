@@ -1,4 +1,5 @@
 require_relative '../lib/pieces/knight'
+require_relative '../lib/game'
 
 describe Knight do
   describe "a knight's instantiation" do
@@ -175,6 +176,58 @@ describe Knight do
       end
     end
 
+  end
+
+  describe "#valid_move?(move, board)" do
+    before do
+      allow($stdin).to receive(:gets).and_return("new game pls", "John", "James")
+      allow($stdout).to receive(:write) # comment if debugging as this will stop pry output also 
+      allow_any_instance_of(Game).to receive(:sleep) # stubs any #sleep's for test running speed
+    end
+    let(:game) { Game.new }
+
+    context "when move is valid against piece, game and board rules" do
+      it "returns true" do
+        white_knight = game.board.piece(7, 1)
+        move = '7152'
+        result = white_knight.valid_move?(move, game.board)
+        expect(result).to be(true)
+      end
+
+      it "returns true" do
+        game.board.grid[5][0] = Pawn.new(:black, 5, 0)
+        white_knight = game.board.piece(7, 1)
+        move = '7150'
+        result = white_knight.valid_move?(move, game.board)
+        expect(result).to be(true)
+      end
+
+      it "returns true" do
+        game.board.grid[7][1], game.board.grid[6][1], game.board.grid[4][3], game.board.grid[3][3] = nil, nil, Knight.new(:white, 4, 3), Knight.new(:black, 3, 3)
+        white_knight = game.board.piece(4, 3)
+        move = '4324'
+        result = white_knight.valid_move?(move, game.board)
+        expect(result).to be(true)
+      end
+    end
+  
+    context "when move is not valid against piece, game and board rules" do
+      it "returns false" do
+        white_knight = game.board.piece(7, 1)
+        move = '7163'
+        result = white_knight.valid_move?(move, game.board)
+        expect(result).to be(false)
+      end
+      
+      it "returns false" do
+        game.board.grid[7][4], game.board.grid[6][4] = nil, nil
+        game.board.grid[5][2] = Pawn.new(:white, 5, 2)
+        white_knight = game.board.piece(7, 1)
+        move = '7152'
+        result = white_knight.valid_move?(move, game.board)
+        expect(result).to be(false)
+      end
+    end
   end
 
   # test updating the objects x&y during a move

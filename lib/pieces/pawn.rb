@@ -89,5 +89,5 @@ class Pawn < Piece
   def promotable?(r, c)
     (@colour == :white && r == 0) || (@colour == :black && r == 7) ? true : false
   end
-  
+
 end

@@ -56,5 +56,4 @@ class King < Piece
     # does this position appear in the #valid_moves of any of opponent's pieces next moves?
   end
 
-
 end

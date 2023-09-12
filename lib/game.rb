@@ -1,27 +1,34 @@
 require 'pry-byebug'
 require 'yaml'
 require 'erb'
+require 'json'
 require_relative 'board'
 require_relative 'player'
 require_relative 'ui_module'
+require_relative 'save_and_load_module'
 require_relative '../lib/errors/input_errors'
 
 Dir[File.join(__dir__, 'pieces', '*.rb')].each { |file| require_relative file }
 
 class Game
   include UiModule
-  attr_accessor :player1, :player2, :active_player, :active_user_move, :moves
-  attr_reader :board, :taken_pieces
-  # attr_writer :game_finished
+  include SaveAndLoadModule
+
+  attr_accessor :player1, :player2, :active_player, :active_user_move, :moves, :board, :taken_pieces, :game_finished
 
   def initialize
-    build_board
-    create_players
-    assign_colour
-    @active_player = white_player
+    @new_game = true
+    @loaded_game_name = nil
     @moves = []
     @taken_pieces = []
     @game_finished = false
+    old_or_new_game
+    if @new_game == true
+      build_board
+      create_players
+      assign_colour
+      @active_player = white_player
+    end
   end
 
 #  ****************** GAME SETUP LOGIC ***********************
@@ -49,8 +56,8 @@ class Game
 
   def game_setup
     display_string(ERB.new(yaml_data['game']['black_piece_instructions']).result(binding), @@type_speed); sleep 0.1;
-    display_string(ERB.new(yaml_data['game']['white_piece_instructions']).result(binding), @@type_speed); puts "\n"; sleep 1;
-    display_string(yaml_data['game']['board_illustration'], 0.005); puts "\n"; sleep 1;
+    display_string(ERB.new(yaml_data['game']['white_piece_instructions']).result(binding), @@type_speed); puts "\n";
+    display_string(yaml_data['game']['board_illustration'], 0.005); puts "\n";
   end
 
 #  ****************** GAME PLAY LOGIC ***********************
@@ -92,7 +99,7 @@ class Game
       @game_finished = true
       return
     end
-    toggle_turn
+    toggle_active_player
   end
 
   def rescue_against_piece_move_rules(src_piece, move)
@@ -263,7 +270,7 @@ class Game
     board.display_board_utf;
     display_string(ERB.new(yaml_data['game']['move_prompt']).result(binding), @@type_speed)
     move = get_input
-    return save_game if move == 'save'
+    return self.save_game if move == 'save'
     return rescue_invalid_format_error(move) unless chess_notation_format?(move)
     return rescue_untrue_move_error(move) unless true_move?(move)
     indexed_move = chess_notation_to_index_format(move)
@@ -279,18 +286,6 @@ class Game
     else
       raise InputError.new("Indexed_move; #{indexed_move} should be formatted like 'iiii'")
     end
-  end
-
-  def save_game
-    puts self.inspect
-    puts player1.inspect
-    puts player2.inspect
-    @game_finished = true
-    puts @game_finished
-    # serialize and save to file; Game, Board, Player
-    # set @game_finished to true
-    # output message confirming successful save, file name, and end of game
-    # check that game actually ends
   end
 
   def rescue_invalid_format_error(move)
@@ -339,7 +334,7 @@ class Game
     @game_finished
   end
 
-  def toggle_turn
+  def toggle_active_player
     active_player == player1 ? (self.active_player = player2) : (self.active_player = player1)
   end
   
