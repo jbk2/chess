@@ -28,6 +28,7 @@
   - handle incorrect user input for which file to load
   - introduce Error classes for why a move cannot be made, e.g. off board, against piece's rules, other piece blocks you, wrong colour square?
   - introduce more begind/rescue blocks (e.g.; file save, ... , ... , ...)
+  - stub sleeps from Game#get_move
   
 __________________________________________
 

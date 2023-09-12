@@ -46,7 +46,7 @@ module UiModule
     move.match?(/[a-h][1-8],[a-h][1-8]/) && move.length == 5
   end
 
-  def chess_notation_to_index_format(chess_move)
+  def chess_to_index_format(chess_move)
     indexed_move = String.new
     indexed_move[0] = ((chess_move[1].to_i - 8).abs).to_s
     indexed_move[1] = (chess_move[0].upcase.ord - 'A'.ord).to_s

@@ -43,19 +43,19 @@ describe UiModule do
     end
   end
   
-  describe "#chess_notation_to_index_format(chess_move)" do
+  describe "#chess_to_index_format(chess_move)" do
     it "correctly converts chess notation 'a8,a7' to 4 digit index format" do
-      result = game.chess_notation_to_index_format('a8,a7')
+      result = game.chess_to_index_format('a8,a7')
       expect(result).to eq('0010')
     end
     
     it "correctly converts chess notation 'g1,h2' to 4 digit index format" do
-      result = game.chess_notation_to_index_format('g1,h2')
+      result = game.chess_to_index_format('g1,h2')
       expect(result).to eq('7667')
     end
     
     it "correctly converts chess notation 'c3,g7' to 4 digit index format" do
-      result = game.chess_notation_to_index_format('c3,g7')
+      result = game.chess_to_index_format('c3,g7')
       expect(result).to eq('5216')
     end
   end
