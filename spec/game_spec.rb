@@ -7,6 +7,7 @@ describe Game do
     allow($stdin).to receive(:gets).and_return("new game pls", "John", "James")
     allow($stdout).to receive(:write) # comment if debugging as this will stop pry output also 
     allow_any_instance_of(Game).to receive(:sleep) # stubs any #sleep's for test running speed
+    allow_any_instance_of(Board).to receive(:sleep) # stubs any #sleep's for test running speed
   end
   
   it 'received sleep' do
@@ -89,9 +90,13 @@ describe Game do
 
   describe '#get_move' do
     let(:active_player) { double(Player) }
+    # before do
+    #   allow_any_instance_of(Game).to receive(:sleep)
+    # end
     
     context 'when move is valid' do
       it "saves the move in the Game @moves array" do
+        # allow_any_instance_of(Game).to receive(:sleep)
         allow(game).to receive(:get_input).and_return('a2,a3') # Pawn
         allow(game).to receive(:moves).and_return(['6050'])
         expect(game).to receive(:add_move).with('6050').once #Pawn
@@ -333,7 +338,6 @@ describe Game do
   end
 
   describe '#game_valid_move?' do
-    
   end
 
   # describe 'only the active player can make a move' do
