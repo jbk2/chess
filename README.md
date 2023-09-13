@@ -45,7 +45,7 @@ __________________________________________
 - Better enforcement of public & private method visibility.
 - Run Rubocop
 
-## NEXT TODO'S 
+## Next Todo's 
 - Complete unit testing of Game#make_move.
 - introduce Error classes for why a move cannot be made, e.g. off board, against piece's rules, other piece blocks you, wrong colour square?
 - introduce more begin/rescue blocks (e.g.; file save, ... , ... , ...)
