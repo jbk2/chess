@@ -32,7 +32,6 @@ include UiModule
       list_saved_games
       load_which_game
       load_game(@loaded_game_name)
-      puts "\n **** READY TO PLAY **** \n"
     end
   end
   
@@ -55,8 +54,9 @@ include UiModule
       game_data = JSON.parse(game_content)
       self.from_json_data(game_data)
       display_string(ERB.new(yaml_data['game']['game_loaded']).result(binding), @@type_speed)
+      puts "\n **** READY TO PLAY **** \n"
     rescue StandardError => e
-      puts "Error loading game: #{e.message}"
+      puts "Error loading game: #{e.message}.\nPlaying a new game instead"
     end
   end
   
