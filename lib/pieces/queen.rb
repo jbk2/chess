@@ -1,6 +1,3 @@
-# ## MOVE RULES
-# - Any stright or diagnonal direction, any number of squares (therefore can be on any colour square).
-# - Cannot move over other her own or over other sides pieces.
 require_relative 'piece'
 
 class Queen < Piece
@@ -25,12 +22,11 @@ class Queen < Piece
   end
 
   def valid_move?(move, board)
-    src = [move[0].to_i,move[1].to_i]
-    dst = [move[2].to_i,move[3].to_i]
+    src,dst  = [move[0].to_i,move[1].to_i], [move[2].to_i,move[3].to_i]
     valid_queen_moves(src, board).include?(dst)
   end
 
-  # validates against move_path_clear & non-moving to same colour piece space.
+  # validates against move_path_clear & non-moving onto same colour piece.
   def valid_queen_moves(src, board)
     game_valid_moves = []
     every_queen_move.each do |dst|
@@ -55,3 +51,7 @@ class Queen < Piece
   end
   
 end
+
+# ## MOVE RULES
+# 1. Any stright or diagnonal direction, any number of squares (therefore can land on any colour square).
+# 2. Cannot move over other her own or over other side's pieces.

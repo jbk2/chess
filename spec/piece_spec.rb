@@ -2,7 +2,7 @@ Dir[File.join('..', '/lib/pieces' '*.rb')].each { |file| require_relative file }
 require_relative '../lib/board'
 
 describe Piece do
-  # example piece moves do not comply with piece move rules, purely tests #move_path_clear?()
+  # example piece moves do not comply with piece move rules, they purely test #move_path_clear?()
   describe '#move_path_clear?(move)' do
     let(:pawn) { Pawn.new(:black, 2, 0) }
     let(:rook) { Rook.new(:black, 0, 0) }

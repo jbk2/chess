@@ -1,14 +1,9 @@
-# ## MOVE RULES
-# - diagonally only, any length, therefore only ever on same colour square.
-# - cannot jump over any other pieces.
-
 require_relative 'piece'
 
 class Bishop < Piece
-  attr_writer :first_move
-  # attr_accessor :colour, :r, :c
-  attr_reader :black_char, :white_char, :colour
   attr_accessor :r, :c
+  attr_reader :black_char, :white_char, :colour
+  attr_writer :first_move
 
   BLACK_CHAR = "\u265D"
   WHITE_CHAR = "\u2657"
@@ -27,12 +22,11 @@ class Bishop < Piece
   end
 
   def valid_move?(move, board)
-    src = [move[0].to_i,move[1].to_i]
-    dst = [move[2].to_i,move[3].to_i]
+    src, dst = [move[0].to_i,move[1].to_i], [move[2].to_i,move[3].to_i]
     valid_bishop_moves(src, board).include?(dst)
   end
 
-  # validates against move_path_clear & non-moving to same colour piece space.
+  # validates against move_path_clear & non-moving onto same colour piece.
   def valid_bishop_moves(src, board)
     game_valid_moves = []
     every_bishop_move.each do |dst|
@@ -57,6 +51,3 @@ end
 # 2. cannot jump over any other pieces.
 # 3. only ever on same colour square.
 # 4. can move any number of squares, so long as 2 == true
-
-
- 

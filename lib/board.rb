@@ -22,6 +22,7 @@ class Board
     populate_bishops
     populate_queens
     populate_kings
+    # Example of a close to game finish completed board, for manual game play testing purposes:
     # grid[0][4], grid[0][7], grid[2][5], grid[2][7] = Rook.new(:white, 0, 4), King.new(:black, 0, 7), Pawn.new(:white, 2, 5), King.new(:white, 2, 7)
   end
 
@@ -177,11 +178,9 @@ class Board
   end
 
   def populate_pawns
-    # grid[1][0] = Pawn.new(:black, 1, 0)
     grid[1].map!.with_index do |v, i|
       v = Pawn.new(:black, 1, i)
     end
-    # grid[6][0] = Pawn.new(:white, 6, 0)
     grid[6].map!.with_index do |v, i|
       v = Pawn.new(:white, 6, i)
     end
@@ -223,27 +222,3 @@ class Board
   end
 
 end
-
-# ________ Old unused, but potentially helpful, methods _______________________
-
- # def display_board
-  #   grid.each {|e| pp "#{e}"}
-  # end
-
-  # def display_piece(x,y)
-  #   pp grid[x][y]
-  # end
-  
-  # def display_piece_utf(x,y)
-  #   puts grid[x][y].uni_char
-  # end
-
-  # def black_or_white(row, column)
-  #   populate_board[row][column]
-  # end
-# b = Board.new
-# p b.display_colour_grid_utf
-
-# b = Board.new
-# b.build_grid
-# pp b.grid.inspect

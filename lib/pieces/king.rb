@@ -1,15 +1,9 @@
-# ## MOVE RULES
-# - Any one square straight or diagnonal (therefore can step on any colour)
-# - Cannot move itself into a check position.
-# - Castling; if 1st move for king & rook & no pieces between them, can in one simultaneous move move king
-# two squares towards rook, and rook move to square on opposite side of new king position. Cannot
-# castle when either; king is in check, king moves through a check or king lands in check.
 require_relative 'piece'
 
 class King < Piece
-  attr_writer :first_move
-  attr_reader :black_char, :white_char, :colour
   attr_accessor :r, :c
+  attr_reader :black_char, :white_char, :colour
+  attr_writer :first_move
   
   BLACK_CHAR = "\u265A"
   WHITE_CHAR = "\u2654"
@@ -29,12 +23,11 @@ class King < Piece
   end
 
   def valid_move?(move, board)
-    src = [move[0].to_i,move[1].to_i]
-    dst = [move[2].to_i,move[3].to_i]
+    src, dst = [move[0].to_i,move[1].to_i], [move[2].to_i,move[3].to_i]
     valid_king_moves(src, board).include?(dst)
   end
 
-# validates against move_path_clear & non-moving to same colour piece space.
+# validates against move_path_clear & non-moving onto own piece.
   def valid_king_moves(src, board)
     game_valid_moves = []
     every_king_move.each do |dst|
@@ -48,12 +41,14 @@ class King < Piece
     moves = []
     moves.push([r+1, c+1], [r+1, c-1], [r-1, c+1], [r-1, c-1], [r-1, c], [r+1, c], [r, c-1], [r, c+1])
     moves.delete_if { |move| !Board.valid_coord?(move[0], move[1]) }
-    # Moves into check - NOT DONE
     # Castling - NOT DONE
   end
 
-  def in_check?(r, c)
-    # does this position appear in the #valid_moves of any of opponent's pieces next moves?
-  end
-
 end
+
+# ## MOVE RULES
+# 1. Any one square straight or diagnonal (therefore can step on any colour)
+# 2. Cannot move itself into a check position.
+# 3. Castling; if 1st move for king & rook & no pieces between them, can in one simultaneous move move king
+# two squares towards rook, and rook move to square on opposite side of new king position. Cannot
+# castle when either; king is in check, king moves through a check or king lands in check.

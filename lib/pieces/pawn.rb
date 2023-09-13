@@ -1,25 +1,12 @@
-# ## MOVE RULES
-# - on 1st move; Can move 2 square forward, on all other moves only one square.
-# - cannot capture with a forward move, i.e. if a piece directly in front of, he cannot move.
-# - may move diagonally by 1 square only if taking an opponent's piece.
-# - cannot move or capture backwards (all other pieces can).
-# - en-passant; after a pawn's double move from home row, if it moved to a square with
-# an adjacent enemy pawn piece, that adjacent enemy pawn may move
-# diagonally into the square jumped by the two step pawn and at the same time take that
-# two step moved pawn. Must be done immediately after the two step pawn move of the original pawn.
-# - on reaching the opponent's end of board it is able to promote into player's choice of his own;
-# queen, rook, knight or bishop (usually queen, not mandatory).   
-
 require_relative 'piece'
-# require_relative '../lib/board'
 
 class Pawn < Piece
-  attr_writer :first_move
-  attr_reader :black_char, :white_char, :colour
   attr_accessor :r, :c
+  attr_reader :black_char, :white_char, :colour
+  attr_writer :first_move
 
- BLACK_CHAR = "\u265F"
- WHITE_CHAR = "\u2659"
+  BLACK_CHAR = "\u265F"
+  WHITE_CHAR = "\u2659"
 
   def initialize(colour, r, c)
     @first_move = true
@@ -34,17 +21,12 @@ class Pawn < Piece
     @first_move = false
   end
 
-  # def uni_char(colour)
-  #   super
-  # end
-
   def valid_move?(move, board)
-    src = [move[0].to_i,move[1].to_i]
-    dst = [move[2].to_i,move[3].to_i]
+    src, dst = [move[0].to_i,move[1].to_i], [move[2].to_i,move[3].to_i]
     valid_pawn_moves(src, board).include?(dst)
   end
 
-# implements diagonal taking move logic, 1st move 2 square logic, clear path logic and not into own piece logic.
+  # implements diagonal taking move logic, 1st move 2 square logic, clear path logic and not into own piece logic.
   def valid_pawn_moves(src, board)
     moves = []
     if @colour == :white 
@@ -79,9 +61,6 @@ class Pawn < Piece
       end
     end
     moves
-    # if first_move? x2 moves forward - DONE
-    # else x1 square forward  - DONE
-    # cannot move backwards - DONE
     # if reached_end_row #promote - NOT DONE
     # if first_move_double_step then set @passantable to true NOT DONE
   end
@@ -91,3 +70,14 @@ class Pawn < Piece
   end
 
 end
+
+# ## MOVE RULES
+# 1. on 1st move; Can move 2 square forward, on all other moves only one square.
+# 2. can only capture with a diagonal forward move & may only move diagonally, by 1 square, if capturing.
+# 3. cannot move or capture backwards (all other pieces can).
+# 4. en-passant; after a pawn's double move from home row, if it moved to a square with
+# an adjacent enemy pawn piece, that adjacent enemy pawn may move
+# diagonally into the square jumped by the two step pawn and at the same time capture that
+# two step moved pawn. Must be done immediately after the two step pawn move of the original pawn.
+# 5. on reaching the opponent's end of board it is able to promote into player's choice of his own;
+# queen, rook, knight or bishop (usually queen, not mandatory)

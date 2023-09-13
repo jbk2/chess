@@ -156,15 +156,15 @@ describe Knight do
       end
     end
     
-    # context 'with a white_knight in 0, 6 on a starting board' do 
-    #   it 'returns all valid piece moves' do
-    #     white_knight, white_pawn = Knight.new(:white, 0, 6), Pn.new(:white, 4, 5)
-    #     board.grid[5][3], board.grid[4][5] = white_knight, white_pawn
-    #     src = [white_knight.r, white_knight.c]
-    #     result = white_knight.valid_knight_moves(src, board)
-    #     expect(result).to eq([[3, 4], [3, 2], [4, 1]])
-    #   end
-    # end
+    context 'with a white_knight in 0, 6 on a starting board' do
+      it 'returns all valid piece moves' do
+        white_knight, white_pawn = Knight.new(:white, 0, 6)
+        board.grid[0][6], board.grid[4][5] = white_knight, white_pawn
+        src = [white_knight.r,white_knight.c]
+        result = white_knight.valid_knight_moves(src, board)
+        expect(result).to eq([[2, 7], [2, 5], [1, 4]])
+      end
+    end
     
     context 'with a black_knight in 0, 1 on a starting board' do 
       it 'returns all valid piece moves' do

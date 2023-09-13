@@ -1,5 +1,4 @@
 require_relative 'game'
-# require_relative 'player'
 require_relative 'ui_module'
 
 module SaveAndLoadModule
@@ -10,7 +9,6 @@ include UiModule
     file_name = "#{player1.name[0] + player2.name[0]}s_game_no_#{file_count + 1}.json"
     save_file(file_name, serialized_game)
     @game_finished = true
-    puts "is @game_finished?; #{@game_finished}"
   end
   
   def file_count

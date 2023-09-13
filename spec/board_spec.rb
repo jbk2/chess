@@ -3,7 +3,6 @@ require_relative '../lib/game'
 
 describe Board do
   let(:board) {Board.new}
-  # let(:game) {Game.new}
   before do
     allow($stdin).to receive(:gets).and_return("new game pls", "John", "James")
     allow($stdout).to receive(:write) # comment if debugging as this will stop pry output also 

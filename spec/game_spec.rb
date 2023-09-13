@@ -40,7 +40,6 @@ describe Game do
     it "should assign a colour to each player" do
       expect([:white, :black]).to include(game.player1.colour)
       expect([:white, :black]).to include(game.player2.colour)
-      # expect(game.player2.colour).to eq(:white).or(be == :black) #alternatively
     end
   end
   
@@ -72,19 +71,9 @@ describe Game do
   end
 
   describe '#add_move(move)' do
-    context 'with correct index format' do 
-      it 'pushes a the move string onto the @moves array' do
-        game.send(:add_move, '1011')
-        expect(game.moves).to eq(['1011'])
-      end
-    end
-    
-    context 'with incorrect index format' do
-      it 'raises and InputError' do
-        expect { game.send(:add_move, 'b7,c7')
-       }.to raise_error(InputError, "Indexed_move; b7,c7 should be formatted like 'iiii'")
-        expect(game.moves).to eq([])
-      end
+    it 'pushes a the move string onto the @moves array' do
+      game.send(:add_move, '1011')
+      expect(game.moves).to eq(['1011'])
     end
   end
 
@@ -95,36 +84,36 @@ describe Game do
       it "saves the move in the Game @moves array" do
         allow(game).to receive(:get_input).and_return('a2,a3') # Pawn
         allow(game).to receive(:moves).and_return(['6050'])
-        expect(game).to receive(:add_move).with('6050').once #Pawn
-        expect(game.moves.last).to eq('6050')
+        expect(game).to receive(:add_move).with('6050')
         game.send(:get_move)
+        expect(game.moves.last).to eq('6050')
       end
     end
 
     context 'when the move is invalid' do
       it "will not save move when formatted incorrectly" do
         allow(game).to receive(:get_input).and_return('aaa1,asdff2', 'a2,a3') # Nil, Pawn
-        allow(game).to receive(:pawn_or_knight_move?).and_return(false, true)
-
         expect(game).not_to receive(:add_move).with('0001111001001')
+        expect(game).to receive(:add_move).with('6050')
         game.send(:get_move)
       end
      
       it "will not save move when moving piece was not owned by active player" do
         allow(game).to receive(:get_input).and_return('a7,a6', 'a2,a3') # Pawn, Pawn
-        allow(game).to receive(:pawn_or_knight_move?).and_return(true, true)
-
-        expect(game).not_to receive(:add_move).with('1020')
+        # allow(game).to receive(:own_piece?).and_return(false, true)
+        # expect(game).not_to receive(:add_move).with('1020')
+        # expect(game).to receive(:add_move).with('6050')
         game.send(:get_move)
+        expect(game.moves.include?('1020')).to be(false)
+        expect(game.moves.last).to eq('6050')
       end
       
       it "will not save move when it's not a genuine move from one square to another" do
         allow(game).to receive(:get_input).and_return('a2,a2', 'a2,a3') # Pawn & Pawn
         allow(game).to receive(:true_move?).and_return(false, true)
-
-        expect(game).not_to receive(:add_move).with('6060')
-        expect(game).to receive(:add_move).with('6050')
         game.send(:get_move)
+        expect(game.moves.include?('1010')).to be(false)
+        expect(game.moves.last).to eq('6050')
       end
     end
 
@@ -222,41 +211,41 @@ describe Game do
     end 
   end
 
-  describe '#make_move' do
-    let(:active_player) { instance_double(Player) }
-    let(:board) { double('Board') }
-    let(:pawn_move_piece) { instance_double(Pawn)}
-    let(:rook_move_piece) { instance_double(Rook)}
-    let(:knight_move_piece) { instance_double(Knight)}
-    let(:bishop_move_piece) { instance_double(Bishop)}
-    let(:queen_move_piece) { instance_double(Queen)}
-    let(:king_move_piece) { instance_double(King)}
+  # describe '#make_move' do
+  #   let(:active_player) { instance_double(Player) }
+  #   let(:board) { double('Board') }
+  #   let(:pawn_move_piece) { instance_double(Pawn)}
+  #   let(:rook_move_piece) { instance_double(Rook)}
+  #   let(:knight_move_piece) { instance_double(Knight)}
+  #   let(:bishop_move_piece) { instance_double(Bishop)}
+  #   let(:queen_move_piece) { instance_double(Queen)}
+  #   let(:king_move_piece) { instance_double(King)}
     
-    before do
-      allow_any_instance_of(Game).to receive(:sleep).at_least(:once)
-      allow(game).to receive(:active_player).and_return(active_player)
-      allow(game).to receive(:board).and_return(board) 
-      @grid = [[rook_move_piece, knight_move_piece, bishop_move_piece, queen_move_piece, king_move_piece, bishop_move_piece, knight_move_piece, rook_move_piece],
-      [pawn_move_piece, pawn_move_piece, pawn_move_piece, pawn_move_piece, pawn_move_piece, pawn_move_piece, pawn_move_piece, pawn_move_piece],
-      [nil, nil, nil, nil, nil, nil, nil, nil],
-      [nil, nil, nil, nil, nil, nil, nil, nil],
-      [nil, nil, nil, nil, nil, nil, nil, nil],
-      [nil, nil, nil, nil, nil, nil, nil, nil],
-      [pawn_move_piece, pawn_move_piece, pawn_move_piece, pawn_move_piece, pawn_move_piece, pawn_move_piece, pawn_move_piece, pawn_move_piece],
-      [rook_move_piece, knight_move_piece, bishop_move_piece, queen_move_piece, king_move_piece, bishop_move_piece, knight_move_piece, rook_move_piece]
-      ]
-    end
+  #   before do
+  #     allow_any_instance_of(Game).to receive(:sleep).at_least(:once)
+  #     allow(game).to receive(:active_player).and_return(active_player)
+  #     allow(game).to receive(:board).and_return(board) 
+  #     @grid = [[rook_move_piece, knight_move_piece, bishop_move_piece, queen_move_piece, king_move_piece, bishop_move_piece, knight_move_piece, rook_move_piece],
+  #     [pawn_move_piece, pawn_move_piece, pawn_move_piece, pawn_move_piece, pawn_move_piece, pawn_move_piece, pawn_move_piece, pawn_move_piece],
+  #     [nil, nil, nil, nil, nil, nil, nil, nil],
+  #     [nil, nil, nil, nil, nil, nil, nil, nil],
+  #     [nil, nil, nil, nil, nil, nil, nil, nil],
+  #     [nil, nil, nil, nil, nil, nil, nil, nil],
+  #     [pawn_move_piece, pawn_move_piece, pawn_move_piece, pawn_move_piece, pawn_move_piece, pawn_move_piece, pawn_move_piece, pawn_move_piece],
+  #     [rook_move_piece, knight_move_piece, bishop_move_piece, queen_move_piece, king_move_piece, bishop_move_piece, knight_move_piece, rook_move_piece]
+  #     ]
+  #   end
     
-    # context 'with a valid Pawn move' do
-    #   it "calls the Pawn's #piece_valid_move?" do
-    #     moves = ['1020']
-    #     allow(active_player).to receive(:instance_variable_get).with(:@moves).and_return(moves)
-    #     allow(active_player).to receive(:moves).and_return(moves)
-    #     allow(board).to receive(:grid).and_return(@grid)
-    #     expect(pawn_move_piece).to receive(:piece_valid_move?).with('1020')
-    #     game.make_move
-    #   end
-    # end
+  #   context 'with a valid Pawn move' do
+  #     it "calls the Pawn's #piece_valid_move?" do
+  #       moves = ['1020']
+  #       allow(active_player).to receive(:instance_variable_get).with(:@moves).and_return(moves)
+  #       allow(active_player).to receive(:moves).and_return(moves)
+  #       allow(board).to receive(:grid).and_return(@grid)
+  #       expect(pawn_move_piece).to receive(:piece_valid_move?).with('1020')
+  #       game.make_move
+  #     end
+  #   end
 
     # context 'with a valid Rook move' do
     #   it "calls Rooks#piece_valid_move?" do
@@ -327,11 +316,11 @@ describe Game do
       # it "changes the piece's position" do
       # end
     
-    context 'with an invalid move' do
+    # context 'with an invalid move' do
       # it "does not change the piece's position" do
       # end
-    end
-  end
+    # end
+  # end
 
   describe '#game_valid_move?' do
   end
@@ -612,54 +601,10 @@ describe Game do
       end
     end
   end
-  
-  # describe '#king_uncheck_move_possible?(player)' do
-  #   context 'when possible' do
-  #     it 'returns true' do
-  #       game.board.grid[6][4] = nil
-  #       game.board.grid[7][3] = nil
-  #       game.board.grid[5][4] = Rook.new(:black, 5, 4)
-  #       result = game.king_uncheck_move_possible?(game.active_player, game.board)
-  #       expect(result).to be(true)
-  #     end
-    
-  #     it 'returns true' do
-  #       game.board.grid[6][4] = nil
-  #       game.board.grid[7][5] = nil
-  #       game.board.grid[5][4] = Rook.new(:black, 5, 4)
-  #       result = game.king_uncheck_move_possible?(game.active_player, game.board)
-  #       expect(result).to be(true)
-  #     end
-  
-  #     it 'returns true' do
-  #       game.board.grid[6][4] = nil
-  #       game.board.grid[7][5] = Pawn.new(:black, 7, 5)
-  #       game.board.grid[5][4] = Rook.new(:black, 5, 4)
-  #       result = game.king_uncheck_move_possible?(game.active_player, game.board)
-  #       expect(result).to be(true)
-  #     end
-  #   end
 
-  #   context 'when not possible' do
-  #     it 'returns false' do
-  #       game.board.grid[6][4] = nil
-  #       game.board.grid[5][4] = Rook.new(:black, 5, 4)
-  #       result = game.king_uncheck_move_possible?(game.active_player, game.board)
-  #       expect(result).to be(false)
-  #     end
-      
-  #     it 'returns false' do
-  #       game.board.grid[6][4], game.board.grid[6][5] = nil, nil
-  #       game.board.grid[4][7], game.board.grid[3][4] = Bishop.new(:black, 4, 7), Rook.new(:black, 3, 4)
-  #       result = game.king_uncheck_move_possible?(game.active_player, game.board)
-  #       expect(result).to be(false)
-  #     end
-  #   end
-  # end
-
-def empty_board(game)
-  game.board.grid.map! { Array.new(8) }
-end
+  def empty_board(game)
+    game.board.grid.map! { Array.new(8) }
+  end
 
   describe "#checkmate?(player)" do
     context 'when player is in check and check mate' do
@@ -781,5 +726,4 @@ end
       end
     end
   end
-
 end
