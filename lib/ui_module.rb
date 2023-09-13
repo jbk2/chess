@@ -7,8 +7,8 @@ module UiModule
   @@type_speed = 0.005
 
   def start_game
-    display_string(ERB.new(yaml_data['game']['turn_instructions']).result(binding), @@type_speed); sleep 1.6;
-    display_string(ERB.new(yaml_data['game']['start_prompt']).result(binding), @@type_speed); sleep 1.6;
+    display_string(ERB.new(yaml_data['game']['turn_instructions']).result(binding), @@type_speed); sleep 1.1;
+    display_string(ERB.new(yaml_data['game']['start_prompt']).result(binding), @@type_speed); sleep 1.1;
   end
 
   def get_input

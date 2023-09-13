@@ -6,7 +6,7 @@
 2. Then type `ruby lib/main.rb` to run the programme.
 3. Follow the terminal prompts from there.
 
-## Points of note:
+## Points of note
 - Fully written with TDD. Run `rspec` in your terminal and read the ~244 tests to familiarise yourself with the code base.
 - All aspects are unit tested, except load and save functionality. Currently there are only limited integration tests.
 - Front end user IO uses chess notation (source colrow, destination colrow, e.g. 'a2,a4'), which is converted into index format (rowcolrowcol, e.g. '6040') to work with the grid's 2d 8 arrays containing 8 elements. 
@@ -23,7 +23,7 @@
 - IO output helper methods are located in UiModule and IO string content is stored as YAML data in data.yml. IO is printed to console via UiModule#display_string which introduces a typing delay for nicer UX.
 - Save & load logic is stored in the SaveAndLoadModule, logic being called via Game#old_or_new_game. Saved games are lovated in the ../Games/ directory.
 
-## Code DSL:
+## Code DSL
 - r = row
 - c = column
 - index format = row first then column (not chess notation which is the reverse).
