@@ -5,6 +5,10 @@ game:
   game_saved: "Game has been successfully saved, under the name; <%=BLUE%><%= file_name %><%=ANSI_END%>. Bye for now.\n"
   turn_instructions: "When prompted to take a turn please type your move by piece's current position, comma,
     position to move piece to, e.g. <%=CYAN%>b1,d1<%=ANSI_END%>, then key return.\n"
+
+  turn_instructions: "On your turn prompt please type your move by; piece's current position, comma, piece's moved 
+    position, e.g. <%=CYAN%>c2,c4<%=ANSI_END%>, then key return.\n"
+
   welcome: "Welcome to your new chess game players.\n"
   player1_name_prompt: "Please tell me the 1st player's name?"
   player1_greeting: "hi <%=BLUE%><%=player1_name%><%=ANSI_END%> \U0001F44B\n"
