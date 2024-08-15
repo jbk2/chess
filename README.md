@@ -1,14 +1,22 @@
 ### CLI Chess implementation – The Odin Project - Ruby course capstone project:
 
 ## Usage
+
+### Online via Replit
+1. Visit app (here)[https://replit.com/@jbk1/Chess].
+2. Read README.md for program orientation.
+3. Open a shell window and type `./lib/main.rb` to run the programme.
+4. Follow the terminal prompts.
+
+### Locally
 *The running script is located in lib/main.rb*
 1. In your console navigate to the directory's root.
-2. Then type `ruby lib/main.rb` to run the programme.
-3. Follow the terminal prompts from there.
+2. run `rspec` from application root to help familiarise yourself with the code via ~244 tests.
+3. Then type `./lib/main.rb` to run the programme.
+4. Follow the terminal prompts.
 
 ## Program Summary and Architecture
-- Built via TDD, run `rspec` from application root to help familiarise yourself with the code via ~244 tests.
-- All behavior is unit tested, except load and save functionality.
+- Built via TDD, all behavior is unit tested.
 - The program IO uses chess notation; source colrow, destination colrow, e.g. 'a2,a4', adapting it into index format (rowcolrowcol, e.g. '6040') to work with the grid's 2d x8 arrays containing x8 elements.
 - Input errors are handled by custom written format checking rescue methods.
 - Game#get_move validates user input against:
