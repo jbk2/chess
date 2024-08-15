@@ -4,16 +4,16 @@
 
 ### Online via Replit
 1. Visit app (here)[https://replit.com/@jbk1/Chess].
-2. Read README.md for program orientation.
-3. Open a shell window and type `./lib/main.rb` to run the programme.
+2. README.md for program orientation.
+3. Open a shell tab and run the executable `./lib/main.rb` to play the game.
 4. Follow the terminal prompts.
 
 ### Locally
-*The running script is located in lib/main.rb*
-1. In your console navigate to the directory's root.
-2. run `rspec` from application root to help familiarise yourself with the code via ~244 tests.
-3. Then type `./lib/main.rb` to run the programme.
-4. Follow the terminal prompts.
+1. Clone repo from (here)[https://github.com/jbk2/chess.git]
+2. README.md for program orientation.
+3. Run `rspec` from application root to familiarise yourself with the code via ~244 tests.
+4. Then from your shell run the executable `./lib/main.rb` to play the game.
+5. Follow terminal prompts.
 
 ## Program Summary and Architecture
 - Built via TDD, all behavior is unit tested.
