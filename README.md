@@ -6,22 +6,22 @@
 2. Then type `ruby lib/main.rb` to run the programme.
 3. Follow the terminal prompts from there.
 
-## Points of note
-- Fully written with TDD. Run `rspec` in your terminal and read the ~244 tests to familiarise yourself with the code base.
-- All aspects are unit tested, except load and save functionality. Currently there are only limited integration tests.
-- Front end user IO uses chess notation (source colrow, destination colrow, e.g. 'a2,a4'), which is converted into index format (rowcolrowcol, e.g. '6040') to work with the grid's 2d 8 arrays containing 8 elements. 
-- User input errors handled mainly by custom written format checking rescue methods.
-- Game#get_move implements user input validation for:
+## Program Summary and Architecture
+- Built via TDD, run `rspec` from application root to help familiarise yourself with the code via ~244 tests.
+- All behavior is unit tested, except load and save functionality.
+- The program IO uses chess notation; source colrow, destination colrow, e.g. 'a2,a4', adapting it into index format (rowcolrowcol, e.g. '6040') to work with the grid's 2d x8 arrays containing x8 elements.
+- Input errors are handled by custom written format checking rescue methods.
+- Game#get_move validates user input against:
   - format, e.g. 'b1,c1'.
   - a real move; i.e. moving from one square to a different square.
   - first move rules.
   - in board 8x8 scope.
-- Game#make_move calls the move's game and piece rule validation via the implementation in each piece class's #valid_move.
-- Game rule checks are implemented in Game's #moves_into_check?, #checkmate?, #stalemate? and #king_taken methods, being called by Game#make_move.
-- Player's turns toggle until Game's @game_finished is set to true by the Game's various game rule state checking methods (as mentioned in above point).
-- Once moves are format, game rule and game state validated they're stored in Game's @moves array and taken pieces in @taken_pieces array.
-- IO output helper methods are located in UiModule and IO string content is stored as YAML data in data.yml. IO is printed to console via UiModule#display_string which introduces a typing delay for nicer UX.
-- Save & load logic is stored in the SaveAndLoadModule, logic being called via Game#old_or_new_game. Saved games are lovated in the ../Games/ directory.
+- Game#make_move runs game rule and piece rule validation against the move, via the each piece class' #valid_move.
+- Game rule checks are implemented via game's #moves_into_check?, #checkmate?, #stalemate? and #king_taken methods, called by Game#make_move.
+- Players' turns toggle until the game's @game_finished evaluates to true according to various game rule state checking methods (as mentioned in above point).
+- Once moves are validated against format, game rule and game state, they're stored in Game's @moves array and taken pieces stored in @taken_pieces array.
+- IO helper methods are located in UiModule and IO string content is stored as YAML data in data.yml. IO is printed to console via UiModule#display_string which introduces typing delays for nicer UX.
+- Save & load logic is stored in the SaveAndLoadModule, logic being called via Game#old_or_new_game. Saved games are located in the ../Games/ directory.
 
 ## Code DSL
 - r = row
