@@ -10,11 +10,11 @@ include UiModule
     save_file(file_name, serialized_game)
     @game_finished = true
   end
-  
+
   def file_count
     Dir['games/*'].length
   end
-  
+
   def save_file(file_name, content)
     Dir.mkdir('games') unless Dir.exist?('games')
     path_name = "games/#{file_name}"
@@ -23,7 +23,7 @@ include UiModule
     end
     display_string(ERB.new(yaml_data['game']['game_saved']).result(binding), @@type_speed)
   end
-  
+
   def old_or_new_game
     display_string(ERB.new(yaml_data['game']['old_or_new_game']).result(binding), @@type_speed)
     if get_input == 'load'
@@ -83,5 +83,4 @@ include UiModule
     self.taken_pieces = data['taken_pieces']
     self.game_finished = data['game_finished']
   end
-
 end

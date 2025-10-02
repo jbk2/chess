@@ -62,5 +62,4 @@ module UiModule
     end
     puts
   end
-
 end
