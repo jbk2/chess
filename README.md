@@ -5,8 +5,9 @@
 ### Online via Replit
 1. Visit app (here)[https://replit.com/@jbk1/Chess].
 2. README.md for program orientation.
-3. Open a shell tab and run the executable `./lib/main.rb` to play the game.
-4. Follow the terminal prompts.
+3. Run & view tests via bundle exec rspec --format documentation in a Replit terminal.
+4. Open a shell tab and run the executable `./lib/main.rb` to play the game.
+5. Follow the terminal prompts.
 
 ### Locally
 1. Clone repo from (here)[https://github.com/jbk2/chess.git]
